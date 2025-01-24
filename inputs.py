@@ -1,4 +1,5 @@
 import pygame as pg
+from vec import *
 
 
 class Key:
@@ -23,6 +24,7 @@ class Inputs:
         self.keys = {}
         self._pg_events()
         self.events = {}
+        self.mouse_pos = Vec(0, 0)
         self.quit = False
 
     def _pg_events(self):
@@ -34,6 +36,7 @@ class Inputs:
         self.keys["mouse_right"] = -3
 
     def update(self):
+        self.mouse_pos = Vec(*pg.mouse.get_pos())
         keys = list(self.events.keys())
         for evt in keys:
             if self.events[evt].duration == -1:
