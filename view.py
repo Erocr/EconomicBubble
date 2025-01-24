@@ -38,4 +38,5 @@ class View:
             self.screen.blit(im, (pos-Vec(im.get_width()/2, 0)).get)
             pos += Vec(0, im.get_height())
 
-
+    def bubble(self, bubble):
+        self.circle(bubble.center, bubble.radius)
