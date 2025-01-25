@@ -12,6 +12,7 @@ visual_data = VisualData(view)
 economy_graph = EconomyGraph(visual_data)
 flash_info = FlashInfo(view.screenSize)
 clock = pg.time.Clock()
+music = Music()
 
 frames = 0
 while not inputs.quit:
@@ -20,13 +21,13 @@ while not inputs.quit:
     economy_graph.update_visuals(view, inputs)
     economy_graph.quick_simulation_update()
 
-    
+
     if (frames % 10 == 0):
         economy_graph.update_simulation()
     
     if (frames % 1000 == 0):
         flash_info.new_msg(random.choice(news.news)[0])
-
+        music.sound("news_popup")
     flash_info.update(inputs)
     flash_info.draw(view)
     view.flip()

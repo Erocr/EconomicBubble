@@ -36,8 +36,8 @@ class View:
             width = 0
         pg.draw.circle(surf, color, center.get, radius, width=width)
 
-    def rect(self, pos, size, color=(255, 255, 255)):
-        pg.draw.rect(self.screen, color, pg.Rect(*pos.get, *size.get))
+    def rect(self, pos, size, color=(255, 255, 255), width=0):
+        pg.draw.rect(self.screen, color, pg.Rect(*pos.get, *size.get), width=width)
 
     def text_font(self, msg, pos, font, color=(0, 0, 0)):
         im = font.render(msg, False, color)

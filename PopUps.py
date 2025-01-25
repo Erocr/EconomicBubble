@@ -1,6 +1,9 @@
 from vec import *
 import pygame as pg
 
+FLASH_INFO = 0
+POPUP = 1
+
 
 class FlashInfo:
     def __init__(self, screenSize):
@@ -38,6 +41,10 @@ class FlashInfo:
         self.text = text
         self.scrolling = 1
 
+    def on_notify(self, values):
+        if values[0] == FLASH_INFO:
+            self.new_msg(values[1])
+
 
 class PopupsContainer:
     def __init__(self):
@@ -48,25 +55,36 @@ class PopupsContainer:
             self.popups[i].draw(view, i)
 
     def update(self, inputs):
+        nb_to_delete = 0
         for popup in self.popups:
-            popup.update(inputs)
+            if popup.update(inputs):
+                nb_to_delete += 1
+        for _ in range(nb_to_delete):
+            self.popups.pop(0)
 
-    def add_popup(self, text, type):
-        """
-        type can be "investment", "
-        """
-        pass
-    # TODO
+    def add_popup(self, text, color=(0, 255, 0)):
+        self.popups.append(Popup(text, color))
+
+    def on_notify(self, values):
+        if values[0] == POPUP:
+            self.add_popup(values[1])
+
 
 class Popup:
-    size = Vec(100, 70)
+    size = Vec(300, 70)
 
     def __init__(self, text, color):
         self.text = text
         self.color = color
+        self.counter = 0
 
     def draw(self, view, i):
         pos = view.screenSize - self.size + UP * self.size.y * i
-        view.rect(pos, self.size)
-        view.text(self.text, pos + self.size/2, self.size.x)
+        view.rect(pos, self.size, color=(255, 255, 255))
+        view.rect(pos, self.size, color=(0, 0, 0), width=3)
+        view.text(self.text, pos + Vec(self.size.x/2, 0), self.size.x, self.color)
+
+    def update(self, inputs):
+        self.counter += 1
+        return self.counter > 100
 
