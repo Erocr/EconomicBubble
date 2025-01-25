@@ -45,24 +45,34 @@ class View:
         im = font.render(msg, False, color)
         self.screen.blit(im, pos.get)
 
-    def text(self, msg, pos, width, color=(255, 255, 255)):
-        """
-        If text doesn't fit, choose it different
-        """
+    def renders(self, msg, width, color=(255, 255, 255)):
         messages = msg.split(" ")
-        count = 0
         images = []
-        line = ""
-        for i in range(0, len(messages)):
-            w = self.font.size(messages[i])[0]
-            count += w
+        line = " " + messages[0]
+        for i in range(1, len(messages)):
+            count = self.font.size(line)[0]
             if count > width:
                 images.append(self.font.render(line[1:], True, color))
                 line = ""
             line += " " + messages[i]
 
         images.append(self.font.render(line[1:], True, color))
+        return images
 
+    def text(self, msg, pos, width, color=(255, 255, 255)):
+        """
+        If text doesn't fit, choose it different
+        """
+        images = self.renders(msg, width, color)
+
+        for im in images:
+            self.screen.blit(im, (pos-Vec(im.get_width()/2, 0)).get)
+            pos += Vec(0, im.get_height())
+
+    def text_centered(self, msg, pos, width, color=(255, 255, 255)):
+        images = self.renders(msg, width, color)
+        mid_y = sum([image.get_height() for image in images]) / 2
+        pos += Vec(0, -mid_y)
         for im in images:
             self.screen.blit(im, (pos-Vec(im.get_width()/2, 0)).get)
             pos += Vec(0, im.get_height())
@@ -133,8 +143,7 @@ class View:
 
         # UP * bubble.radius * 0.9 to keep the text inside vertically
         # bubble.radius * 0.75 to keep the text inside horizontally the circle
-        self.text(bubble.text, bubble.center + UP *
-                  bubble.radius * 0.9, bubble.radius * 0.75)
+        self.text_centered(bubble.text, bubble.center, bubble.radius * 0.75)
 
     def single_curve(self, pos: Vec, size: Vec, curve, color=(255, 255, 255)):
         pg.draw.rect(self.screen, (0, 0, 0), pg.Rect(*pos.get, *size.get))

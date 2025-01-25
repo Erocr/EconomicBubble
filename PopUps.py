@@ -41,10 +41,6 @@ class FlashInfo:
         self.text = text
         self.scrolling = 1
 
-    def on_notify(self, values):
-        if values[0] == FLASH_INFO:
-            self.new_msg(values[1])
-
 
 class PopupsContainer:
     def __init__(self):
@@ -82,7 +78,7 @@ class Popup:
         pos = view.screenSize - self.size + UP * self.size.y * i
         view.rect(pos, self.size, color=(200, 255, 255))
         view.rect(pos, self.size, color=(0, 0, 0), width=3)
-        view.text(self.text, pos + Vec(self.size.x/2, 0), self.size.x, self.color)
+        view.text(self.text, pos + Vec(self.size.x/2, 0), self.size.x*0.8, self.color)
 
     def update(self, inputs):
         self.counter += 1
