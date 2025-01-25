@@ -4,6 +4,7 @@ import pygame as pg
 
 class Music:
     def __init__(self):
+        self.activated = True
         pg.mixer.init()
         pg.mixer.music.load(sys.path[0] + "/music/pleasant-dream.wav")
         pg.mixer.music.play(-1)
@@ -20,7 +21,16 @@ class Music:
         pg.mixer.music.load(sys.path[0] + "/music/" + music)
 
     def sound(self, sound):
-        self.sounds[sound].play()
+        if self.activated:
+            self.sounds[sound].play()
+
+    def pause(self):
+        pg.mixer.music.pause()
+        self.activated = False
+
+    def unpause(self):
+        pg.mixer.music.unpause()
+        self.activated = True
 
 
 

@@ -31,7 +31,7 @@ while not inputs.quit:
         if e: current_state = "game"
 
     elif current_state == "game":
-        settings.update(inputs)
+        settings.update(inputs, music)
         flash_info.update(inputs)
 
         economy_graph.update_visuals(view, inputs)
