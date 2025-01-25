@@ -40,3 +40,5 @@ class Bubble:
     def clicked(self):
         return self.click_timer == 1
 
+    def set_text(self, text):
+        self.text = text

@@ -1,6 +1,13 @@
 from vec import *
 import pygame as pg
 
+FLASH_INFO = 0
+POPUP = 1
+
+class Observer:
+    def __init__(self):
+
+
 
 class FlashInfo:
     def __init__(self, screenSize):
@@ -36,6 +43,10 @@ class FlashInfo:
         self.text = text
         self.scrolling = 1
 
+    def on_notify(self, values):
+        if values[0] == FLASH_INFO:
+            self.new_msg(values[1])
+
 
 class PopupsContainer:
     def __init__(self):
@@ -55,6 +66,10 @@ class PopupsContainer:
 
     def add_popup(self, text, color=(0, 255, 0)):
         self.popups.append(Popup(text, color))
+
+    def on_notify(self, values):
+        if values[0] == POPUP:
+            self.add_popup(values[1])
 
 
 class Popup:
