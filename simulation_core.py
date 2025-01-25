@@ -13,6 +13,7 @@ class BaseNode:
         self.max_value = 10_000
         self.bubble = bubble
         self.parents = []
+        self.true_capital = 1_000
         self.debt = 0
     
     def addParent(self, node):
@@ -52,7 +53,7 @@ class TrueCapitalNode(BaseNode):
         elif type(parent) == InvestorsDoubtNode:
             self._value *= (1 - self.shares)
             if parent._value < 0.5 * parent.max_value:
-                if self.shares < 0.8:
+                if self.shares < 0.8 and parent.interest > 1.1:
                     self.shares += parent.invest(self.shares)
             else:
                 self.shares -= parent.pullout(self.shares)
@@ -165,9 +166,12 @@ class InvestorsDoubtNode(BaseNode):
         super().__init__(bubble)
         self.max_value = 100
         # the investors observe for some time, which helps
-        # then calculate how much they doubt you
+        # then calculate how much they doubt you, as well as
+        # how interested they are
         self.invested = 0
         self.pulled_out = 0
+        self.interest = 1
+
         self.observing_for = 7
         self.records = []
 
@@ -195,15 +199,16 @@ class InvestorsDoubtNode(BaseNode):
             if len(self.records) > self.observing_for:
                 res = self.records[-1] - self.records[0] 
                 res /= self.records[0]
-                print(str(res) + " & ")
+                # print(str(res) + " & ")
                 if abs(res) < 0.2 / self.volatility:
-                    self._value *= 1.1
-                    return
+                    self._value *= 1.01; return
                 if res < 0:
-                    self._value *= (1 + abs(res)) 
+                    self._value *= (1 + abs(res))
+                    self.interest = max(1, self.interest / 1.001)
                     if self._value > 75: self.all_eyes_on()
                 else:
                     self.stop_watching()
+                    self.interest = min(1.5, self.interest + 0.05)
                     self._value /= (1 + res)
 
         if type(parent) == EventNode:
@@ -226,7 +231,8 @@ class InvestorsDoubtNode(BaseNode):
         if len(self.records) < self.observing_for or self.invested > 0: 
             return 0
         if random.random() * 100 > self._value:
-            self.invested = random.random() * (0.8 - shares) / 2
+            self.invested = random.random() * (0.8 - shares) / 2.5
+            self.invested *= self.interest
             self.invested *= (1 - self._value / 100)
             if self.invested * 100 < 1: self.invested = 0
             return self.invested
@@ -236,10 +242,9 @@ class InvestorsDoubtNode(BaseNode):
         # pullout if doubt starts to grow
         if len(self.records) < self.observing_for or self.pulled_out > 0:
             return 0
-        print(str(self._value) + " @ ")
         if random.random() * 100 < self._value:
-            print(str(shares) + " @ ")
             self.pulled_out = random.random() * shares / 2
+            self.pulled_out /= self.interest
             self.pulled_out *= self._value / 100
             if self.pulled_out * 100 < 1: self.pulled_out = 0
             return self.pulled_out
@@ -259,10 +264,11 @@ class MarketingNode(BaseNode):
         if self.is_click:
             self._value = getNewValue(self._value, 10, 100)
             self.is_click = False
+            self.debt += 50 + self.true_capital/80
             # self._value = clamp(self._value, 0, 10_000)
 
         self.bubble.set_text(
-            f"Marketing {to_readable_int(self._value)}$"
+            f"Marketing {to_readable_int(self._value)}%"
         )
 
 class SecurityNode(BaseNode):
@@ -278,12 +284,12 @@ class SecurityNode(BaseNode):
     def update(self):
         if self.is_click:
             self._value = getNewValue(self._value, 10, 100)
-            # self._value = clamp(self._value, 0, 10_000)
             super().update()
+            self.debt += 50 + self.true_capital/80
             self.is_click = False
         
         self.bubble.set_text(
-            f"Security {to_readable_int(self._value)}$"
+            f"Security {to_readable_int(self._value)}%"
         )
 
 class EspionageNode(BaseNode):
@@ -297,13 +303,15 @@ class EspionageNode(BaseNode):
             self.is_click = True
 
     def update(self):
-        # self._value = max(0, self._value - 1)
-        # if self.is_click:
-        #     self._value = getNewValue(self._value, 10, 100)
-        #     self.is_click = False
+        self._value = max(0, self._value - 1)
+        if self.is_click:
+            self._value = getNewValue(self._value, 10, 100)
+            self.debt += 50 + self.true_capital/80
+            self.is_click = False
+            
         
         self.bubble.set_text(
-            f"Espionage {to_readable_int(self._value)}$"
+            f"Espionage {to_readable_int(self._value)}%"
         )
 
 class EventNode(BaseNode):

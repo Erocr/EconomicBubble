@@ -131,6 +131,7 @@ class EconomyGraph:
         for node in self.nodes:
             full_debt += node.debt
             node.debt = 0
+            node.true_capital = self.TC._value
             node.update()
         self.TC._value -= full_debt
         if self.TC._value < 0: self.TC._value = 0
