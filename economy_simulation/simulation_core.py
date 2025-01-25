@@ -1,3 +1,4 @@
+from ... import bubble
 import random
 
 def clamp(val, min_, max_):
@@ -27,9 +28,11 @@ class BaseNode:
         self.value_history.append(self._value)
 
 
+# visible
 class TrueCapitalNode(BaseNode):
-    def __init__(self):
+    def __init__(self, bubble):
         super().__init__()
+        self.bubble = bubble
         self.shares = 0 # Ratio of investment, between 0 and 1
     
     def update(self):
@@ -48,6 +51,7 @@ class TrueCapitalNode(BaseNode):
                 self.shares -= abs(random.gauss(1, 0.5) * parent._value)
             self.shares = clamp(self.shares, 0, 1)
             self._value *= (1 + self.shares)            
+
 
 class ApparentCapitalNode(BaseNode):
     def __init__(self):
@@ -73,11 +77,14 @@ class ApparentCapitalNode(BaseNode):
         if (type(parent) == PublicDoubtNode):
             self.persuade = getNewValue(self.persuade, parent._value/100, 0.5)
 
+# visible
 class MarketNode(BaseNode):
-    def __init__(self):
+    def __init__(self, bubble, graph):
         super().__init__()
         self.tendance = 1
         self.mult = 1
+        self.bubble = bubble
+        self.graph = graph
 
     def update(self):
         for node in self.parents:
@@ -94,10 +101,12 @@ class MarketNode(BaseNode):
         if type(parent) == EspionageNode:
             self._value = getNewValue(self._value, parent._value, 25)
 
+# visible
 class PublicDoubtNode(BaseNode):
-    def __init__(self):
+    def __init__(self, bubble):
         super().__init__()
         self.max_value = 100
+        self.bubble = bubble
     
     def update(self):
         for node in self.parents:
@@ -115,11 +124,12 @@ class PublicDoubtNode(BaseNode):
         elif type(parent) == EventNode:
             pass
         
-    
+# visible
 class InvestorsDoubtNode(BaseNode):
-    def __init__(self):
+    def __init__(self, bubble):
         super().__init__()
         self.max_value = 100
+        self.bubble = bubble
 
     def influencedBy(self, parent):
         if type(parent) == MarketNode:
@@ -137,19 +147,23 @@ class InvestorsDoubtNode(BaseNode):
 
     def invest(self, shares):
         if random.random() > self._value:
-            return random.random() * (1 - shares)
+            return random.random() * (1 - shares) * (1 - self._value)
 
+# visible
 class MarketingNode(BaseNode):
-    def __init__(self):
+    def __init__(self, bubble):
         super().__init__()
+        self.bubble = bubble
 
     def update(self, bonus):
         self._value += getNewValue(self._value, bonus, 100)
         self._value = clamp(self._value, 0, 10_000)
 
+# visible
 class SecurityNode(BaseNode):
-    def __init__(self):
+    def __init__(self, bubble):
         super().__init__()
+        self.bubble = bubble
 
     def update(self, bonus):
         self._value += getNewValue(self._value, bonus, 100)
@@ -158,8 +172,9 @@ class SecurityNode(BaseNode):
 
 
 class EspionageNode(BaseNode):
-    def __init__(self):
+    def __init__(self, bubble):
         super().__init__()
+        self.bubble = bubble
 
     def update(self, bonus):
         self._value += getNewValue(self._value, bonus, 100)
