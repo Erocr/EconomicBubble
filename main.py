@@ -5,8 +5,8 @@ from graph import *
 from PopUps import *
 import news
 import random
-from Music import *
 from splash_screen import *
+from music import *
 
 view = View()
 inputs = Inputs()
