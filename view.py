@@ -13,7 +13,7 @@ class View:
         self.font = pg.font.SysFont("serif", 24)
         self.mini_font = pg.font.SysFont("serif", 12)
         #self.background = self.import_background()
-        self.background = pg.image.load(sys.path[0] + "/images/Game_Jam_Desk_new_york.jpg")
+        self.background = pg.image.load(sys.path[0] + "/images/Game_Jam_Desk_Classy.jpg")
 
     def import_background(self):
         background = pg.image.load(sys.path[0] + "/images/Game_Jam_Desk_new_york_cropped.jpg")
@@ -139,7 +139,8 @@ class View:
                          radius - bubble.fill_level * radius * 2)).get)
 
         self.miniCircles(bubble, radius, 13)
-        self.circle(bubble.center, radius+5, (154, 127, 104))
+        #outter circles
+        self.circle(bubble.center, radius+5, (108, 104, 101))
 
         # UP * bubble.radius * 0.9 to keep the text inside vertically
         # bubble.radius * 0.75 to keep the text inside horizontally the circle
