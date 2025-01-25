@@ -351,5 +351,5 @@ class Event():
             self.burst()
                 
         self.bubble.set_text(
-            f"Event {misc.to_readable_int(self._value)}$"
+            f"Event {to_readable_int(self._value)}$"
         )
