@@ -16,7 +16,6 @@ def string_true_capital(val):
 
 class BaseNode:
     def __init__(self, bubble):
-        self.value_history = []
         self._value = 0
         self._stability = 0
         self.max_value = 10_000
@@ -45,11 +44,8 @@ class TrueCapitalNode(BaseNode):
         self.shares = 0 # Ratio of investment, between 0 and 1
     
     def update(self):
-        for node in self.parents:
-            self.influencedBy(node)
-            
-        self.bubble.set_text(string_true_capital(self._value))
         super().update()
+        self.bubble.set_text(string_true_capital(self._value))
     
     def influencedBy(self, parent):
         if type(parent) == MarketNode:
@@ -70,8 +66,7 @@ class ApparentCapitalNode(BaseNode):
         self.persuade = 0.1
 
     def update(self):
-        for node in self.parents:
-            self.influencedBy(node)
+        super().update()
         
         self.bubble.set_text(string_shown_capital(self._value))
         self.persuade = clamp(self.persuade, 0, 1)
@@ -79,7 +74,6 @@ class ApparentCapitalNode(BaseNode):
         
         self.value_history.append(self._value)
         
-        super().update()
 
     def influencedBy(self, parent):
         if (type(parent) == TrueCapitalNode):
@@ -100,16 +94,14 @@ class MarketNode(BaseNode):
         # self.graph = graph
 
     def update(self):
+        super().update()
+
         if self.bubble.clicked():
             self.mult += 0.1
             self.mult = clamp(self.mult, 0, 5)
 
-        for node in self.parents:
-            self.influencedBy(node)
-
         self._value += random.gauss(self.tendance, self._stability)
         self.tendance /= 2
-        super().update()
     
     def influencedBy(self, parent):
         if type(parent) == PublicDoubtNode:
@@ -124,10 +116,11 @@ class PublicDoubtNode(BaseNode):
         self.max_value = 100
     
     def update(self):
+        super().update()
+
         self._value += random.gauss(0, 1) * self._stability
 
         self._value = clamp(self._value, 0, 10_000)
-        super().update()
         
     def influencedBy(self, parent):
         if type(parent) == MarketingNode:
@@ -145,25 +138,37 @@ class InvestorsDoubtNode(BaseNode):
         self.observing_for = 7
         self.records = []
 
+    def all_eyes_on(self):
+        self.observing_for = 2
+        self.records = []
+
     def influencedBy(self, parent):
         if type(parent) == ApparentCapitalNode:
             newavg = self.records[-1] * len(self.records)
-            newavg = (newa)
-            self.records.append(parent._value)
+            newavg = (newavg + parent._value) / (len(self.records) + 1)
+            self.records.append(newavg)
             if len(self.records) > self.observing_for:
-                
-
+                res = self.records[-1] - self.records[0]
+                if res / self.records[0] < 0.2:
+                    self.observing_for += 1
+                elif res < 0:
+                    self._value *= (2 + 1 / res)
+                    if res / self.records[0] > 0.4:
+                        selfall_eyes_on()
+                else:
+                    self._value *= 1 / (res + 1)
+                    
+            return 0
 
         if type(parent) == EventNode:
             # self._value = getNewValue()
             pass
 
     def update(self):
-        for node in self.parents:
-            self.influencedBy(node)
+        super().update()
+
         self._value += random.gauss(0, 1) * self._stability
         self._value = clamp(self._value, 0, 10_000)
-        super().update()
 
     def invest(self, shares):
         if random.random() > self._value:
@@ -197,7 +202,6 @@ class EspionageNode(BaseNode):
         if self.bubble.clicked():
             self._value += getNewValue(self._value, 10, 100)
             self._value = clamp(self._value, 0, 10_000)
-            super().update()
 
 class EventNode(BaseNode):
     def __init__(self, bubble):
