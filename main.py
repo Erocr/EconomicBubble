@@ -22,10 +22,10 @@ while not inputs.quit:
     if (frames % 10 == 0):
         economy_graph.update_simulation()
     
-    if (frames % 100 == 0):
+    if (frames % 1000 == 0):
         flash_info.new_msg(random.choice(news.news)[0])
-    flash_info.update()
-    flash_info.draw()
+    flash_info.update(inputs)
+    flash_info.draw(view)
     view.flip()
 
     clock.tick(50)
