@@ -11,15 +11,16 @@ class EconomyGraph:
         OperaM = core.MarketNode(),      # Soap-Opera Market
         PD = core.PublicDoubtNode(),     # Public Doubt
         ID = core.InverstorsDoubtNode(), # Investors Doubt
+        Events = core.EventNode(),       # Events
+
         M1 = core.MarketingNode(),       # Marketing 1 : press message
         M2 = core.MarketingNode(),       # Marketing 2 : ads
         S1 = core.SecurityNode(),        # Security 2 : media control
         S2 = core.SecurityNode(),        # Security 2 : surveillance
-        Events = core.EventNode(),       # Events
         Spy = core.EspionageNode()       # Espionage
-        
+
         self.nodes = [
-            TC, AC, SoapM, BeerM, OperaM, PD, ID, M1, M2, S1, S2, Events, Spy
+            TC, AC, SoapM, BeerM, OperaM, PD, ID, Events
         ]
         
         # Edges
@@ -44,3 +45,12 @@ class EconomyGraph:
     def update(self):
         for e in random.shuffle(self.nodes):
             e.update()
+    
+    def dbg_print(self):
+        for node in self.nodes:
+            print(node.__name__)
+            print(node.va)
+
+
+def main():
+    economy = EconomyGraph()
