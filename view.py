@@ -22,6 +22,13 @@ class View:
         if filled: width = 0
         pg.draw.circle(surf, color, center.get, radius, width=width)
 
+    def rect(self, pos, size, color=(255, 255, 255)):
+        pg.draw.rect(self.screen, color, pg.Rect(*pos.get, *size.get))
+
+    def text_font(self, msg, pos, font, color=(0, 0, 0)):
+        im = font.render(msg, False, color)
+        self.screen.blit(im, pos.get)
+
     def text(self, msg, pos, width, color=(255, 255, 255)):
         """
         If text doesn't fit, choose it different
