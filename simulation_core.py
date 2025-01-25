@@ -100,6 +100,7 @@ class MarketNode(BaseNode):
     def quick_update(self):
         self._value += random.random()/20
         self._value += random.gauss(self.tendance, self.volatility*5)/20
+        self._value = clamp(self._value, random.randint(3, 12), random.randint(163, 194))
         if self.bubble.clicked():
             self.is_click = True
 

@@ -175,7 +175,7 @@ class View:
             var_x = size.x / len(curves[i])
             self.curve(curves[i], var_x, var_y, pos, size, center, colors[i])
         pg.draw.rect(self.screen, (255, 255, 255), pg.Rect(*pos.get, *size.get), width=2)
-        # self.axis(pos, size, var_y, center, min_y, max_y)
+        self.axis(pos, size, var_y, center, min_y, max_y)
 
     def curve(self, curve, var_x, var_y, pos, size, center, color=(255, 255, 255)):
         positions = []
@@ -201,7 +201,7 @@ class View:
             if v * 20 > max_y - min_y:
                 value = v
                 break
-        for y in range(self.round(min_y, value, True), max_y, value):
+        for y in range(self.round(min_y, value, True), int(max_y), value):
             p1 = (pos.x, pos.y + self.relative_pos_y(var_y, y, center, size).y)
             p2 = (pos.x + 10, p1[1])
             pg.draw.line(self.screen, (255, 255, 255), p1, p2)
