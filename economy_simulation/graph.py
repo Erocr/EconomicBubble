@@ -6,19 +6,19 @@ import random
 class EconomyGraph:
     def __init__(self):
         # Nodes
-        TC = core.TrueCapitalNode(),     # True capital
-        AC = core.ApparentCapitalNode(), # Apparent capital
-        SoapM = core.MarketNode(),       # Soap Market
-        BeerM = core.MarketNode(),       # Beer Market
-        OperaM = core.MarketNode(),      # Soap-Opera Market
-        PD = core.PublicDoubtNode(),     # Public Doubt
-        ID = core.InverstorsDoubtNode(), # Investors Doubt
-        Events = core.EventNode(),       # Events
+        TC = core.TrueCapitalNode()     # True capital
+        AC = core.ApparentCapitalNode() # Apparent capital
+        SoapM = core.MarketNode()       # Soap Market
+        BeerM = core.MarketNode()       # Beer Market
+        OperaM = core.MarketNode()      # Soap-Opera Market
+        PD = core.PublicDoubtNode()     # Public Doubt
+        ID = core.InvestorsDoubtNode() # Investors Doubt
+        Events = core.EventNode()       # Events
 
-        M1 = core.MarketingNode(),       # Marketing 1 : press message
-        M2 = core.MarketingNode(),       # Marketing 2 : ads
-        S1 = core.SecurityNode(),        # Security 2 : media control
-        S2 = core.SecurityNode(),        # Security 2 : surveillance
+        M1 = core.MarketingNode()       # Marketing 1 : press message
+        M2 = core.MarketingNode()       # Marketing 2 : ads
+        S1 = core.SecurityNode()        # Security 2 : media control
+        S2 = core.SecurityNode()        # Security 2 : surveillance
         Spy = core.EspionageNode()       # Espionage
 
         self.nodes = [
@@ -45,7 +45,8 @@ class EconomyGraph:
         # }
 
     def update(self):
-        for e in random.shuffle(self.nodes):
+        random.shuffle(self.nodes)
+        for e in self.nodes:
             e.update()
     
     def dbg_print(self):
@@ -59,7 +60,10 @@ def main():
     for i in time:
         economy.update()
 
-    for node in economy:
-        plt.plot(time, node.value_history)
+    for node in economy.nodes:
+        plt.plot(time, node.value_history, label = str(node))
     
+    plt.legend()
     plt.show()
+
+main()
