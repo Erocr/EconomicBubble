@@ -44,6 +44,9 @@ class Vec:
     def __str__(self):
         return f"vec({self.x}, {self.y})"
 
+    def __mod__(self, other):
+        return Vec(self.x % other, self.y % other)
+
     @property
     def get(self):
         return self.x, self.y
