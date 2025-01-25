@@ -3,22 +3,12 @@ from bubble import Bubble
 import matplotlib.pyplot as plt
 import numpy as np
 import random
+import curve
+import vec
 
 
-class EconomyGraph:
-    def __init__(self, visualData):
-        self.vd = visualData
-        
-        self.TC = core.TrueCapitalNode(
-            Bubble(self.vd.bubble_size_capital, self.vd.pos_true_capital, self.vd.default_fill,
-                core.string_true_capital(0),  (7, 37, 6), (133, 187, 101))
-        ) # True capital
-
-        self.AC = core.ApparentCapitalNode(
-            Bubble(self.vd.bubble_size_capital, self.vd.pos_shown_capital, self.vd.default_fill,
-                core.string_shown_capital(0),  (7, 37, 6), (133, 187, 101))
-        ) # Apparent capital
-
+class MarketGroup:
+    def __init__(self):
         self.SoapM = core.MarketNode(
             Bubble(self.vd.bubble_size_investing, self.vd.pos_invest_left, self.vd.default_fill,
                    "Soap", (95, 167, 120), (206, 200, 239))
@@ -33,6 +23,38 @@ class EconomyGraph:
             Bubble(self.vd.bubble_size_investing, self.vd.pos_invest_right, self.vd.default_fill,
                    "Wrap", (246, 108, 164), (245, 197, 217))
         ) # Wrap Market
+
+        self.nodes = [self.BeerM, self.SoapM, self.WrapM]
+
+        self.multi_curve = curve.MultiCurve(vec.Vec(0, 0), vec.Vec(100, 100), 3, [(255, 0, 0), (0, 255, 0), (0, 0, 255)])
+
+    def update(self):
+        for node in self.nodes:
+            node.update()
+    
+    def draw(self, view, inputs):
+        # draw the bubbles
+        for node in self.nodes:
+            node.draw(view, inputs)
+        
+        # draw the multi curve
+        self.multi_curve.add_values([node._value for node in self.nodes])
+        self.multi_curve.draw(view)
+    
+
+class EconomyGraph:
+    def __init__(self, visualData):
+        self.vd = visualData
+        
+        self.TC = core.TrueCapitalNode(
+            Bubble(self.vd.bubble_size_capital, self.vd.pos_true_capital, self.vd.default_fill,
+                core.string_true_capital(0),  (7, 37, 6), (133, 187, 101))
+        ) # True capital
+
+        self.AC = core.ApparentCapitalNode(
+            Bubble(self.vd.bubble_size_capital, self.vd.pos_shown_capital, self.vd.default_fill,
+                core.string_shown_capital(0),  (7, 37, 6), (133, 187, 101))
+        ) # Apparent capital
 
         self.ID = core.InvestorsDoubtNode(
             Bubble(self.vd.bubble_size_doubt, self.vd.pos_investor_doubt, self.vd.default_fill,
