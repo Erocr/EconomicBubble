@@ -4,10 +4,6 @@ import pygame as pg
 FLASH_INFO = 0
 POPUP = 1
 
-class Observer:
-    def __init__(self):
-
-
 
 class FlashInfo:
     def __init__(self, screenSize):
