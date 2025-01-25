@@ -58,6 +58,9 @@ class TrueCapitalNode(BaseNode):
                 self.shares -= abs(random.gauss(1, self.volatility) * parent._value)
             self.shares = clamp(self.shares, 0, 1)
             self._value *= (1 + self.shares)
+    
+    def tutorial(self):
+        return f"test"
 
 class ApparentCapitalNode(BaseNode):
     def __init__(self, bubble):
@@ -157,15 +160,15 @@ class InvestorsDoubtNode(BaseNode):
         # the investors observe for some time, which helps
         # then calculate how much they doubt you
         self.invested = 0
-        self.observing_for = 7
+        self.observing_for = 14
         self.records = []
 
     def all_eyes_on(self):
-        self.observing_for = 3
+        self.observing_for = 7
         self.records = []
     
     def stop_watching(self):
-        self.observing_for = 7
+        self.observing_for = 14
         self.records = []
 
     def influencedBy(self, parent):
@@ -203,15 +206,14 @@ class InvestorsDoubtNode(BaseNode):
             f"Investors Doubt {misc.to_readable_int(self._value)}%"
         )
 
-    def invest(self, shares):
+    def invest(self, shares): 
         # invest only after observing
         if len(self.records) < self.observing_for or self.invested > 0: 
             return 0
         if random.random() * 100 > self._value:
             self.invested = random.random() * (0.8 - shares)
-            self.invested *= (1 - self._value/100)
-            
-            print(self.invested * 100)
+            self.invested *= (1 - self._value / 100)
+            if self.invested * 100 < 1: self.invested = 0
             return self.invested
         return 0
 
@@ -255,7 +257,6 @@ class SecurityNode(BaseNode):
         self.bubble.set_text(
             f"Security {misc.to_readable_int(self._value)}$"
         )
-
 
 class EspionageNode(BaseNode):
     def __init__(self, bubble):
