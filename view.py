@@ -1,6 +1,7 @@
 import pygame as pg
 from vec import *
-from math import cos, sin, pi
+from math import cos, sin, pi, floor, ceil
+import sys
 
 
 class View:
@@ -8,7 +9,8 @@ class View:
         pg.font.init()
         self.screenSize = Vec(1000, 700)
         self.screen = pg.display.set_mode(self.screenSize.get)
-        self.font = pg.font.Font('freesansbold.ttf', 24)
+        self.font = pg.font.Font(sys.path[0]+'\\fonts\\EBGaramond-Bold.ttf', 24)
+        self.mini_font = pg.font.SysFont("serif", 12)
 
     def flip(self):
         pg.display.flip()
@@ -110,9 +112,10 @@ class View:
             if y > max_y: max_y = y
             if y < min_y: min_y = y
 
+        center = (max_y + min_y) / 2
         var_y = size.y / (max_y - min_y) * 0.9
         var_x = size.x / len(curve)
-        self.curve(curve, var_x, var_y, pos, max_y)
+        self.curve(curve, var_x, var_y, pos, max_y, center)
         pg.draw.rect(self.screen, (255, 255, 255), pg.Rect(*pos.get, *size.get), width=2)
 
     def multiple_curves(self, pos: Vec, size: Vec, curves, colors=None):
@@ -132,12 +135,35 @@ class View:
             var_x = size.x / len(curves[i])
             self.curve(curves[i], var_x, var_y, pos, size, center, colors[i])
         pg.draw.rect(self.screen, (255, 255, 255), pg.Rect(*pos.get, *size.get), width=2)
+        self.axis(pos, size, var_y, center, min_y, max_y)
 
     def curve(self, curve, var_x, var_y, pos, size, center, color=(255, 255, 255)):
         positions = []
         for i in range(1, len(curve)+1):
-            positions.append((pos + RIGHT * (var_x * i - 5) + DOWN * var_y * (center - curve[i-1]) + DOWN * size.y/2).get)
+            positions.append((pos + RIGHT * (var_x * i - 5) + self.relative_pos_y(var_y, curve[i-1], center, size)).get)
 
         pg.draw.lines(self.screen, color, False, positions)
 
+    def relative_pos_y(self, var_y, y, center, size):
+        return DOWN * var_y * (center - y) + DOWN * size.y / 2
+
+    def round(self, nb, error, up=False):
+        if up:
+            return ceil(nb/error) * error
+        else:
+            return floor(nb/error) * error
+
+    def axis(self, pos, size, var_y, center, min_y, max_y):
+        possible_values = (1, 5, 10, 25, 20, 100, 200)
+        value = 500
+        for v in possible_values:
+            if v * 20 > max_y - min_y:
+                value = v
+                break
+        for y in range(self.round(min_y, value, True), max_y, value):
+            p1 = (pos.x, self.relative_pos_y(var_y, y, center, size).y)
+            p2 = (pos.x + 10, p1[1])
+            pg.draw.line(self.screen, (255, 255, 255), p1, p2)
+            text = self.mini_font.render(str(y), True, (255, 255, 255))
+            self.screen.blit(text, (Vec(*p2) + RIGHT*10 + UP * text.get_height()/2).get)
 
