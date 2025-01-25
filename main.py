@@ -5,6 +5,7 @@ from graph import *
 from PopUps import *
 import news
 import random
+from music import *
 
 view = View()
 inputs = Inputs()
@@ -14,10 +15,10 @@ flash_info = FlashInfo(view.screenSize)
 clock = pg.time.Clock()
 music = Music()
 
-frames = 0
+frames = 1
 while not inputs.quit:
     inputs.update()
-    # if not economy_graph.has_exploded():
+    # if not economy_graph.has_exploded(): 
     economy_graph.update_visuals(view, inputs)
     economy_graph.quick_simulation_update()
 

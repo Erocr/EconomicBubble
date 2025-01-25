@@ -183,7 +183,7 @@ class View:
             positions.append((pos + RIGHT * (var_x * i - 5) + DOWN *
                              var_y * (center - curve[i-1]) + DOWN * size.y/2).get)
 
-        pg.draw.lines(self.screen, color, False, positions)
+        pg.draw.lines(self.screen, color, False, positions, width=2)
 
     def relative_pos_y(self, var_y, y, center, size):
         return DOWN * var_y * (center - y) + DOWN * size.y / 2
