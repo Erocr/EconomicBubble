@@ -22,6 +22,6 @@ while not inputs.quit:
     view.flip()
 
     clock.tick(50)
-    frames++;
+    frames += 1
 
 pg.quit()

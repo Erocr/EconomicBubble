@@ -7,11 +7,11 @@ def getNewValue(value, bonus, max_value):
     clamped_bonus = clamp(bonus, -max_value, max_value)
     return value + clamped_bonus - value * abs(clamped_bonus) / max_value
 
-def string_shown_capital(self, val):
-    return f"Shown capital: {val}$"
+def string_shown_capital(val):
+    return f"Shown capital: {val:.2f}$"
     
-def string_true_capital(self, val):
-    return f"True capital: {val}$"
+def string_true_capital(val):
+    return f"True capital: {val:.2f}$"
 
 class BaseNode:
     def __init__(self, bubble):
