@@ -9,7 +9,7 @@ class View:
         pg.font.init()
         self.screenSize = Vec(1000, 700)
         self.screen = pg.display.set_mode(self.screenSize.get)
-        self.font = pg.font.Font(sys.path[0]+'\\fonts\\EBGaramond-Bold.ttf', 24)
+        self.font = pg.font.SysFont("serif", 24)
         self.mini_font = pg.font.SysFont("serif", 12)
 
     def flip(self):
@@ -111,7 +111,7 @@ class View:
         # bubble.radius * 0.75 to keep the text inside horizontally the circle
         self.text(bubble.text, bubble.center + UP * bubble.radius * 0.9, bubble.radius * 0.75)
 
-    def single_curve(self, pos: Vec, size: Vec, curve):
+    def single_curve(self, pos: Vec, size: Vec, curve, color=(255, 255, 255)):
         pg.draw.rect(self.screen, (0, 0, 0), pg.Rect(*pos.get, *size.get))
         max_y = curve[0]
         min_y = curve[0]
@@ -122,8 +122,8 @@ class View:
         center = (max_y + min_y) / 2
         var_y = size.y / (max_y - min_y) * 0.9
         var_x = size.x / len(curve)
-        self.curve(curve, var_x, var_y, pos, max_y, center)
-        pg.draw.rect(self.screen, (255, 255, 255), pg.Rect(*pos.get, *size.get), width=2)
+        self.curve(curve, var_x, var_y, pos, size, center, color)
+        pg.draw.rect(self.screen, (0, 0, 0), pg.Rect(*pos.get, *size.get), width=2)
 
     def multiple_curves(self, pos: Vec, size: Vec, curves, colors=None):
         pg.draw.rect(self.screen, (0, 0, 0), pg.Rect(*pos.get, *size.get))
@@ -142,7 +142,7 @@ class View:
             var_x = size.x / len(curves[i])
             self.curve(curves[i], var_x, var_y, pos, size, center, colors[i])
         pg.draw.rect(self.screen, (255, 255, 255), pg.Rect(*pos.get, *size.get), width=2)
-        self.axis(pos, size, var_y, center, min_y, max_y)
+        # self.axis(pos, size, var_y, center, min_y, max_y)
 
     def curve(self, curve, var_x, var_y, pos, size, center, color=(255, 255, 255)):
         positions = []
@@ -168,7 +168,7 @@ class View:
                 value = v
                 break
         for y in range(self.round(min_y, value, True), max_y, value):
-            p1 = (pos.x, self.relative_pos_y(var_y, y, center, size).y)
+            p1 = (pos.x, pos.y + self.relative_pos_y(var_y, y, center, size).y)
             p2 = (pos.x + 10, p1[1])
             pg.draw.line(self.screen, (255, 255, 255), p1, p2)
             text = self.mini_font.render(str(y), True, (255, 255, 255))
