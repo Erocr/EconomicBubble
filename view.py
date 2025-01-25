@@ -12,7 +12,8 @@ class View:
         self.screenSize = Vec(*self.screen.get_size())
         self.font = pg.font.SysFont("serif", 24)
         self.mini_font = pg.font.SysFont("serif", 12)
-        self.background = self.import_background()
+        #self.background = self.import_background()
+        self.background = pg.image.load(sys.path[0] + "/images/Game_Jam_Desk_new_york_cropped.jpg")
 
     def import_background(self):
         background = pg.image.load(sys.path[0] + "/images/Game_Jam_Desk_new_york_cropped.jpg")
