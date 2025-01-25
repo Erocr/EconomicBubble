@@ -1,6 +1,8 @@
 from vec import *
 
 
+class 
+
 class Curve:
     def __init__(self, pos: Vec, size: Vec):
         self.pos = pos
