@@ -1,12 +1,22 @@
 from view import *
 from inputs import *
+from game import *
 
 
 view = View()
 inputs = Inputs()
+game = Game()
+
+clock = pg.time.Clock()
 
 while not inputs.quit:
     inputs.update()
-    view.text("Hello Je mange quelque chose", Vec(100, 0), 200)
+
+    game.update(inputs)
+
+    game.draw(view)
     view.flip()
+
+    clock.tick(50)
+
 pg.quit()
