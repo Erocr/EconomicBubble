@@ -91,6 +91,10 @@ class EconomyGraph:
         self.M1.addParents([self.S1])
         self.Events.addParents([self.Spy])
 
+    def quick_simulation_update(self):
+        for node in self.market_nodes:
+            node.quick_update()
+
     def update_simulation(self):
         random.shuffle(self.nodes)
         for node in self.nodes:
