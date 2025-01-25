@@ -14,7 +14,7 @@ class View:
         self.background = self.import_background()
 
     def import_background(self):
-        background = pg.image.load(sys.path[0] + "/images/Game_Jam_Desk.jpg")
+        background = pg.image.load(sys.path[0] + "/images/Game_Jam_Desk_new_york.jpg")
         scale_x = self.screenSize.x / background.get_width()
         scale_y = self.screenSize.y / background.get_height()
         background = pg.transform.scale_by(background, max(scale_y, scale_x))
