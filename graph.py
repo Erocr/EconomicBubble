@@ -12,12 +12,12 @@ class EconomyGraph:
         
         self.TC = core.TrueCapitalNode(
             Bubble(self.vd.bubble_size_capital, self.vd.pos_true_capital, self.vd.default_fill,
-                core.string_true_capital(1000),  (7, 37, 6), (133, 187, 101))
+                    "",  (7, 37, 6), (133, 187, 101))
         ) # True capital
 
         self.AC = core.ApparentCapitalNode(
             Bubble(self.vd.bubble_size_capital, self.vd.pos_shown_capital, self.vd.default_fill,
-                core.string_shown_capital(1000),  (7, 37, 6), (133, 187, 101))
+                    "",  (7, 37, 6), (133, 187, 101))
         ) # Apparent capital
 
         self.ID = core.InvestorsDoubtNode(
@@ -52,17 +52,17 @@ class EconomyGraph:
 
         self.SoapM = core.MarketNode(
             Bubble(self.vd.bubble_size_investing, self.vd.pos_invest_left, self.vd.default_fill,
-                   "Soap", (95, 167, 120), (206, 200, 239))
+                    "", (95, 167, 120), (206, 200, 239)), "Soap"
         ) # Soap Market
 
         self.BeerM = core.MarketNode(
             Bubble(self.vd.bubble_size_investing, self.vd.pos_invest_center, self.vd.default_fill,
-                   "Beer", (185, 113, 31), (242, 142, 28))
+                    "", (185, 113, 31), (242, 142, 28)), "Beer"
         ) # Beer Market
 
         self.WrapM = core.MarketNode(
             Bubble(self.vd.bubble_size_investing, self.vd.pos_invest_right, self.vd.default_fill,
-                   "Wrap", (246, 108, 164), (245, 197, 217))
+                    "", (246, 108, 164), (245, 197, 217)), "Wrap"
         ) # Wrap Market
 
         self.multi_curve = curve.MultiCurve(self.vd.multicurve_pos, self.vd.multicurve_size, 3, [(255, 0, 0), (0, 255, 0), (0, 0, 255)])
