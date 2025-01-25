@@ -9,52 +9,61 @@ class EconomyGraph:
     def __init__(self, visualData):
         self.vd = visualData
         
-        # visible nodes
         self.TC = core.TrueCapitalNode(
             bubble.Bubble(self.vd.bubble_size_capital, self.vd.pos_true_capital, self.vd.default_fill,
                 self.vd.string_true_capital,  (7, 37, 6), (133, 187, 101))
-        )     # True capital
+        ) # True capital
+
         self.AC = core.ApparentCapitalNode(
             bubble.Bubble(self.vd.bubble_size_capital, self.vd.pos_shown_capital, self.vd.default_fill,
                 self.vd.string_shown_capital,  (7, 37, 6), (133, 187, 101)),
         ) # Apparent capital
+
         self.SoapM = core.MarketNode(
             bubble.Bubble(self.vd.bubble_size_investing, self.vd.pos_invest_left, self.vd.default_fill, "Soap",
                 (95, 167, 120), (206, 200, 239)),
-        )       # Soap Market
+        ) # Soap Market
+
         self.BeerM = core.MarketNode(
             bubble.Bubble(self.vd.bubble_size_investing, self.vd.pos_invest_center, self.vd.default_fill, "Beer",
                 (185, 113, 31), (242, 142, 28)),
+        ) # Beer Market
 
-        )       # Beer Market
         self.OperaM = core.MarketNode(
             bubble.Bubble(self.vd.bubble_size_investing, self.vd.pos_invest_right, self.vd.default_fill, "Soap Opera",
                 (246, 108, 164), (245, 197, 217)),
-        )       # Bubblerap Market
+        ) # Bubblewrap Market
+
         self.PD = core.PublicDoubtNode(
-            bubble.Bubble(self.vd.bubble_size_investing, self.vd.pos_invest_right, self.vd.default_fill, "Soap Opera",
-                    (246, 108, 164), (245, 197, 217)),
-        )     # Public Doubt
+            
+        ) # Public Doubt
+
         self.ID = core.InvestorsDoubtNode(
 
-        )  # Investors Doubt
+        ) # Investors Doubt
+
         self.Events = core.EventNode(
 
-        )       # Events
+        ) # Events
+    
         self.M1 = core.MarketingNode(
             bubble.Bubble(self.vd.bubble_size_big, self.vd.pos_marketing, self.vd.default_fill,
                    "Marketing", (0, 0, 255), (0, 255, 255)),
         )       # Marketing 1 : press message
+
         self.M2 = core.MarketingNode(
 
         )       # Marketing 2 : ads
+
         self.S1 = core.SecurityNode(
             bubble.Bubble(self.vd.bubble_size_big, self.vd.pos_security, self.vd.default_fill, "Security",
                     (255, 0, 0), (255, 100, 100)),
         )        # Security 2 : media control
+
         self.S2 = core.SecurityNode(
 
         )        # Security 2 : surveillance
+
         self.Spy = core.EspionageNode(
             bubble.Bubble(self.vd.bubble_size_big, self.vd.pos_espionnage, self.vd.default_fill,
                     "Espionnage", (50, 0, 0), (100, 0, 0))
