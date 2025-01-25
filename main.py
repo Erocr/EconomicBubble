@@ -4,7 +4,7 @@ from game import *
 
 view = View()
 inputs = Inputs()
-game = Game()
+game = Game(view)
 clock = pg.time.Clock()
 
 while not inputs.quit:
