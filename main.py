@@ -37,7 +37,7 @@ while not inputs.quit:
         economy_graph.update_visuals(view, inputs)
         economy_graph.quick_simulation_update()
 
-        if frames % 10 == 0:
+        if frames % 50 == 0:
             economy_graph.update_simulation()
 
         if frames % 1000 == 0:

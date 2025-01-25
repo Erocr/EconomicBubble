@@ -105,8 +105,10 @@ class EconomyGraph:
     def check_invest(self, node):
         if type(node) == core.InvestorsDoubtNode:
             if node.invested > 0:
+                invest_str = str(int(node.invested * 100)) + "%"
                 self.popups.add_popup(
-                    f"An investor has just bought {node.invested * 100}% of your company!"
+                    "An investor has just bought " + invest_str + " of your company!",
+                    (0, 0, 0)
                 )
                 node.invested = 0
                 
@@ -125,7 +127,8 @@ class EconomyGraph:
         for node in self.nodes:
             node.draw(view, inputs)
             self.check_invest(node)
-            self.popups.update(inputs)
+        self.popups.update(inputs)
+        self.popups.draw(view)
         self.draw_market_multicurve(view)
 
     def has_exploded(self):
