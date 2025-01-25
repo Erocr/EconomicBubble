@@ -80,11 +80,11 @@ class Popup:
 
     def draw(self, view, i):
         pos = view.screenSize - self.size + UP * self.size.y * i
-        view.rect(pos, self.size, color=(255, 255, 255))
+        view.rect(pos, self.size, color=(200, 255, 255))
         view.rect(pos, self.size, color=(0, 0, 0), width=3)
         view.text(self.text, pos + Vec(self.size.x/2, 0), self.size.x, self.color)
 
     def update(self, inputs):
         self.counter += 1
-        return self.counter > 100
+        return self.counter > 1000
 
