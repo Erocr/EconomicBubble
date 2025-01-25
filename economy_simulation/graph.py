@@ -1,30 +1,64 @@
 import simulation_core as core
+from ... import bubble
 import matplotlib.pyplot as plt
 import numpy as np
 import random
 
 class EconomyGraph:
-    def __init__(self):
-        # Nodes
-        self.TC = core.TrueCapitalNode()     # True capital
-        self.AC = core.ApparentCapitalNode() # Apparent capital
-        self.SoapM = core.MarketNode()       # Soap Market
-        self.BeerM = core.MarketNode()       # Beer Market
-        self.OperaM = core.MarketNode()      # Soap-Opera Market
-        self.PD = core.PublicDoubtNode()     # Public Doubt
-        self.ID = core.InvestorsDoubtNode() # Investors Doubt
-        self.Events = core.EventNode()       # Events
+    def __init__(self, bubble_dict):
+        # visible nodes
+        self.TC = core.TrueCapitalNode(
 
-        self.M1 = core.MarketingNode()       # Marketing 1 : press message
-        self.M2 = core.MarketingNode()       # Marketing 2 : ads
-        self.S1 = core.SecurityNode()        # Security 2 : media control
-        self.S2 = core.SecurityNode()        # Security 2 : surveillance
-        self.Spy = core.EspionageNode()       # Espionage
+        )     # True capital
+        self.AC = core.ApparentCapitalNode(
 
-        self.nodes = [
+        ) # Apparent capital
+        self.SoapM = core.MarketNode(
+
+        )       # Soap Market
+        self.BeerM = core.MarketNode(
+
+        )       # Beer Market
+        self.OperaM = core.MarketNode(
+
+        )      # Soap-wrap Market
+        self.PD = core.PublicDoubtNode(
+            Bubble(bubble_size_investing, pos_invest_right, default_fill, "Soap Wrap",
+                   (246, 108, 164), (245, 197, 217)),
+        )     # Public Doubt
+        self.ID = core.InvestorsDoubtNode(
+
+        )  # Investors Doubt
+        self.Events = core.EventNode(
+
+        )       # Events
+        self.M1 = core.MarketingNode(
+
+        )       # Marketing 1 : press message
+        self.M2 = core.MarketingNode(
+
+        )       # Marketing 2 : ads
+        self.S1 = core.SecurityNode(
+
+        )        # Security 2 : media control
+        self.S2 = core.SecurityNode(
+
+        )        # Security 2 : surveillance
+        self.Spy = core.EspionageNode(
+
+        )      # Espionage
+
+
+        self.influenced_nodes = [
             self.TC, self.AC, self.SoapM, self.BeerM, self.OperaM, self.PD, self.ID, self.Events
         ]
-        
+
+        self.clickable_nodes = [
+            self.M1, self.M2, self.S1, self.S2, self.Spy
+        ]
+
+        self.nodes = self.influenced_nodes + self.clickable_nodes
+
         # Edges
         self.TC.addParents([self.SoapM, self.BeerM, self.OperaM, self.ID])
         self.AC.addParents([self.TC, self.M1, self.PD])
