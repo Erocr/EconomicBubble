@@ -4,9 +4,9 @@ import random
 def clamp(val, min_, max_):
     return min(max(val, min_), max_)
 
-def getNewValue(value, bonus, max_bonus):
-    clamped_bonus = clamp(bonus, -max_bonus, max_bonus)
-    return value + clamped_bonus - value * abs(clamped_bonus) / max_bonus
+def getNewValue(value, bonus, max_value):
+    clamped_bonus = clamp(bonus, -max_value, max_value)
+    return value + clamped_bonus - value * abs(clamped_bonus) / max_value
 
 
 class BaseNode:
@@ -15,6 +15,7 @@ class BaseNode:
         self._value = 0
         self._stability = 0
         self.max_value = 10_000
+        self.bubble = bubble
         self.parents = []
     
     def addParent(self, node):
@@ -26,6 +27,9 @@ class BaseNode:
 
     def update(self):
         self.value_history.append(self._value)
+    
+    def draw(self):
+        self.bubble.draw()
 
 
 # visible
@@ -155,9 +159,10 @@ class MarketingNode(BaseNode):
         super().__init__()
         self.bubble = bubble
 
-    def update(self, bonus):
-        self._value += getNewValue(self._value, bonus, 100)
-        self._value = clamp(self._value, 0, 10_000)
+    def update(self):
+        if self.bubble.clicked():
+            self._value += getNewValue(self._value, 10, 100)
+            self._value = clamp(self._value, 0, 10_000)
 
 # visible
 class SecurityNode(BaseNode):
@@ -165,10 +170,11 @@ class SecurityNode(BaseNode):
         super().__init__()
         self.bubble = bubble
 
-    def update(self, bonus):
-        self._value += getNewValue(self._value, bonus, 100)
-        self._value = clamp(self._value, 0, 10_000)
-        super().update()
+    def update(self):
+        if self.bubble.clicked():
+            self._value += getNewValue(self._value, 10, 100)
+            self._value = clamp(self._value, 0, 10_000)
+            super().update()
 
 
 class EspionageNode(BaseNode):
@@ -176,10 +182,11 @@ class EspionageNode(BaseNode):
         super().__init__()
         self.bubble = bubble
 
-    def update(self, bonus):
-        self._value += getNewValue(self._value, bonus, 100)
-        self._value = clamp(self._value, 0, 10_000)
-        super().update()
+    def update(self):
+        if self.bubble.clicked():
+            self._value += getNewValue(self._value, 10, 100)
+            self._value = clamp(self._value, 0, 10_000)
+            super().update()
 
 class EventNode(BaseNode):
     def __init__(self):
