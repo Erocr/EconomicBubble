@@ -95,6 +95,10 @@ class MarketNode(BaseNode):
         # self.graph = graph
 
     def update(self):
+        if self.bubble.clicked():
+            self.mult += 0.1
+            self.mult = clamp(self.mult, 0, 5)
+
         for node in self.parents:
             self.influencedBy(node)
 
@@ -134,10 +138,11 @@ class InvestorsDoubtNode(BaseNode):
     def __init__(self, bubble):
         super().__init__(bubble)
         self.max_value = 100
+        self.
 
     def influencedBy(self, parent):
-        if type(parent) == MarketNode:
-            self._value = getNewValue(2*(parent.max_value/2 - parent._value) / parent.max_value)        
+        if type(parent) == ApparentCapitalNode:
+            self._value = parent._value 
         if type(parent) == EventNode:
             # self._value = getNewValue()
             pass
