@@ -30,9 +30,9 @@ class EconomyGraph:
         ) # Beer Market
 
         self.OperaM = core.MarketNode(
-            bubble.Bubble(self.vd.bubble_size_investing, self.vd.pos_invest_right, self.vd.default_fill, "Soap Opera",
+            bubble.Bubble(self.vd.bubble_size_investing, self.vd.pos_invest_right, self.vd.default_fill, "Wrap",
                 (246, 108, 164), (245, 197, 217)),
-        ) # Bubblewrap Market
+        ) # Wrap Market
 
         self.PD = core.PublicDoubtNode(
             
@@ -51,31 +51,22 @@ class EconomyGraph:
                    "Marketing", (0, 0, 255), (0, 255, 255)),
         )       # Marketing 1 : press message
 
-        self.M2 = core.MarketingNode(
-
-        )       # Marketing 2 : ads
-
         self.S1 = core.SecurityNode(
             bubble.Bubble(self.vd.bubble_size_big, self.vd.pos_security, self.vd.default_fill, "Security",
                     (255, 0, 0), (255, 100, 100)),
-        )        # Security 2 : media control
-
-        self.S2 = core.SecurityNode(
-
-        )        # Security 2 : surveillance
+        )       # Security 1 : media control
 
         self.Spy = core.EspionageNode(
             bubble.Bubble(self.vd.bubble_size_big, self.vd.pos_espionnage, self.vd.default_fill,
                     "Espionnage", (50, 0, 0), (100, 0, 0))
         )      # Espionage
 
-
         self.influenced_nodes = [
             self.TC, self.AC, self.SoapM, self.BeerM, self.OperaM, self.PD, self.ID, self.Events
         ]
 
         self.clickable_nodes = [
-            self.M1, self.M2, self.S1, self.S2, self.Spy
+            self.M1, self.S1, self.Spy
         ]
 
         self.nodes = self.influenced_nodes + self.clickable_nodes
@@ -86,11 +77,10 @@ class EconomyGraph:
         self.SoapM.addParents([self.PD])
         self.BeerM.addParents([self.PD])
         self.OperaM.addParents([self.PD])
-        self.PD.addParents([self.M2, self.Events])
+        self.PD.addParents([self.Events])
         self.ID.addParents([self.S1, self.Events, self.AC, self.ID])
         self.M1.addParents([self.S1])
-        self.M2.addParents([self.S2])
-        self.Events.addParents([self.S2, self.Spy])
+        self.Events.addParents([self.Spy])
 
     def update_simulation(self):
         random.shuffle(self.nodes)
