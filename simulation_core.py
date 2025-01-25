@@ -9,12 +9,6 @@ def getNewValue(value, bonus, max_value):
     clamped_bonus = clamp(bonus, -max_value, max_value)
     return value + clamped_bonus - value * abs(clamped_bonus) / max_value
 
-def string_shown_capital(val):
-    return f"Shown capital: {val}$"
-    
-def string_true_capital(val):
-    return f"True capital: {val}$"
-
 class BaseNode:
     def __init__(self, bubble):
         self._value = 0
@@ -47,7 +41,9 @@ class TrueCapitalNode(BaseNode):
     
     def update(self):
         super().update()
-        self.bubble.set_text(string_true_capital(misc.to_readable_int(self._value)))
+        self.bubble.set_text(
+            f"True capital {misc.to_readable_int(self._value)}$"
+        )
     
     def influencedBy(self, parent):
         if type(parent) == MarketNode:
@@ -69,9 +65,11 @@ class ApparentCapitalNode(BaseNode):
         self.persuade = 0.1
 
     def update(self):
-        super().update()
-        
-        self.bubble.set_text(string_shown_capital(misc.to_readable_int(self._value)))
+        super().update() 
+        self.bubble.set_text(
+            f"Shown capital {misc.to_readable_int(self._value)}$"
+        )
+
         self.persuade = clamp(self.persuade, 0, 1)
         self._value = clamp(self._value, 0, 10_000)
         
@@ -81,18 +79,20 @@ class ApparentCapitalNode(BaseNode):
 
         if (type(parent) == MarketingNode):
             self.persuade = getNewValue(self._value, parent._value/10, 100)
-            self._value = getNewValue(self._value, parent._value, 100)
+            self._value += parent._value
+            # self._value = getNewValue(self._value, parent._value, 100)
 
         if (type(parent) == PublicDoubtNode):
             self.persuade = getNewValue(self.persuade, parent._value/100, 0.5)
 
 class MarketNode(BaseNode):
-    def __init__(self, bubble):
+    def __init__(self, bubble, name):
         super().__init__(bubble)
         self._value = 100
         self.max_value = 1000
         self.tendance = 1
         self.mult = 1
+        self.name = name
         # self.graph = graph
 
     def quick_update(self):
@@ -106,6 +106,10 @@ class MarketNode(BaseNode):
             self.mult = clamp(self.mult, 0, 5)
 
         self._value += random.gauss(self.tendance, self.volatility*10)
+
+        self.bubble.set_text(
+            f"{self.name} {misc.to_readable_int(self._value)}$"
+        )
     
     def influencedBy(self, parent):
         if type(parent) == PublicDoubtNode:
@@ -124,7 +128,11 @@ class PublicDoubtNode(BaseNode):
 
         self._value += random.gauss(0, self.volatility)
         self._value = clamp(self._value, 0, 10_000)
-        
+
+        self.bubble.set_text(
+            f"Public Doubt {misc.to_readable_int(self._value)}$"
+        )
+
     def influencedBy(self, parent):
         if type(parent) == MarketingNode:
             self._value = getNewValue(self._value, -parent._value, 100)
@@ -181,6 +189,10 @@ class InvestorsDoubtNode(BaseNode):
         self._value += random.gauss(0, 1) * self.volatility
         self._value = clamp(self._value, 0, 10_000)
 
+        self.bubble.set_text(
+            f"Investors Doubt {misc.to_readable_int(self._value)}$"
+        )
+
     def invest(self, shares):
         if len(self.records) < self.observing_for:
             return 0
@@ -193,19 +205,28 @@ class MarketingNode(BaseNode):
         super().__init__(bubble)
 
     def update(self):
+        self._value = max(0, self._value - 1)
         if self.bubble.clicked():
-            self._value += getNewValue(self._value, 10, 100)
-            self._value = clamp(self._value, 0, 10_000)
+            self._value = getNewValue(self._value, 10, 100)
+            # self._value = clamp(self._value, 0, 10_000)
+
+        self.bubble.set_text(
+            f"Marketing {misc.to_readable_int(self._value)}$"
+        )
 
 class SecurityNode(BaseNode):
     def __init__(self, bubble):
         super().__init__(bubble)
 
     def update(self):
-        if self.bubble.clicked():
-            self._value += getNewValue(self._value, 10, 100)
-            self._value = clamp(self._value, 0, 10_000)
-            super().update()
+        # if self.bubble.clicked():
+            # self._value = getNewValue(self._value, 10, 100)
+            # self._value = clamp(self._value, 0, 10_000)
+            # super().update()
+        
+        self.bubble.set_text(
+            f"Security {misc.to_readable_int(self._value)}$"
+        )
 
 
 class EspionageNode(BaseNode):
@@ -214,8 +235,12 @@ class EspionageNode(BaseNode):
 
     def update(self):
         if self.bubble.clicked():
-            self._value += getNewValue(self._value, 10, 100)
-            self._value = clamp(self._value, 0, 10_000)
+            self._value = getNewValue(self._value, 10, 100)
+            # self._value = clamp(self._value, 0, 10_000)
+        
+        self.bubble.set_text(
+            f"Espionage {misc.to_readable_int(self._value)}$"
+        )
 
 class EventNode(BaseNode):
     def __init__(self, bubble):
@@ -246,3 +271,7 @@ class Event():
             self.alive = False
         elif random.random() < self.risk:
             self.burst()
+                
+        self.bubble.set_text(
+            f"Event {misc.to_readable_int(self._value)}$"
+        )
