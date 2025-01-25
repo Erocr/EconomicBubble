@@ -1,5 +1,6 @@
 import simulation_core as core
 from bubble import Bubble
+from PopUps import PopupsContainer
 import matplotlib.pyplot as plt
 import numpy as np
 import random
@@ -9,7 +10,8 @@ import vec
 class EconomyGraph:
     def __init__(self, visual_data):
         self.vd = visual_data
-        
+        self.popups = PopupsContainer()
+
         self.TC = core.TrueCapitalNode(
             Bubble(self.vd.bubble_size_capital, self.vd.pos_true_capital, self.vd.default_fill,
                     "",  (7, 37, 6), (133, 187, 101))
@@ -31,7 +33,7 @@ class EconomyGraph:
         ) # Public Doubt
 
         self.Events = core.EventNode(
-            Bubble(self.vd.bubble_size_investing, self.vd.pos_invest_right, self.vd.default_fill,
+            Bubble(self.vd.bubble_size_investing, self.vd.sc * 2, self.vd.default_fill,
                    "Wrap", (246, 108, 164), (245, 197, 217))
         ) # Events
     
@@ -50,22 +52,27 @@ class EconomyGraph:
                     "Espionnage", (128, 0, 0), (184, 20, 20))
         )      # Espionage
 
+        self.soap_color = (95, 167, 120)
+        self.beer_color = (185, 113, 31)
+        self.wrap_color = (246, 108, 164)
+
         self.SoapM = core.MarketNode(
             Bubble(self.vd.bubble_size_investing, self.vd.pos_invest_left, self.vd.default_fill,
-                    "", (95, 167, 120), (206, 200, 239)), "Soap"
+                    "", self.soap_color, (206, 200, 239)), "Soap"
         ) # Soap Market
 
         self.BeerM = core.MarketNode(
             Bubble(self.vd.bubble_size_investing, self.vd.pos_invest_center, self.vd.default_fill,
-                    "", (185, 113, 31), (242, 142, 28)), "Beer"
+                    "", self.beer_color, (242, 142, 28)), "Beer"
         ) # Beer Market
 
         self.WrapM = core.MarketNode(
             Bubble(self.vd.bubble_size_investing, self.vd.pos_invest_right, self.vd.default_fill,
-                    "", (246, 108, 164), (245, 197, 217)), "Wrap"
+                    "", self.wrap_color, (245, 197, 217)), "Wrap"
         ) # Wrap Market
 
-        self.multi_curve = curve.MultiCurve(self.vd.multicurve_pos, self.vd.multicurve_size, 3, [(255, 0, 0), (0, 255, 0), (0, 0, 255)])
+        self.multi_curve = curve.MultiCurve(self.vd.multicurve_pos, self.vd.multicurve_size, 3,
+                                            [self.soap_color, self.beer_color, self.wrap_color])
 
         self.market_nodes = [self.SoapM, self.BeerM, self.WrapM]
 
@@ -86,14 +93,23 @@ class EconomyGraph:
         for node in self.market_nodes:
             node.addParents([self.PD])
 
-        self.PD.addParents([self.Events])
+        self.PD.addParents([self.Events, self.Spy])
         self.ID.addParents([self.S1, self.Events, self.AC, self.ID])
         self.M1.addParents([self.S1])
         self.Events.addParents([self.Spy])
 
     def quick_simulation_update(self):
-        for node in self.market_nodes:
+        for node in self.nodes:
             node.quick_update()
+    
+    def check_invest(self, node):
+        if type(node) == core.InvestorsDoubtNode:
+            if node.invested > 0:
+                self.popups.add_popup(
+                    f"An investor has just bought {node.invested * 100}% of your company!"
+                )
+                node.invested = 0
+                
 
     def update_simulation(self):
         random.shuffle(self.nodes)
@@ -103,13 +119,13 @@ class EconomyGraph:
     def draw_market_multicurve(self, view):
         # draw the multi curve
         self.multi_curve.add_values([node._value for node in self.market_nodes])
-
         self.multi_curve.draw(view)
 
     def update_visuals(self, view, inputs):
         for node in self.nodes:
             node.draw(view, inputs)
-        
+            self.check_invest(node)
+            self.popups.update(inputs)
         self.draw_market_multicurve(view)
 
     def has_exploded(self):
