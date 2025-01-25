@@ -7,7 +7,7 @@ class Settings:
     def __init__(self):
         self.activated = False
         self.music_activated = True
-        self.setting_image = self.music_on = self.music_off = None
+        self.setting_image = self.music_on = self.music_off = self.quit_image = None
         self.import_images()
 
     def import_images(self):
@@ -17,6 +17,8 @@ class Settings:
         self.music_on = pg.transform.scale(self.music_on, (50, 50))
         self.music_off = pg.image.load(sys.path[0] + "/images/music_on.png")
         self.music_off = pg.transform.scale(self.music_off, (50, 50))
+        self.quit_image = pg.image.load(sys.path[0] + "/images/quit_icon.png")
+        self.quit_image = pg.transform.scale(self.quit_image, (50, 50))
 
     def update(self, inputs, music):
         if (inputs.pressed("mouse_left") and
@@ -30,6 +32,10 @@ class Settings:
                 music.unpause()
             else:
                 music.pause()
+        quit_pos = music_pos + Vec(self.quit_image.get_width(), 0)
+        if (self.activated and inputs.pressed("mouse_left") and
+                dist(quit_pos, inputs.mouse_pos) < self.music_on.get_width() / 2):
+            inputs.quit = True
 
     def draw(self, view):
         view.screen.blit(self.setting_image, (0, 0))
@@ -38,4 +44,5 @@ class Settings:
                 view.screen.blit(self.music_on, (self.setting_image.get_width(), 0))
             else:
                 view.screen.blit(self.music_off, (self.setting_image.get_width(), 0))
+            view.screen.blit(self.quit_image, (self.setting_image.get_width()+self.music_off.get_width(), 0))
 

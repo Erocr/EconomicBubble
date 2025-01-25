@@ -8,13 +8,15 @@ class View:
     def __init__(self):
         pg.font.init()
         self.screenSize = Vec(1100, 700)
-        self.screen = pg.display.set_mode(self.screenSize.get)
+        self.screen = pg.display.set_mode(self.screenSize.get, pg.NOFRAME)
+        self.screenSize = Vec(*self.screen.get_size())
         self.font = pg.font.SysFont("serif", 24)
         self.mini_font = pg.font.SysFont("serif", 12)
-        self.background = self.import_background()
+        #self.background = self.import_background()
+        self.background = pg.image.load(sys.path[0] + "/images/Game_Jam_Desk_new_york.jpg")
 
     def import_background(self):
-        background = pg.image.load(sys.path[0] + "/images/Game_Jam_Desk_new_york.jpg")
+        background = pg.image.load(sys.path[0] + "/images/Game_Jam_Desk_new_york_cropped.jpg")
         scale_x = self.screenSize.x / background.get_width()
         scale_y = self.screenSize.y / background.get_height()
         background = pg.transform.scale_by(background, max(scale_y, scale_x))
@@ -43,24 +45,34 @@ class View:
         im = font.render(msg, False, color)
         self.screen.blit(im, pos.get)
 
-    def text(self, msg, pos, width, color=(255, 255, 255)):
-        """
-        If text doesn't fit, choose it different
-        """
+    def renders(self, msg, width, color=(255, 255, 255)):
         messages = msg.split(" ")
-        count = 0
         images = []
-        line = ""
-        for i in range(0, len(messages)):
-            w = self.font.size(messages[i])[0]
-            count += w
+        line = " " + messages[0]
+        for i in range(1, len(messages)):
+            count = self.font.size(line)[0]
             if count > width:
                 images.append(self.font.render(line[1:], True, color))
                 line = ""
             line += " " + messages[i]
 
         images.append(self.font.render(line[1:], True, color))
+        return images
 
+    def text(self, msg, pos, width, color=(255, 255, 255)):
+        """
+        If text doesn't fit, choose it different
+        """
+        images = self.renders(msg, width, color)
+
+        for im in images:
+            self.screen.blit(im, (pos-Vec(im.get_width()/2, 0)).get)
+            pos += Vec(0, im.get_height())
+
+    def text_centered(self, msg, pos, width, color=(255, 255, 255)):
+        images = self.renders(msg, width, color)
+        mid_y = sum([image.get_height() for image in images]) / 2
+        pos += Vec(0, -mid_y)
         for im in images:
             self.screen.blit(im, (pos-Vec(im.get_width()/2, 0)).get)
             pos += Vec(0, im.get_height())
@@ -131,8 +143,7 @@ class View:
 
         # UP * bubble.radius * 0.9 to keep the text inside vertically
         # bubble.radius * 0.75 to keep the text inside horizontally the circle
-        self.text(bubble.text, bubble.center + UP *
-                  bubble.radius * 0.9, bubble.radius * 0.75)
+        self.text_centered(bubble.text, bubble.center, bubble.radius * 0.75)
 
     def single_curve(self, pos: Vec, size: Vec, curve, color=(255, 255, 255)):
         pg.draw.rect(self.screen, (0, 0, 0), pg.Rect(*pos.get, *size.get))
@@ -175,7 +186,7 @@ class View:
             var_x = size.x / len(curves[i])
             self.curve(curves[i], var_x, var_y, pos, size, center, colors[i])
         pg.draw.rect(self.screen, (255, 255, 255), pg.Rect(*pos.get, *size.get), width=2)
-        # self.axis(pos, size, var_y, center, min_y, max_y)
+        self.axis(pos, size, var_y, center, min_y, max_y)
 
     def curve(self, curve, var_x, var_y, pos, size, center, color=(255, 255, 255)):
         positions = []
@@ -201,7 +212,7 @@ class View:
             if v * 20 > max_y - min_y:
                 value = v
                 break
-        for y in range(self.round(min_y, value, True), max_y, value):
+        for y in range(self.round(min_y, value, True), int(max_y), value):
             p1 = (pos.x, pos.y + self.relative_pos_y(var_y, y, center, size).y)
             p2 = (pos.x + 10, p1[1])
             pg.draw.line(self.screen, (255, 255, 255), p1, p2)

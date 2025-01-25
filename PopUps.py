@@ -41,10 +41,6 @@ class FlashInfo:
         self.text = text
         self.scrolling = 1
 
-    def on_notify(self, values):
-        if values[0] == FLASH_INFO:
-            self.new_msg(values[1])
-
 
 class PopupsContainer:
     def __init__(self):

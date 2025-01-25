@@ -226,7 +226,7 @@ class InvestorsDoubtNode(BaseNode):
         if len(self.records) < self.observing_for or self.invested > 0: 
             return 0
         if random.random() * 100 > self._value:
-            self.invested = random.random() * (0.8 - shares)
+            self.invested = random.random() * (0.8 - shares) / 2
             self.invested *= (1 - self._value / 100)
             if self.invested * 100 < 1: self.invested = 0
             return self.invested
@@ -239,7 +239,7 @@ class InvestorsDoubtNode(BaseNode):
         print(str(self._value) + " @ ")
         if random.random() * 100 < self._value:
             print(str(shares) + " @ ")
-            self.pulled_out = random.random() * shares
+            self.pulled_out = random.random() * shares / 2
             self.pulled_out *= self._value / 100
             if self.pulled_out * 100 < 1: self.pulled_out = 0
             return self.pulled_out
