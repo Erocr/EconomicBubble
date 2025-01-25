@@ -1,5 +1,5 @@
 import simulation_core as core
-from ... import bubble, visual_data
+from bubble import Bubble
 import matplotlib.pyplot as plt
 import numpy as np
 import random
@@ -10,54 +10,57 @@ class EconomyGraph:
         self.vd = visualData
         
         self.TC = core.TrueCapitalNode(
-            bubble.Bubble(self.vd.bubble_size_capital, self.vd.pos_true_capital, self.vd.default_fill,
+            Bubble(self.vd.bubble_size_capital, self.vd.pos_true_capital, self.vd.default_fill,
                 self.vd.string_true_capital,  (7, 37, 6), (133, 187, 101))
         ) # True capital
 
         self.AC = core.ApparentCapitalNode(
-            bubble.Bubble(self.vd.bubble_size_capital, self.vd.pos_shown_capital, self.vd.default_fill,
-                self.vd.string_shown_capital,  (7, 37, 6), (133, 187, 101)),
+            Bubble(self.vd.bubble_size_capital, self.vd.pos_shown_capital, self.vd.default_fill,
+                self.vd.string_shown_capital,  (7, 37, 6), (133, 187, 101))
         ) # Apparent capital
 
         self.SoapM = core.MarketNode(
-            bubble.Bubble(self.vd.bubble_size_investing, self.vd.pos_invest_left, self.vd.default_fill, "Soap",
-                (95, 167, 120), (206, 200, 239)),
+            Bubble(self.vd.bubble_size_investing, self.vd.pos_invest_left, self.vd.default_fill, "Soap",
+                (95, 167, 120), (206, 200, 239))
         ) # Soap Market
 
         self.BeerM = core.MarketNode(
-            bubble.Bubble(self.vd.bubble_size_investing, self.vd.pos_invest_center, self.vd.default_fill, "Beer",
-                (185, 113, 31), (242, 142, 28)),
+            Bubble(self.vd.bubble_size_investing, self.vd.pos_invest_center, self.vd.default_fill, "Beer",
+                (185, 113, 31), (242, 142, 28))
         ) # Beer Market
 
         self.OperaM = core.MarketNode(
-            bubble.Bubble(self.vd.bubble_size_investing, self.vd.pos_invest_right, self.vd.default_fill, "Wrap",
-                (246, 108, 164), (245, 197, 217)),
+            Bubble(self.vd.bubble_size_investing, self.vd.pos_invest_right, self.vd.default_fill, "Wrap",
+                (246, 108, 164), (245, 197, 217))
         ) # Wrap Market
 
         self.PD = core.PublicDoubtNode(
-            
+            Bubble(self.vd.bubble_size_investing, self.vd.pos_investor_doubt, self.vd.default_fill, "Wrap",
+                (246, 108, 164), (245, 197, 217))
         ) # Public Doubt
 
         self.ID = core.InvestorsDoubtNode(
-
+            Bubble(self.vd.bubble_size_investing, self.vd.pos_public_doubt, self.vd.default_fill, "Wrap",
+                (246, 108, 164), (245, 197, 217))
         ) # Investors Doubt
 
         self.Events = core.EventNode(
-
+            Bubble(self.vd.bubble_size_investing, self.vd.pos_invest_right, self.vd.default_fill, "Wrap",
+                (246, 108, 164), (245, 197, 217))
         ) # Events
     
         self.M1 = core.MarketingNode(
-            bubble.Bubble(self.vd.bubble_size_big, self.vd.pos_marketing, self.vd.default_fill,
-                   "Marketing", (0, 0, 255), (0, 255, 255)),
+            Bubble(self.vd.bubble_size_big, self.vd.pos_marketing, self.vd.default_fill,
+                   "Marketing", (0, 0, 255), (0, 255, 255))
         )       # Marketing 1 : press message
 
         self.S1 = core.SecurityNode(
-            bubble.Bubble(self.vd.bubble_size_big, self.vd.pos_security, self.vd.default_fill, "Security",
-                    (255, 0, 0), (255, 100, 100)),
+            Bubble(self.vd.bubble_size_big, self.vd.pos_security, self.vd.default_fill, "Security",
+                    (255, 0, 0), (255, 100, 100))
         )       # Security 1 : media control
 
         self.Spy = core.EspionageNode(
-            bubble.Bubble(self.vd.bubble_size_big, self.vd.pos_espionnage, self.vd.default_fill,
+            Bubble(self.vd.bubble_size_big, self.vd.pos_espionnage, self.vd.default_fill,
                     "Espionnage", (50, 0, 0), (100, 0, 0))
         )      # Espionage
 
@@ -84,21 +87,12 @@ class EconomyGraph:
 
     def update_simulation(self):
         random.shuffle(self.nodes)
-        for e in self.nodes:
-            e.update()
-    
-    def update_visuals(self, inputs):
-        for bubble in self.bubbles:
-            bubble.update(inputs)
-
-    def draw(self, view):
-        for bubble in self.bubbles:
-            bubble.draw(view)
-
-    def dbg_print(self):
         for node in self.nodes:
-            print(node.__name__)
-            print(node._value)
+            node.update()
+            
+    def update_visuals(self, view, inputs):
+        for node in self.nodes:
+            node.draw(view, inputs)
 
 # def main2():
 #     economy = EconomyGraph()
@@ -117,16 +111,16 @@ class EconomyGraph:
 #     plt.show()
 
 
-def main():
-    economy = EconomyGraph()
-    time = np.arange(100)
-    for i in time:
-        economy.update()
+# def main():
+#     economy = EconomyGraph()
+#     time = np.arange(100)
+#     for i in time:
+#         economy.update()
 
-    for node in economy.nodes:
-        plt.plot(time, node.value_history, label = str(node))
+#     for node in economy.nodes:
+#         plt.plot(time, node.value_history, label = str(node))
 
-    plt.legend()
-    plt.show()
+#     plt.legend()
+#     plt.show()
 
-main()
+# main()

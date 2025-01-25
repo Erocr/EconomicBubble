@@ -1,4 +1,3 @@
-from ... import bubble
 import random
 
 def clamp(val, min_, max_):
@@ -10,7 +9,7 @@ def getNewValue(value, bonus, max_value):
 
 
 class BaseNode:
-    def __init__(self):
+    def __init__(self, bubble):
         self.value_history = []
         self._value = 0
         self._stability = 0
@@ -28,14 +27,14 @@ class BaseNode:
     def update(self):
         self.value_history.append(self._value)
     
-    def draw(self):
-        self.bubble.draw()
+    def draw(self, view, inputs):
+        self.bubble.update(inputs)
+        self.bubble.draw(view)
 
 
 class TrueCapitalNode(BaseNode):
     def __init__(self, bubble):
-        super().__init__()
-        self.bubble = bubble
+        super().__init__(bubble)
         self.shares = 0 # Ratio of investment, between 0 and 1
     
     def update(self):
@@ -57,8 +56,8 @@ class TrueCapitalNode(BaseNode):
 
 
 class ApparentCapitalNode(BaseNode):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, bubble):
+        super().__init__(bubble)
         self.persuade = 0.1
 
     def update(self):
@@ -81,12 +80,11 @@ class ApparentCapitalNode(BaseNode):
             self.persuade = getNewValue(self.persuade, parent._value/100, 0.5)
 
 class MarketNode(BaseNode):
-    def __init__(self, bubble, graph):
-        super().__init__()
+    def __init__(self, bubble):
+        super().__init__(bubble)
         self.tendance = 1
         self.mult = 1
-        self.bubble = bubble
-        self.graph = graph
+        # self.graph = graph
 
     def update(self):
         for node in self.parents:
@@ -105,9 +103,8 @@ class MarketNode(BaseNode):
 
 class PublicDoubtNode(BaseNode):
     def __init__(self, bubble):
-        super().__init__()
+        super().__init__(bubble)
         self.max_value = 100
-        self.bubble = bubble
     
     def update(self):
         for node in self.parents:
@@ -127,9 +124,8 @@ class PublicDoubtNode(BaseNode):
         
 class InvestorsDoubtNode(BaseNode):
     def __init__(self, bubble):
-        super().__init__()
+        super().__init__(bubble)
         self.max_value = 100
-        self.bubble = bubble
 
     def influencedBy(self, parent):
         if type(parent) == MarketNode:
@@ -151,8 +147,7 @@ class InvestorsDoubtNode(BaseNode):
 
 class MarketingNode(BaseNode):
     def __init__(self, bubble):
-        super().__init__()
-        self.bubble = bubble
+        super().__init__(bubble)
 
     def update(self):
         if self.bubble.clicked():
@@ -161,8 +156,7 @@ class MarketingNode(BaseNode):
 
 class SecurityNode(BaseNode):
     def __init__(self, bubble):
-        super().__init__()
-        self.bubble = bubble
+        super().__init__(bubble)
 
     def update(self):
         if self.bubble.clicked():
@@ -173,8 +167,7 @@ class SecurityNode(BaseNode):
 
 class EspionageNode(BaseNode):
     def __init__(self, bubble):
-        super().__init__()
-        self.bubble = bubble
+        super().__init__(bubble)
 
     def update(self):
         if self.bubble.clicked():
@@ -183,8 +176,8 @@ class EspionageNode(BaseNode):
             super().update()
 
 class EventNode(BaseNode):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, bubble):
+        super().__init__(bubble)
         self.events = []
 
 class Event():
