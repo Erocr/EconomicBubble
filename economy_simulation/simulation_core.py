@@ -38,11 +38,12 @@ class TrueCapitalNode(BaseNode):
         if type(parent) == MarketNode:
             self._value += parent._value * parent.mult
         elif type(parent) == InvestorsDoubtNode:
-            shares_held = self._value * self.shares
+            self._value *= (1 - self.shares)
             if parent._value < 0.5:
-                mean = shares_held * (1.5 - parent._value)
+                self.shares += parent.invest(self.shares)
             else:
                 self.shares -= random.gauss(parent._value, 0.5)
+            self._value *= (1 + self.shares)
             
 
 class ApparentCapitalNode(BaseNode):
@@ -60,7 +61,8 @@ class ApparentCapitalNode(BaseNode):
             self._value = self.persuade * self._value + (1 - self.persuade) * parent._value
 
         if (type(parent) == MarketingNode):
-            self._value = getNewValue(parent._value)
+            self.persuade = getNewValue(self._value, parent._value/10, 100)
+            self._value = getNewValue(self._value, parent._value, 100)
 
 class MarketNode(BaseNode):
     def __init__(self):
@@ -97,9 +99,9 @@ class PublicDoubtNode(BaseNode):
         
     def influencedBy(self, parent):
         if type(parent) == MarketingNode:
-            pass
+            self._value = getNewValue(self._value, parent._value, 100)
         
-        elif type()(parent) == EventNode:
+        elif type(parent) == EventNode:
             pass
         
     
@@ -117,25 +119,37 @@ class InvestorsDoubtNode(BaseNode):
     def update(self):
         for node in self.parents:
             self.influenced_by(node)
-    
         self._value += random.gauss(0, 1) * self._stability
-
         self.clamp()
+
+    def invest(self, shares):
+        if random.random < self._value:
+            return random.random() * (1 - shares)
 
 class MarketingNode(BaseNode):
     def __init__(self):
         super().__init__()
-    
-    def update(self):
-        pass
+
+    def update(self, bonus):
+        self._value += getNewValue(self._value, bonus, 100)
+        self.clamp()
 
 class SecurityNode(BaseNode):
     def __init__(self):
         super().__init__()
 
+    def update(self, bonus):
+        self._value += getNewValue(self._value, bonus, 100)
+        self.clamp()
+
+
 class EspionageNode(BaseNode):
     def __init__(self):
         super().__init__()
+
+    def update(self, bonus):
+        self._value += getNewValue(self._value, bonus, 100)
+        self.clamp()
 
 class EventNode(BaseNode):
     def __init__(self):
