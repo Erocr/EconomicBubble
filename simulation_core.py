@@ -1,4 +1,5 @@
 import random
+import numpy as np
 
 def clamp(val, min_, max_):
     return min(max(val, min_), max_)
@@ -30,7 +31,8 @@ class BaseNode:
             self.addParent(e)
 
     def update(self):
-        self.value_history.append(self._value)
+        for node in self.parents:
+            self.influencedBy(node)
     
     def draw(self, view, inputs):
         self.bubble.update(inputs)
@@ -74,6 +76,9 @@ class ApparentCapitalNode(BaseNode):
         self.bubble.set_text(string_shown_capital(self._value))
         self.persuade = clamp(self.persuade, 0, 1)
         self._value = clamp(self._value, 0, 10_000)
+        
+        self.value_history.append(self._value)
+        
         super().update()
 
     def influencedBy(self, parent):
@@ -119,9 +124,6 @@ class PublicDoubtNode(BaseNode):
         self.max_value = 100
     
     def update(self):
-        for node in self.parents:
-            self.influencedBy(node)
-
         self._value += random.gauss(0, 1) * self._stability
 
         self._value = clamp(self._value, 0, 10_000)
@@ -138,11 +140,20 @@ class InvestorsDoubtNode(BaseNode):
     def __init__(self, bubble):
         super().__init__(bubble)
         self.max_value = 100
-        self.
+        # the investors observe for some time, which helps
+        # then calculate how much they doubt you
+        self.observing_for = 7
+        self.records = []
 
     def influencedBy(self, parent):
         if type(parent) == ApparentCapitalNode:
-            self._value = parent._value 
+            newavg = self.records[-1] * len(self.records)
+            newavg = (newa)
+            self.records.append(parent._value)
+            if len(self.records) > self.observing_for:
+                
+
+
         if type(parent) == EventNode:
             # self._value = getNewValue()
             pass
