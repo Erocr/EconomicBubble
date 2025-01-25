@@ -41,6 +41,7 @@ class BaseNode:
 class TrueCapitalNode(BaseNode):
     def __init__(self, bubble):
         super().__init__(bubble)
+        self._value = 1000
         self.shares = 0 # Ratio of investment, between 0 and 1
     
     def update(self):
@@ -52,7 +53,7 @@ class TrueCapitalNode(BaseNode):
             self._value += parent._value * parent.mult
         elif type(parent) == InvestorsDoubtNode:
             self._value *= (1 - self.shares)
-            if parent._value < 0.5:
+            if parent._value < 0.5 * parent.max_value:
                 self.shares += parent.invest(self.shares)
             else:
                 self.shares -= abs(random.gauss(1, 0.5) * parent._value)
@@ -63,6 +64,7 @@ class TrueCapitalNode(BaseNode):
 class ApparentCapitalNode(BaseNode):
     def __init__(self, bubble):
         super().__init__(bubble)
+        self._value = 1000
         self.persuade = 0.1
 
     def update(self):
@@ -72,9 +74,6 @@ class ApparentCapitalNode(BaseNode):
         self.persuade = clamp(self.persuade, 0, 1)
         self._value = clamp(self._value, 0, 10_000)
         
-        self.value_history.append(self._value)
-        
-
     def influencedBy(self, parent):
         if (type(parent) == TrueCapitalNode):
             self._value = self.persuade * self._value + (1 - self.persuade) * parent._value
@@ -89,6 +88,8 @@ class ApparentCapitalNode(BaseNode):
 class MarketNode(BaseNode):
     def __init__(self, bubble):
         super().__init__(bubble)
+        self._value = 100
+        self.max_value = 1000
         self.tendance = 1
         self.mult = 1
         # self.graph = graph
@@ -135,30 +136,37 @@ class InvestorsDoubtNode(BaseNode):
         self.max_value = 100
         # the investors observe for some time, which helps
         # then calculate how much they doubt you
-        self.observing_for = 7
+        self.observing_for = 70
         self.records = []
 
     def all_eyes_on(self):
-        self.observing_for = 2
+        self.observing_for = 30
+        self.records = []
+    
+    def stop_watching(self):
+        self.observing_for = 70
         self.records = []
 
     def influencedBy(self, parent):
         if type(parent) == ApparentCapitalNode:
-            newavg = self.records[-1] * len(self.records)
-            newavg = (newavg + parent._value) / (len(self.records) + 1)
+            if len(self.records) > 0:
+                newavg = self.records[-1] * len(self.records)
+                newavg = (newavg + parent._value) / (len(self.records) + 1)
+            else: newavg = parent._value
             self.records.append(newavg)
+            # print(str(self._value) + ", " + str(newavg))
+
+            # once enough info is given:
             if len(self.records) > self.observing_for:
                 res = self.records[-1] - self.records[0]
-                if res / self.records[0] < 0.2:
-                    self.observing_for += 1
-                elif res < 0:
-                    self._value *= (2 + 1 / res)
-                    if res / self.records[0] > 0.4:
-                        selfall_eyes_on()
+                if abs(res / self.records[0]) < 0.2: return
+                if res < 0:
+                    self._value *= (1 - 1 / res) / 6
+                    if self._value > 75: self.all_eyes_on()
                 else:
+                    self.stop_watching()
                     self._value *= 1 / (res + 1)
-                    
-            return 0
+            self._value = clamp(self._value, 1.0, 100.0)
 
         if type(parent) == EventNode:
             # self._value = getNewValue()
@@ -173,6 +181,7 @@ class InvestorsDoubtNode(BaseNode):
     def invest(self, shares):
         if random.random() > self._value:
             return random.random() * (1 - shares) * (1 - self._value)
+        return 0
 
 class MarketingNode(BaseNode):
     def __init__(self, bubble):
@@ -207,6 +216,9 @@ class EventNode(BaseNode):
     def __init__(self, bubble):
         super().__init__(bubble)
         self.events = []
+
+    def influencedBy(self, parent):
+        pass
 
 class Event():
     def __init__(self, TTL, stb, dbt, risk):

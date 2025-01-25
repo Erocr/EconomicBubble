@@ -20,7 +20,7 @@ class VisualData:
 
         # Investing possibilities
         self.bubble_size_investing = 50 * self.ratio
-        self.pos_invest_center = self.sc / Vec(1.4, 1.7)
+        self.pos_invest_center = self.sc / Vec(1.4, 2.1) # beer
         self.pos_invest_left = self.pos_invest_center - \
             Vec(self.sc.get[0] / 9, 0)
         self.pos_invest_right = self.pos_invest_center + \
@@ -42,3 +42,7 @@ class VisualData:
             self.sc.get[0], 0) + Vec(- self.sc.get[0], self.sc.get[1]) / Vec(12, 12)
         self.pos_public_doubt = self.pos_investor_doubt + \
             Vec(0, self.bubble_size_doubt*2) + Vec(0, self.sc.get[1]/30)
+
+        # Multicurve
+        self.multicurve_size = Vec(200, 200)
+        self.multicurve_pos = self.pos_invest_center + Vec(-self.multicurve_size.get[0]/2,self.bubble_size_investing) + Vec(0,self.sc.get[1]/30)

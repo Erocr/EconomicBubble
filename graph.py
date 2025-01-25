@@ -6,54 +6,18 @@ import random
 import curve
 import vec
 
-
-class MarketGroup:
-    def __init__(self):
-        self.SoapM = core.MarketNode(
-            Bubble(self.vd.bubble_size_investing, self.vd.pos_invest_left, self.vd.default_fill,
-                   "Soap", (95, 167, 120), (206, 200, 239))
-        ) # Soap Market
-
-        self.BeerM = core.MarketNode(
-            Bubble(self.vd.bubble_size_investing, self.vd.pos_invest_center, self.vd.default_fill,
-                   "Beer", (185, 113, 31), (242, 142, 28))
-        ) # Beer Market
-
-        self.WrapM = core.MarketNode(
-            Bubble(self.vd.bubble_size_investing, self.vd.pos_invest_right, self.vd.default_fill,
-                   "Wrap", (246, 108, 164), (245, 197, 217))
-        ) # Wrap Market
-
-        self.nodes = [self.BeerM, self.SoapM, self.WrapM]
-
-        self.multi_curve = curve.MultiCurve(vec.Vec(0, 0), vec.Vec(100, 100), 3, [(255, 0, 0), (0, 255, 0), (0, 0, 255)])
-
-    def update(self):
-        for node in self.nodes:
-            node.update()
-    
-    def draw(self, view, inputs):
-        # draw the bubbles
-        for node in self.nodes:
-            node.draw(view, inputs)
-        
-        # draw the multi curve
-        self.multi_curve.add_values([node._value for node in self.nodes])
-        self.multi_curve.draw(view)
-    
-
 class EconomyGraph:
-    def __init__(self, visualData):
-        self.vd = visualData
+    def __init__(self, visual_data):
+        self.vd = visual_data
         
         self.TC = core.TrueCapitalNode(
             Bubble(self.vd.bubble_size_capital, self.vd.pos_true_capital, self.vd.default_fill,
-                core.string_true_capital(0),  (7, 37, 6), (133, 187, 101))
+                core.string_true_capital(1000),  (7, 37, 6), (133, 187, 101))
         ) # True capital
 
         self.AC = core.ApparentCapitalNode(
             Bubble(self.vd.bubble_size_capital, self.vd.pos_shown_capital, self.vd.default_fill,
-                core.string_shown_capital(0),  (7, 37, 6), (133, 187, 101))
+                core.string_shown_capital(1000),  (7, 37, 6), (133, 187, 101))
         ) # Apparent capital
 
         self.ID = core.InvestorsDoubtNode(
@@ -86,9 +50,28 @@ class EconomyGraph:
                     "Espionnage", (128, 0, 0), (184, 20, 20))
         )      # Espionage
 
+        self.SoapM = core.MarketNode(
+            Bubble(self.vd.bubble_size_investing, self.vd.pos_invest_left, self.vd.default_fill,
+                   "Soap", (95, 167, 120), (206, 200, 239))
+        ) # Soap Market
+
+        self.BeerM = core.MarketNode(
+            Bubble(self.vd.bubble_size_investing, self.vd.pos_invest_center, self.vd.default_fill,
+                   "Beer", (185, 113, 31), (242, 142, 28))
+        ) # Beer Market
+
+        self.WrapM = core.MarketNode(
+            Bubble(self.vd.bubble_size_investing, self.vd.pos_invest_right, self.vd.default_fill,
+                   "Wrap", (246, 108, 164), (245, 197, 217))
+        ) # Wrap Market
+
+        self.multi_curve = curve.MultiCurve(self.vd.multicurve_pos, self.vd.multicurve_size, 3, [(255, 0, 0), (0, 255, 0), (0, 0, 255)])
+
+        self.market_nodes = [self.SoapM, self.BeerM, self.WrapM]
+
         self.influenced_nodes = [
-            self.TC, self.AC, self.SoapM, self.BeerM, self.WrapM, self.PD, self.ID, self.Events
-        ]
+            self.TC, self.AC, self.PD, self.ID, self.Events
+        ] + self.market_nodes
 
         self.clickable_nodes = [
             self.M1, self.S1, self.Spy
@@ -97,11 +80,12 @@ class EconomyGraph:
         self.nodes = self.influenced_nodes + self.clickable_nodes
 
         # Edges
-        self.TC.addParents([self.SoapM, self.BeerM, self.WrapM, self.ID])
+        self.TC.addParents([*self.market_nodes, self.ID])
         self.AC.addParents([self.TC, self.M1, self.PD])
-        self.SoapM.addParents([self.PD])
-        self.BeerM.addParents([self.PD])
-        self.WrapM.addParents([self.PD])
+
+        for node in self.market_nodes:
+            node.addParents([self.PD])
+
         self.PD.addParents([self.Events])
         self.ID.addParents([self.S1, self.Events, self.AC, self.ID])
         self.M1.addParents([self.S1])
@@ -111,11 +95,19 @@ class EconomyGraph:
         random.shuffle(self.nodes)
         for node in self.nodes:
             node.update()
-            
+    
+    def draw_market_multicurve(self, view):
+        # draw the multi curve
+        self.multi_curve.add_values([node._value for node in self.market_nodes])
+
+        self.multi_curve.draw(view)
+
     def update_visuals(self, view, inputs):
         for node in self.nodes:
             node.draw(view, inputs)
-    
+        
+        self.draw_market_multicurve(view)
+
     def has_exploded(self):
         return (self.AC._value == 0) or (self.ID._value > 100) or (self.PD._value > 100)
 

@@ -32,7 +32,7 @@ class MultiCurve:
 
     def add_values(self, values):
         """ add one value to each curves """
-        for our_vals, v in enumerate(zip(self.values, values)):
+        for our_vals, v in zip(self.values, values):
             our_vals.push(v)
 
     def draw(self, view):

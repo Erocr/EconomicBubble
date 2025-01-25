@@ -127,7 +127,7 @@ class View:
                          radius - bubble.fill_level * radius * 2)).get)
 
         self.miniCircles(bubble, radius, 13)
-        self.circle(bubble.center, radius+5, (255, 255, 255))
+        self.circle(bubble.center, radius+5, (163, 255, 255))
 
         # UP * bubble.radius * 0.9 to keep the text inside vertically
         # bubble.radius * 0.75 to keep the text inside horizontally the circle
@@ -151,6 +151,9 @@ class View:
         pg.draw.rect(self.screen, (0, 0, 0), pg.Rect(*pos.get, *size.get), width=2)
 
     def multiple_curves(self, pos: Vec, size: Vec, curves, colors=None):
+        if (any([len(curve) < 2 for curve in curves])):
+            return
+
         pg.draw.rect(self.screen, (0, 0, 0), pg.Rect(*pos.get, *size.get))
         if colors is None:
             colors = [(255, 255, 255)] * len(curves)
@@ -162,8 +165,11 @@ class View:
                     max_y = y
                 if y < min_y:
                     min_y = y
+        if (max_y == min_y):
+            var_y = 0
+        else:
+            var_y = size.y / (max_y - min_y) * 0.9
 
-        var_y = size.y / (max_y - min_y) * 0.9
         center = (max_y + min_y) / 2
         for i in range(len(curves)):
             var_x = size.x / len(curves[i])
