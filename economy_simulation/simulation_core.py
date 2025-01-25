@@ -7,8 +7,10 @@ def getNewValue(value, bonus, max_bonus):
     clamped_bonus = clamp(bonus, -max_bonus, max_bonus)
     return value + clamped_bonus - value * abs(clamped_bonus) / max_bonus
 
+
 class BaseNode:
     def __init__(self):
+        self.value_history = []
         self._value = 0
         self._stability = 0
         self.max_value = 10_000
@@ -24,6 +26,10 @@ class BaseNode:
     def clamp(self):
         self._value = clamp(self._value, 0, self.max_value)
         self._stability = clamp(self._stability, 0, self.max_value)
+    
+    def update(self):
+        self.value_history.append(self._value)
+
 
 class TrueCapitalNode(BaseNode):
     def __init__(self):
@@ -33,6 +39,7 @@ class TrueCapitalNode(BaseNode):
     def update(self):
         for node in self.parents:
             self.influenced_by(node)
+        super().update()
     
     def influencedBy(self, parent):
         if type(parent) == MarketNode:
@@ -43,8 +50,8 @@ class TrueCapitalNode(BaseNode):
                 self.shares += parent.invest(self.shares)
             else:
                 self.shares -= random.gauss(parent._value, 0.5)
-            self._value *= (1 + self.shares)
-            
+            clamp(self.shares, 0, 1)
+            self._value *= (1 + self.shares)            
 
 class ApparentCapitalNode(BaseNode):
     def __init__(self, capital_node):
@@ -55,6 +62,7 @@ class ApparentCapitalNode(BaseNode):
     def update(self):
         for node in self.parents:
             self.influencedBy(node)
+        super().update()
 
     def influencedBy(self, parent):
         if (type(parent) == TrueCapitalNode):
@@ -76,6 +84,7 @@ class MarketNode(BaseNode):
 
         self._value += random.gauss(self.tendance, self._stability)
         self.tendance /= 2
+        super().update()
     
     def influencedBy(self, parent):
         if type(parent) == PublicDoubtNode:
@@ -96,6 +105,7 @@ class PublicDoubtNode(BaseNode):
         self._value += random.gauss(0, 1) * self._stability
 
         self.clamp()
+        super().update()
         
     def influencedBy(self, parent):
         if type(parent) == MarketingNode:
@@ -121,9 +131,10 @@ class InvestorsDoubtNode(BaseNode):
             self.influenced_by(node)
         self._value += random.gauss(0, 1) * self._stability
         self.clamp()
+        super().update()
 
     def invest(self, shares):
-        if random.random < self._value:
+        if random.random > self._value:
             return random.random() * (1 - shares)
 
 class MarketingNode(BaseNode):
@@ -141,6 +152,7 @@ class SecurityNode(BaseNode):
     def update(self, bonus):
         self._value += getNewValue(self._value, bonus, 100)
         self.clamp()
+        super().update()
 
 
 class EspionageNode(BaseNode):
@@ -150,6 +162,7 @@ class EspionageNode(BaseNode):
     def update(self, bonus):
         self._value += getNewValue(self._value, bonus, 100)
         self.clamp()
+        super().update()
 
 class EventNode(BaseNode):
     def __init__(self):

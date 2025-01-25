@@ -1,4 +1,6 @@
 import simulation_core as core
+import matplotlib.pyplot as plt
+import numpy as np
 import random
 
 class EconomyGraph:
@@ -49,8 +51,15 @@ class EconomyGraph:
     def dbg_print(self):
         for node in self.nodes:
             print(node.__name__)
-            print(node.va)
-
+            print(node._value)
 
 def main():
     economy = EconomyGraph()
+    time = np.arange(100)
+    for i in time:
+        economy.update()
+
+    for node in economy:
+        plt.plot(time, node.value_history)
+    
+    plt.show()
