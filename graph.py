@@ -93,7 +93,7 @@ class EconomyGraph:
         for node in self.market_nodes:
             node.addParents([self.PD, self.Spy])
 
-        self.PD.addParents([self.Events])
+        self.PD.addParents([self.Events, self.ID])
         self.ID.addParents([self.S1, self.Events, self.AC, self.ID])
         self.M1.addParents([self.S1])
         self.Events.addParents([self.Spy])

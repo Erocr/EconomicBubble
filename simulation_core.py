@@ -143,7 +143,7 @@ class PublicDoubtNode(BaseNode):
     
     def update(self):
         super().update()
-
+        self._value -= 0.05
         self._value += random.gauss(0, self.volatility/500)
         self._value = clamp(self._value, 0, self.max_value)
 
@@ -155,8 +155,8 @@ class PublicDoubtNode(BaseNode):
         if type(parent) == MarketingNode:
             self._value = getNewValue(self._value, -parent._value/2, self.max_value)
         
-        if type(parent) == EspionageNode:
-            self._value = getNewValue(self._value, parent._value, self.max_value)
+        if type(parent) == InvestorsDoubtNode:
+            self._value = getNewValue(self._value, parent._value/25, self.max_value)
 
         if type(parent) == EventNode:
             pass
@@ -204,7 +204,7 @@ class InvestorsDoubtNode(BaseNode):
                     self._value *= 1.01; return
                 if res < 0:
                     self._value *= (1 + abs(res))
-                    self.interest = max(1, self.interest / 1.001)
+                    self.interest = max(1, self.interest - 0.05)
                     if self._value > 75: self.all_eyes_on()
                 else:
                     self.stop_watching()
