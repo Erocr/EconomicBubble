@@ -11,10 +11,22 @@ class View:
         self.screen = pg.display.set_mode(self.screenSize.get)
         self.font = pg.font.SysFont("serif", 24)
         self.mini_font = pg.font.SysFont("serif", 12)
+        self.background = self.import_background()
+
+    def import_background(self):
+        background = pg.image.load(sys.path[0] + "/images/Game_Jam_Desk.jpg")
+        scale_x = self.screenSize.x / background.get_width()
+        scale_y = self.screenSize.y / background.get_height()
+        background = pg.transform.scale_by(background, max(scale_y, scale_x))
+        real_background = pg.Surface(self.screenSize.get)
+        p = - Vec(*background.get_size())/2 + self.screenSize/2
+        real_background.blit(background, p.get)
+        return real_background
 
     def flip(self):
         pg.display.flip()
-        self.screen.fill((165, 245, 240))
+        # self.screen.fill((165, 245, 240))
+        self.screen.blit(self.background, (0, 0))
 
     def circle(self, center: Vec, radius, color=(255, 255, 255), surf=None, filled=False):
         if surf is None:
