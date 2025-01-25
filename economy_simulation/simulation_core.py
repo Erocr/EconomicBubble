@@ -38,7 +38,7 @@ class TrueCapitalNode(BaseNode):
     
     def update(self):
         for node in self.parents:
-            self.influenced_by(node)
+            self.influencedBy(node)
         super().update()
     
     def influencedBy(self, parent):
@@ -54,10 +54,9 @@ class TrueCapitalNode(BaseNode):
             self._value *= (1 + self.shares)            
 
 class ApparentCapitalNode(BaseNode):
-    def __init__(self, capital_node):
+    def __init__(self):
         super().__init__()
         self.persuade = 0.1
-        self.capital_node = capital_node
 
     def update(self):
         for node in self.parents:
@@ -120,21 +119,22 @@ class InvestorsDoubtNode(BaseNode):
         super().__init__()
         self.max_value = 100
 
-    def influenced_by(self, parent):
+    def influencedBy(self, parent):
         if type(parent) == MarketNode:
             self._value = getNewValue(2*(parent.max_value/2 - parent._value) / parent.max_value)        
         if type(parent) == EventNode:
-            self._value = getNewValue()
+            # self._value = getNewValue()
+            pass
 
     def update(self):
         for node in self.parents:
-            self.influenced_by(node)
+            self.influencedBy(node)
         self._value += random.gauss(0, 1) * self._stability
         self.clamp()
         super().update()
 
     def invest(self, shares):
-        if random.random > self._value:
+        if random.random() > self._value:
             return random.random() * (1 - shares)
 
 class MarketingNode(BaseNode):
