@@ -36,15 +36,13 @@ class EconomyGraph:
 
         self.ID = core.InvestorsDoubtNode(
             Bubble(self.vd.bubble_size_doubt, self.vd.pos_investor_doubt, self.vd.default_fill, "Investor Doubt",
-                (246, 108, 164), (33,171,205))
+                (33,171,205),(239,204,0))
         ) # Investors Doubt
 
         self.PD = core.PublicDoubtNode(
-            Bubble(self.vd.bubble_size_doubt, self.vd.pos_public_doubt, self.vd.default_fill, "PublicDoubt",
-                (246, 108, 164), (33,171,205))
+            Bubble(self.vd.bubble_size_doubt, self.vd.pos_public_doubt, self.vd.default_fill, "Public Doubt",
+                (33,171,205),(239,204,0))
         ) # Public Doubt
-
-        
 
         self.Events = core.EventNode(
             Bubble(self.vd.bubble_size_investing, self.vd.pos_invest_right, self.vd.default_fill, "Wrap",
