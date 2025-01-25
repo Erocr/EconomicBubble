@@ -25,7 +25,7 @@ class Bubble:
         self.text = text
 
     def update(self, inputs):
-        self.anim_timer = (self.anim_timer + 1) % 10000
+        self.anim_timer = (self.anim_timer + 1/3) % 10000
         if self.click_timer > 0:
             self.click_timer += 1
             if self.click_timer > 50:

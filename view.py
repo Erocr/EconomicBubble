@@ -52,15 +52,36 @@ class View:
         self.circle(Vec(radius, -radius + height), radius, color, semi_down, filled=True)
         return semi_down
 
-    def mini_circles(self, bubble, radius, nb_circles: int):
+    def included(self, mini_pos, mini_rad, big_pos, big_rad):
+        return (dist(big_pos, mini_pos) + mini_rad) <= big_rad
+
+    def miniNotOut(self, mini_pos: Vec, mini_rad, big_pos: Vec, big_rad, color: tuple):
+        res = pg.Surface((mini_rad * 2, mini_rad * 2))
+        pg.draw.circle(res, color, (mini_rad, mini_rad), mini_rad)
+        res.set_colorkey((0, 0, 0))
+        for y in range(res.get_height()):
+            for x in range(res.get_width()):
+                if dist(mini_pos - Vec(mini_rad, mini_rad) + Vec(x, y), big_pos) > big_rad:
+                    res.set_at((x, y), (0, 0, 0, 0))
+        return res
+
+    def miniCircles(self, bubble, radius, nb_circles: int):
         h = radius - radius * bubble.fill_level * 2
         x = sqrt(radius ** 2 - h ** 2)
         d = x * 2
         mini_rad = d / nb_circles / 2
-        start = bubble.center + Vec(-x, h) + RIGHT
-        flag = False
-        for i in range(nb_circles-1):
-            self.circle(start + RIGHT * mini_rad * (2 * i + 2), mini_rad, [bubble.color1, bubble.color2][flag], filled=True)
+        start = bubble.center + Vec(-x, h) + (RIGHT * bubble.anim_timer / 1) % (mini_rad * 2)
+        flag = (bubble.anim_timer / 1) % (mini_rad * 4) > mini_rad * 2
+        for i in range(-1, nb_circles+1):
+            # Small variation of the height of the waves
+            wave = DOWN * 1.7 * cos(i / (4 * pi))
+            mini_pos = start + RIGHT * mini_rad * (2 * i) + wave
+            col = [bubble.color1, bubble.color2][flag]
+            if not (i <= 0 or i >= nb_circles-1):
+                self.circle(mini_pos, mini_rad, col, filled=True)
+            else:
+                surf = self.miniNotOut(mini_pos, mini_rad, bubble.center, bubble.radius, col)
+                self.screen.blit(surf, (mini_pos - Vec(mini_rad, mini_rad)).get)
             flag = not flag
 
     def bubble(self, bubble):
@@ -73,9 +94,9 @@ class View:
         self.screen.blit(semi_up, (bubble.center - Vec(radius, radius)).get)
         self.screen.blit(semi_down, (bubble.center + Vec(-radius, radius - bubble.fill_level * radius * 2)).get)
 
-        self.circle(bubble.center, radius, (255, 255, 255))
 
-        self.mini_circles(bubble, radius, 20)
+        self.miniCircles(bubble, radius, 13)
+        self.circle(bubble.center, radius, (255, 255, 255))
 
         # UP * bubble.radius * 0.9 to keep the text inside vertically
         # bubble.radius * 0.75 to keep the text inside horizontally the circle
