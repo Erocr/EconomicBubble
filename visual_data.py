@@ -6,12 +6,6 @@ class VisualData:
         self.default_fill = 0.25
         self.sc = view.screenSize
 
-        def string_shown_capital(self, val):
-            return f"Shown capital: {val}$"
-    
-        def string_true_capital(self, val):
-            return f"True capital: {val}$"
-
         self.ratio = self.sc.size / (1100**2 + 700**2)**(1/2)
         # Triangle of marketing, espionnage and security
         self.bubble_size_big = 90 * self.ratio
@@ -39,5 +33,4 @@ class VisualData:
         # Doubt
         self.bubble_size_doubt = 70 * self.ratio
         self.pos_investor_doubt = Vec(self.sc.get[0],0) + Vec( - self.sc.get[0], self.sc.get[1]) / Vec(12,12)
-        self.pos_public_doubt = self.pos_investor_doubt + Vec(0,self.sc.get[1]/12)
-        
+        self.pos_public_doubt = self.pos_investor_doubt + Vec(0,self.bubble_size_doubt) + Vec(0,self.sc.get[1]/12)

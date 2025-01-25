@@ -7,6 +7,11 @@ def getNewValue(value, bonus, max_value):
     clamped_bonus = clamp(bonus, -max_value, max_value)
     return value + clamped_bonus - value * abs(clamped_bonus) / max_value
 
+def string_shown_capital(self, val):
+    return f"Shown capital: {val}$"
+    
+def string_true_capital(self, val):
+    return f"True capital: {val}$"
 
 class BaseNode:
     def __init__(self, bubble):
@@ -40,6 +45,8 @@ class TrueCapitalNode(BaseNode):
     def update(self):
         for node in self.parents:
             self.influencedBy(node)
+            
+        self.bubble.set_text(string_true_capital(self._value))
         super().update()
     
     def influencedBy(self, parent):
@@ -64,6 +71,7 @@ class ApparentCapitalNode(BaseNode):
         for node in self.parents:
             self.influencedBy(node)
         
+        self.bubble.set_text(string_shown_capital(self._value))
         self.persuade = clamp(self.persuade, 0, 1)
         self._value = clamp(self._value, 0, 10_000)
         super().update()

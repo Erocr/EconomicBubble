@@ -11,12 +11,12 @@ class EconomyGraph:
         
         self.TC = core.TrueCapitalNode(
             Bubble(self.vd.bubble_size_capital, self.vd.pos_true_capital, self.vd.default_fill,
-                self.vd.string_true_capital,  (7, 37, 6), (133, 187, 101))
+                core.string_true_capital(0),  (7, 37, 6), (133, 187, 101))
         ) # True capital
 
         self.AC = core.ApparentCapitalNode(
             Bubble(self.vd.bubble_size_capital, self.vd.pos_shown_capital, self.vd.default_fill,
-                self.vd.string_shown_capital,  (7, 37, 6), (133, 187, 101))
+                core.string_shown_capital(0),  (7, 37, 6), (133, 187, 101))
         ) # Apparent capital
 
         self.SoapM = core.MarketNode(
@@ -29,20 +29,22 @@ class EconomyGraph:
                 (185, 113, 31), (242, 142, 28))
         ) # Beer Market
 
-        self.OperaM = core.MarketNode(
+        self.WrapM = core.MarketNode(
             Bubble(self.vd.bubble_size_investing, self.vd.pos_invest_right, self.vd.default_fill, "Wrap",
                 (246, 108, 164), (245, 197, 217))
         ) # Wrap Market
 
+        self.ID = core.InvestorsDoubtNode(
+            Bubble(self.vd.bubble_size_doubt, self.vd.pos_investor_doubt, self.vd.default_fill, "Investor Doubt",
+                (246, 108, 164), (33,171,205))
+        ) # Investors Doubt
+
         self.PD = core.PublicDoubtNode(
-            Bubble(self.vd.bubble_size_investing, self.vd.pos_investor_doubt, self.vd.default_fill, "Wrap",
-                (246, 108, 164), (245, 197, 217))
+            Bubble(self.vd.bubble_size_doubt, self.vd.pos_public_doubt, self.vd.default_fill, "PublicDoubt",
+                (246, 108, 164), (33,171,205))
         ) # Public Doubt
 
-        self.ID = core.InvestorsDoubtNode(
-            Bubble(self.vd.bubble_size_investing, self.vd.pos_public_doubt, self.vd.default_fill, "Wrap",
-                (246, 108, 164), (245, 197, 217))
-        ) # Investors Doubt
+        
 
         self.Events = core.EventNode(
             Bubble(self.vd.bubble_size_investing, self.vd.pos_invest_right, self.vd.default_fill, "Wrap",
@@ -65,7 +67,7 @@ class EconomyGraph:
         )      # Espionage
 
         self.influenced_nodes = [
-            self.TC, self.AC, self.SoapM, self.BeerM, self.OperaM, self.PD, self.ID, self.Events
+            self.TC, self.AC, self.SoapM, self.BeerM, self.WrapM, self.PD, self.ID, self.Events
         ]
 
         self.clickable_nodes = [
@@ -75,11 +77,11 @@ class EconomyGraph:
         self.nodes = self.influenced_nodes + self.clickable_nodes
 
         # Edges
-        self.TC.addParents([self.SoapM, self.BeerM, self.OperaM, self.ID])
+        self.TC.addParents([self.SoapM, self.BeerM, self.WrapM, self.ID])
         self.AC.addParents([self.TC, self.M1, self.PD])
         self.SoapM.addParents([self.PD])
         self.BeerM.addParents([self.PD])
-        self.OperaM.addParents([self.PD])
+        self.WrapM.addParents([self.PD])
         self.PD.addParents([self.Events])
         self.ID.addParents([self.S1, self.Events, self.AC, self.ID])
         self.M1.addParents([self.S1])
