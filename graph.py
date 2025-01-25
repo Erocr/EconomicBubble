@@ -93,6 +93,9 @@ class EconomyGraph:
     def update_visuals(self, view, inputs):
         for node in self.nodes:
             node.draw(view, inputs)
+    
+    def has_exploded(self):
+        return (self.AC._value == 0) or (self.ID._value > 100) or (self.PD._value > 100)
 
 # def main2():
 #     economy = EconomyGraph()

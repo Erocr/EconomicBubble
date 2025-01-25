@@ -31,6 +31,6 @@ class VisualData:
         self.pos_true_capital = self.mid_capital_pos + Vec(self.sc.get[0]/10, 0)
 
         # Doubt
-        self.bubble_size_doubt = 70 * self.ratio
+        self.bubble_size_doubt = 50 * self.ratio
         self.pos_investor_doubt = Vec(self.sc.get[0],0) + Vec( - self.sc.get[0], self.sc.get[1]) / Vec(12,12)
         self.pos_public_doubt = self.pos_investor_doubt + Vec(0,self.bubble_size_doubt) + Vec(0,self.sc.get[1]/12)
