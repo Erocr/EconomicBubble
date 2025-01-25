@@ -1,5 +1,6 @@
 import random
 import numpy as np
+import misc
 
 def clamp(val, min_, max_):
     return min(max(val, min_), max_)
@@ -9,15 +10,15 @@ def getNewValue(value, bonus, max_value):
     return value + clamped_bonus - value * abs(clamped_bonus) / max_value
 
 def string_shown_capital(val):
-    return f"Shown capital: {val:.2f}$"
+    return f"Shown capital: {val}$"
     
 def string_true_capital(val):
-    return f"True capital: {val:.2f}$"
+    return f"True capital: {val}$"
 
 class BaseNode:
     def __init__(self, bubble):
         self._value = 0
-        self._stability = 0
+        self.volatility = 10
         self.max_value = 10_000
         self.bubble = bubble
         self.parents = []
@@ -46,7 +47,7 @@ class TrueCapitalNode(BaseNode):
     
     def update(self):
         super().update()
-        self.bubble.set_text(string_true_capital(self._value))
+        self.bubble.set_text(string_true_capital(misc.to_readable_int(self._value)))
     
     def influencedBy(self, parent):
         if type(parent) == MarketNode:
@@ -54,9 +55,9 @@ class TrueCapitalNode(BaseNode):
         elif type(parent) == InvestorsDoubtNode:
             self._value *= (1 - self.shares)
             if parent._value < 0.5 * parent.max_value:
-                self.shares += parent.invest(self.shares)
+                self.shares += parent.invest(self.shares) / self.volatility
             else:
-                self.shares -= abs(random.gauss(1, 0.5) * parent._value)
+                self.shares -= abs(random.gauss(1, self.volatility) * parent._value)
             self.shares = clamp(self.shares, 0, 1)
             self._value *= (1 + self.shares)            
 
@@ -70,7 +71,7 @@ class ApparentCapitalNode(BaseNode):
     def update(self):
         super().update()
         
-        self.bubble.set_text(string_shown_capital(self._value))
+        self.bubble.set_text(string_shown_capital(misc.to_readable_int(self._value)))
         self.persuade = clamp(self.persuade, 0, 1)
         self._value = clamp(self._value, 0, 10_000)
         
@@ -94,6 +95,9 @@ class MarketNode(BaseNode):
         self.mult = 1
         # self.graph = graph
 
+    def quick_update(self):
+        self._value += random.random()*10
+
     def update(self):
         super().update()
 
@@ -101,8 +105,7 @@ class MarketNode(BaseNode):
             self.mult += 0.1
             self.mult = clamp(self.mult, 0, 5)
 
-        self._value += random.gauss(self.tendance, self._stability)
-        self.tendance /= 2
+        self._value += random.gauss(self.tendance, self.volatility*10)
     
     def influencedBy(self, parent):
         if type(parent) == PublicDoubtNode:
@@ -119,13 +122,12 @@ class PublicDoubtNode(BaseNode):
     def update(self):
         super().update()
 
-        self._value += random.gauss(0, 1) * self._stability
-
+        self._value += random.gauss(0, self.volatility)
         self._value = clamp(self._value, 0, 10_000)
         
     def influencedBy(self, parent):
         if type(parent) == MarketingNode:
-            self._value = getNewValue(self._value, parent._value, 100)
+            self._value = getNewValue(self._value, -parent._value, 100)
         
         elif type(parent) == EventNode:
             pass
@@ -136,15 +138,15 @@ class InvestorsDoubtNode(BaseNode):
         self.max_value = 100
         # the investors observe for some time, which helps
         # then calculate how much they doubt you
-        self.observing_for = 70
+        self.observing_for = 14
         self.records = []
 
     def all_eyes_on(self):
-        self.observing_for = 30
+        self.observing_for = 5
         self.records = []
     
     def stop_watching(self):
-        self.observing_for = 70
+        self.observing_for = 14
         self.records = []
 
     def influencedBy(self, parent):
@@ -159,7 +161,8 @@ class InvestorsDoubtNode(BaseNode):
             # once enough info is given:
             if len(self.records) > self.observing_for:
                 res = self.records[-1] - self.records[0]
-                if abs(res / self.records[0]) < 0.2: return
+                if abs(res / self.records[0]) < 0.2 / self.volatility:
+                    return
                 if res < 0:
                     self._value *= (1 - 1 / res) / 6
                     if self._value > 75: self.all_eyes_on()
@@ -175,11 +178,13 @@ class InvestorsDoubtNode(BaseNode):
     def update(self):
         super().update()
 
-        self._value += random.gauss(0, 1) * self._stability
+        self._value += random.gauss(0, 1) * self.volatility
         self._value = clamp(self._value, 0, 10_000)
 
     def invest(self, shares):
-        if random.random() > self._value:
+        if len(self.records) < self.observing_for:
+            return 0
+        if random.random() * 100 > self._value:
             return random.random() * (1 - shares) * (1 - self._value)
         return 0
 
@@ -221,9 +226,9 @@ class EventNode(BaseNode):
         pass
 
 class Event():
-    def __init__(self, TTL, stb, dbt, risk):
+    def __init__(self, TTL, vol, dbt, risk):
         self.time_to_live = TTL
-        self.stability = stb
+        self.volatility = vol
         self.doubt = dbt
         
         # the probability of the event to burst

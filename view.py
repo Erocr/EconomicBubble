@@ -127,7 +127,7 @@ class View:
                          radius - bubble.fill_level * radius * 2)).get)
 
         self.miniCircles(bubble, radius, 13)
-        self.circle(bubble.center, radius+5, (163, 255, 255))
+        self.circle(bubble.center, radius+5, (154, 127, 104))
 
         # UP * bubble.radius * 0.9 to keep the text inside vertically
         # bubble.radius * 0.75 to keep the text inside horizontally the circle
