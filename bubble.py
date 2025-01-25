@@ -8,7 +8,8 @@ class Bubble:
     center : Vec
     fill_level : float between 0 and 1
     anim_timer : int ables the animation, like a frameCount
-    anim_timer : int ables the animation for the click, like a frameCount
+    anim_timer : int ab
+    es the animation for the click, like a frameCount
     text : The text showed in the center of the circle
     color1 : color of the top part
     color2 : color of the bottom part
