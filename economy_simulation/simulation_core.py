@@ -38,13 +38,11 @@ class TrueCapitalNode(BaseNode):
         if type(parent) == MarketNode:
             self._value += parent._value * parent.mult
         elif type(parent) == InvestorsDoubtNode:
-            self._value *= (1 - self.shares)
+            shares_held = self._value * self.shares
             if parent._value < 0.5:
-                mean = self._value * self.shares * (1.5 - parent_value)
-                
+                mean = shares_held * (1.5 - parent._value)
             else:
                 self.shares -= random.gauss(parent._value, 0.5)
-            self._value *= (1 + self.shares)
             
 
 class ApparentCapitalNode(BaseNode):
