@@ -14,12 +14,13 @@ class Bubble:
     color2 : color of the bottom part
     """
 
-    def __init__(self, radius: float, center: Vec, fill_level: float, text: str):
+    def __init__(self, radius: float, center: Vec, fill_level: float, text: str,
+                 color1=(0, 255, 0), color2=(255, 0, 0)):
         self.radius = radius
         self.center = center
         self.fill_level = fill_level
-        self.color1 = (0, 255, 0)
-        self.color2 = (255, 0, 0)
+        self.color1 = color1
+        self.color2 = color2
         self.click_timer = 0
         self.anim_timer = 0
         self.text = text
@@ -32,7 +33,10 @@ class Bubble:
                 self.click_timer = 0
         if inputs.pressed("mouse_left") and dist(inputs.mouse_pos, self.center) < self.radius:
             self.click_timer = 1
-            self.fill_level += 0.1
 
     def draw(self, view):
         view.bubble(self)
+
+    def clicked(self):
+        return self.click_timer == 1
+
