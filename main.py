@@ -35,6 +35,9 @@ while not inputs.quit:
         flash_info.update(inputs)
 
         economy_graph.update_visuals(view, inputs)
+        if frames % 10 == 0:
+            economy_graph.update_multigraph()
+        
         economy_graph.quick_simulation_update()
 
         if frames % 50 == 0:

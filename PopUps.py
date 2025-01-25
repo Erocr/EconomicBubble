@@ -73,16 +73,21 @@ class PopupsContainer:
 class Popup:
     size = Vec(300, 70)
 
-    def __init__(self, text, color):
-        self.text = text
+    def __init__(self, texts, color):
+        self.texts = texts
         self.color = color
         self.counter = 0
 
     def draw(self, view, i):
-        pos = view.screenSize - self.size + UP * self.size.y * i
+        pos = view.screenSize - self.size + UP * (self.size.y + 10) * i
         view.rect(pos, self.size, color=(200, 255, 255))
         view.rect(pos, self.size, color=(0, 0, 0), width=3)
-        view.text(self.text, pos + Vec(self.size.x/2, 0), self.size.x, self.color)
+
+        if len(self.texts) > 0:
+            text_pos_y = (self.size.y - (view.font.size(self.texts[0])[1] + 2) * (len(self.texts))) / 2
+            for text in self.texts:
+                view.text(text, pos + Vec(self.size.x/2, text_pos_y), self.size.x, self.color)
+                text_pos_y += (view.font.size(self.texts[0])[1] + 2)
 
     def update(self, inputs):
         self.counter += 1

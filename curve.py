@@ -24,7 +24,7 @@ class MultiCurve:
     def __init__(self, pos, size, nb_curves, colors=None):
         self.pos = pos
         self.size = size
-        self.values = [Queue(100) for _ in range(nb_curves)]
+        self.values = [Queue(60) for _ in range(nb_curves)]
         self.colors = colors
         if colors is None:
             self.colors = [(255, 255, 255) for _ in range(nb_curves)]

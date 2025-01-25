@@ -91,45 +91,58 @@ class EconomyGraph:
         self.AC.addParents([self.TC, self.M1, self.PD])
 
         for node in self.market_nodes:
-            node.addParents([self.PD])
+            node.addParents([self.PD, self.Spy])
 
-        self.PD.addParents([self.Events, self.Spy])
+        self.PD.addParents([self.Events])
         self.ID.addParents([self.S1, self.Events, self.AC, self.ID])
         self.M1.addParents([self.S1])
         self.Events.addParents([self.Spy])
 
     def quick_simulation_update(self):
         for node in self.nodes:
-            node.quick_update()
+            node.quick_update()        
     
+    def update_multigraph(self):
+        self.multi_curve.add_values([node._value for node in self.market_nodes])
+
     def check_invest(self, node):
-        if type(node) == core.InvestorsDoubtNode:
-            if node.invested > 0:
-                invest_str = str(int(node.invested * 100)) + "%"
-                self.popups.add_popup(
-                    "An investor has just bought " + invest_str + " of your company!",
-                    (0, 0, 0)
-                )
-                node.invested = 0
-                
+        node = self.ID
+        if node.invested > 0:
+            invest_str = str(int(node.invested * 100)) + "%"
+            self.popups.add_popup(
+                ["An investor has just bought", invest_str + " of your company!"],
+                (0, 0, 0)
+            )
+            node.invested = 0
+
+    def check_pullout(self, node):
+        node = self.ID
+        if node.pulled_out > 0:
+            pullout_str = str(int(node.pulled_out * 100)) + "%"
+            self.popups.add_popup(
+                ["An investor has withdrawn", pullout_str + " of your company!"],
+                (255, 0, 0)
+            )
+            node.pulled_out = 0
 
     def update_simulation(self):
         random.shuffle(self.nodes)
+        full_debt = 0
         for node in self.nodes:
+            full_debt += node.debt
+            node.debt = 0
             node.update()
-    
-    def draw_market_multicurve(self, view):
-        # draw the multi curve
-        self.multi_curve.add_values([node._value for node in self.market_nodes])
-        self.multi_curve.draw(view)
+        self.TC._value -= full_debt
+        if self.TC._value < 0: self.TC._value = 0
 
     def update_visuals(self, view, inputs):
         for node in self.nodes:
             node.draw(view, inputs)
             self.check_invest(node)
+            self.check_pullout(node)
+        self.multi_curve.draw(view)
         self.popups.update(inputs)
         self.popups.draw(view)
-        self.draw_market_multicurve(view)
 
     def has_exploded(self):
         return (self.AC._value == 0) or (self.ID._value > 100) or (self.PD._value > 100)
