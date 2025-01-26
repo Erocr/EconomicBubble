@@ -79,7 +79,7 @@ while not inputs.quit:
                     economy_graph.update_simulation()
 
                 if frames % 1000 == 0:
-                    infoMsg = random.choice(news.news.keys())
+                    infoMsg = random.choice(list(news.news.keys()))
                     flash_info.new_msg(infoMsg)
                     observer.notify(EVENT_SOUND, ("news_popup",))
                     economy_graph.apply_action(news.news[infoMsg])

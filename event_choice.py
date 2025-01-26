@@ -5,7 +5,7 @@ from observer import *
 
 
 class Card:
-    image = pg.image.load(sys.path[0] + "/images/bubble_wrap_blue.jpg")
+    image = pg.image.load(sys.path[0] + "/images/clear_grey.png")
 
     def __init__(self, narration, index, view):
         self.narration = narration
