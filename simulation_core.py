@@ -299,7 +299,6 @@ class InvestorNode(BaseNode):
         # the investors observe for some time, which helps
         # then calculate how much they doubt you, as well as
         # how interested they are
-        self.invested = 0
         self.pulled_out = 0
         self.interest = 1
         self.true_capital = 10
@@ -367,12 +366,13 @@ class InvestorNode(BaseNode):
                                                   or self.interest < 1.1: 
             return 0
         if random.random() * 100 > self._value:
-            self.invested = random.random() * (0.8 - shares) / 2.5
-            self.invested *= self.interest
-            self.invested *= (1 - self._value / 100)
-            if self.invested * 100 < 1: self.invested = 0
-            self.owned_shares += self.invested
-            return self.invested
+            invested = random.random() * (0.8 - shares) / 2.5
+            invested *= self.interest
+            invested *= (1 - self._value / 100)
+            if invested * 100 < 1: invested = 0
+            self.owned_shares += invested
+            self.observer.notify(EVENT_INVESTED, [self, invested])
+            return invested
         return 0
 
     def pullout(self):

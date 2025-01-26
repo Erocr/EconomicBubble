@@ -125,20 +125,20 @@ class EconomyGraph:
         if event == EVENT_CRIME_FOUND:
             pass
         if event == EVENT_INVESTED:
-                        
+            investor, invested = notifications
+            capital = self.TC._value
+            invest_str = str(int(invested * capital)) + "$"
+            self.observer.notify(EVENT_NEW_POPUP,
+                (["An investor has just spent ", invest_str + " into your company!"],
+                (0, 0, 0))
+            )
+            investor.invested_money += investor.invested * capital
 
     def check_invest(self, node, observer):
         node = self.ID
         capital = self.TC._value
         for investor in node.investors:
             if investor.invested > 0:
-                invest_str = str(int(investor.invested * capital)) + "$"
-                observer.notify(EVENT_NEW_POPUP,
-                                (["An investor has just spent ", invest_str + " into your company!"],
-                                (0, 0, 0))
-                                )
-                investor.invested_money += investor.invested * capital
-                investor.invested = 0
 
     def check_pullout(self, node, observer):
         node = self.ID
