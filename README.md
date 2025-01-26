@@ -55,15 +55,21 @@ if you are in your desired folder:
 
 If you are in the folder where you cloned the repo, execute the following command in your terminal:
 
-```python3 main.py```
+```
+python3 main.py
+```
 
 If not, you can either go to the folder or use the following command:
 
-```python3 REPLACE_WITH_FULL_PATH/main.py```
+```
+python3 REPLACE_WITH_FULL_PATH/main.py
+```
 
 If you get a "ModuleNotFound" error when you try to run the game, try to install the missing module(s) by using 
 
-```pip install REPLACE_WITH_MODULE_NAME```
+```
+pip install REPLACE_WITH_MODULE_NAME
+```
 
 
 ## How to play
