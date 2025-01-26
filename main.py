@@ -63,7 +63,7 @@ while not inputs.quit:
                 paused = True
             end = cards.update(inputs)
             if end is not None:
-                economy_graph.apply_action(economy_graph.actions[end])
+                economy_graph.apply_action(economy_graph.actions.all_actions[end])
                 paused = False
 
             if not paused: flash_info.update(inputs)

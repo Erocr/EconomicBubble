@@ -1,11 +1,8 @@
 import simulation_core as core
 from bubble import Bubble
 from PopUps import PopupsContainer
-# import matplotlib.pyplot as plt
-# import numpy as np
 import random
 import curve
-import vec
 from observer import *
 from actions import Actions
 
@@ -113,7 +110,7 @@ class EconomyGraph:
 
         self.type_to_node = {type(node): node for node in self.all_nodes}
         
-        self.actions = Actions(core.TrueCapitalNode, core.WrapNode, core.SoapNode, core.WrapNode, core.PublicDoubtNode, core.InvestorsDoubtNode).actions
+        self.actions = Actions(core.TrueCapitalNode, core.WrapNode, core.SoapNode, core.WrapNode, core.PublicDoubtNode, core.InvestorsDoubtNode)
 
     def quick_simulation_update(self):
         for node in self.nodes:

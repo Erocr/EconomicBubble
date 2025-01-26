@@ -277,3 +277,8 @@ class Actions :
                     PublicDoubtNode: [(PublicDoubtNode.mulValue, 0.45)],
                 },
         }
+        
+        
+
+        self.all_actions = self.actions | self.illegal
+
