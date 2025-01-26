@@ -152,7 +152,7 @@ class EconomyGraph:
         self.multi_curve.draw(view)
 
     def has_exploded(self):
-        return (self.AC._value == 0) or (self.ID._value > 100) or (self.PD._value > 100)
+        return (self.AC._value == 0) or (self.ID._value >= 100) or (self.PD._value > 100)
 
 # def main2():
 #     economy = EconomyGraph()
