@@ -141,7 +141,7 @@ class MarketNode(BaseNode):
     
     def influencedBy(self, parent):
         if type(parent) == PublicDoubtNode:
-            self.tendance = -10 * 2*(parent._value - parent.max_value / 2) / parent.max_value
+            self.tendance += -10 * 2*(parent._value - parent.max_value / 2) / parent.max_value
         
         if type(parent) == EspionageNode:
             if parent.is_click:
