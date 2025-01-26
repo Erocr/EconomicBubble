@@ -41,7 +41,7 @@ pip install curve
 
 **2. Clone this repo into a folder of your choosing**
 
-If you're on Linux or MacOS, open a terminal window and paste one of the commands below.
+Open a terminal window and paste one of the commands below.
 
 If you are not in your desired folder:
 
@@ -68,6 +68,8 @@ If not, you can either go to the folder or use the following command:
 ```
 python3 REPLACE_WITH_FULL_PATH/main.py
 ```
+
+> PRO TIP: If you want to make opening the game easier and you're on MacOS or Linux, make an alias by using ```alias EconomicBubble="python3 REPLACE_WITH_FULL_PATH/main.py".``` Once done, you can simply type ```EconomicBubble``` to run the game. Remember to actually replace "REPLACE_WITH_FULL_PATH" with the full path
 
 If you get a "ModuleNotFound" error when you try to run the game, try to install the missing module(s) by using 
 
