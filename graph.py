@@ -149,8 +149,6 @@ class EconomyGraph:
             public.volatility *= volatility
             public.volatility = core.clamp(public.volatility, 1, 10)
             for investor in investors:
-                investor._value += abs(random.gauss(0, public.volatility)) * notifications
-                investor._value = core.clamp(investor._value, 1, 100)
                 investor.volatility *= volatility
                 investor.volatility = core.clamp(investor.volatility, 1, 10)
 
@@ -183,8 +181,9 @@ class EconomyGraph:
                 return
             string1 = notifications[0] + str(int(notifications[1] * 100)) + "%"
             string2 = notifications[0] + str(int(notifications[2] * 100)) + "%"
-            self.actions.questions[string1] = {self.S1: [(self.S1.right_answer, 1)]}
-            self.actions.questions[string2] = {self.S1: [(self.S1.wrong_answer, 1)]}
+            self.actions.questions[string1] = {core.SecurityNode: [(self.S1.right_answer, 1)]}
+            self.actions.questions[string2] = {core.SecurityNode: [(self.S1.wrong_answer, 1)]}
+            self.actions.all_actions = self.actions.all_actions | self.actions.questions
             self.observer.notify(EVENT_TRIGGER_CHOICES, [string1, string2])
 
         elif event == EVENT_RIGHT_ANSWER:
@@ -211,10 +210,14 @@ class EconomyGraph:
             node.update()
 
         max_invest = 0
-        for investor in self.ID.investors:
-            investor.true_capital = self.TC._value
-            if investor.owned_shares > max_invest:
-                max_invest = investor.owned_shares
+        for node in self.nodes:
+            if type(node) == core.InvestorsDoubtNode:
+                for investor in node.investors:
+                    investor.true_capital = self.TC._value
+                    if investor.owned_shares > max_invest:
+                        max_invest = investor.owned_shares
+                    investor.volatility /= 1.01
+        self.PD.volatility /= 1.01
         self.S1.check_answer = max_invest
 
     def update_visuals(self, view, inputs, observer, paused):

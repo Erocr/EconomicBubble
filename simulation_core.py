@@ -96,8 +96,8 @@ class TrueCapitalNode(BaseNode):
             if self._value > 130:
                 self.observer.notify(EVENT_PLAY_NORMAL, None)
         self.bubble.set_fill_level(1-exp(-1/100000*self._value))
-        self.bills += 0.5
-        self.percentage_bills = getNewValue(self.percentage_bills, 0.01, 2)
+        self.bills += 0.4
+        self.percentage_bills = getNewValue(self.percentage_bills, 0.001, 0.5)
         self._value -= self.bills
 
 
