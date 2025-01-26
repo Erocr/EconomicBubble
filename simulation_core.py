@@ -536,11 +536,17 @@ class SecurityNode(BaseNode):
         super().__init__(bubble, observer)
         self.is_click = False
         self.nb_clicks = 1
-        self.defense_team = []
+        self.defense_team = 0
 
     def quick_update(self):
         if self.bubble.clicked():
             self.is_click = True
+    
+    def add_defense_team(self, val):
+        self.defense_team += val
+
+    def monitor(self, val):
+        print("Not Yet Implemented")
 
     def update(self):
         super().update()
@@ -649,13 +655,9 @@ class Event():
         elif random.random() < self.risk:
             self.burst()
         else:
-            self.risk /= 2
-                
-        self.bubble.set_text(
-            f"Event: Risk to burst {to_readable_int(self._risk)}%"
-        )
+            self.risk = max(self.risk - 0.1, 0)
 
-class Crime(Event):
-    def burst(self):
-        super().burst(self)
-        self.observer.notify(EVENT_CRIME_FOUND, self.risk)
+# class Crime(Event):
+#     def burst(self):
+#         super().burst(self)
+#         self.observer.notify(EVENT_CRIME_FOUND, self.risk)
