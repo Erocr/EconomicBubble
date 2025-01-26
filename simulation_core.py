@@ -2,6 +2,7 @@ import random
 import numpy as np
 from misc import *
 from observer import *
+from math import exp
 
 def getNewValue(value, bonus, max_value):
     clamped_bonus = clamp(bonus, -max_value, max_value)
@@ -51,6 +52,7 @@ class TrueCapitalNode(BaseNode):
         self.bubble.set_text(
             f"True capital {to_readable_int(self._value)}$"
         )
+        self.bubble.set_fill_level(1-exp(-1/1000*self._value))
     
     def influencedBy(self, parent):
         if type(parent) == MarketNode:
