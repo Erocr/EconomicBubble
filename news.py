@@ -14,7 +14,7 @@ news = {
     "Enjoy a hot air balloon trip for two people at a low price !": {},
     "A strange phenomenon: giant soap bubbles invade a beach": {},
     "A toxic bubble discovered in barley fields. Repercussions on the beer industry are to be expected.": {BeerNode: (BeerNode.mulValue, 0.3)},
-    "Soap isn't strong enough anymore, try bleach instead.": {SoapNode : (SoapNode.mulValue, 0.6)},
+    "Soap isn't strong enough anymore, try bleach instead.": {SoapNode : [(SoapNode.mulValue, 0.6), (SoapNode.increment_min_price, -0.15)]},
     "Alcoholism is climbing, investors love you, people blame you.": {},
     "blup, Blup, BLUP ...                          POP !": {},
     "O     °     O     o     0     °     o     O     0     °     o     0     O": {},
@@ -26,7 +26,7 @@ news = {
     "A world record: an author creates a comic strip with 10,000 speech bubbles on a single page !" : {}, 
     "Champagne !" : {},
     "Following the TriPod challenge, swallowing bubble soap becomes the new trend for Gen Zers" : {SoapNode : (SoapNode.mulValue, 1.2)},
-    "A beer enriched with vitamins promises to combine pleasure and well-being" : {BeerNode: (BeerNode.mulValue, 1.3)}
-    
+    "A beer enriched with vitamins promises to combine pleasure and well-being" : {BeerNode: (BeerNode.mulValue, 1.3)},
+    "Five reasons you should start using Bubble Sort in your code (and five why it sucks)" : {},
     
 }

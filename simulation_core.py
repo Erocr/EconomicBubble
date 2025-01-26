@@ -163,6 +163,12 @@ class MarketNode(BaseNode):
     def mulValue(self, val):
         self._value *= val
     
+    def increment_max_price(self, increment):
+        self.max_value += increment
+    
+    def increment_min_price(self, increment):
+        self.min_value += increment
+    
 class SoapNode(MarketNode):
     def __init__(self, bubble, observer):
         super().__init__(bubble, observer)

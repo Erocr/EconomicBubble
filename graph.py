@@ -107,6 +107,8 @@ class EconomyGraph:
         self.S1.addParents([self.Events, self.TC])
         self.Spy.addParents([self.TC])
 
+        self.type_to_node = {type(node): node for node in self.nodes}
+
     def quick_simulation_update(self):
         for node in self.nodes:
             node.quick_update()
@@ -170,10 +172,8 @@ class EconomyGraph:
             node.draw_docs(view)
 
     def apply_action(self, action):
-        for e in self.nodes:
-            if type(e) in action:
-                action[type(e)][0](e, action(type(e))[1])
-            
+        for node_type, (function, arg) in action.values():
+            function(self.type_to_node[node_type], arg)
 
     def has_exploded(self):
         return (self.AC._value == 0) or (self.ID._value >= 100) or (self.PD._value > 100)
