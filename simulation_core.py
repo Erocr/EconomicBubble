@@ -79,6 +79,8 @@ class TrueCapitalNode(BaseNode):
         super().__init__(bubble, observer)
         self._value = 5000
         self.shares = 0 # Ratio of investment, between 0 and 1
+        self.bills = 0
+        self.percentage_bills = 0
     
     def update(self):
         super().update()
@@ -94,6 +96,10 @@ class TrueCapitalNode(BaseNode):
             if self._value > 130:
                 self.observer.notify(EVENT_PLAY_NORMAL, None)
         self.bubble.set_fill_level(1-exp(-1/100000*self._value))
+        self.bills += 0.5
+        self.percentage_bills = getNewValue(self.percentage_bills, 0.01, 2)
+        self._value -= self.bills
+
 
     def influencedBy(self, parent):
         if type(parent) in [SoapNode, BeerNode, WrapNode]:
@@ -199,7 +205,7 @@ class SoapNode(MarketNode):
     def update(self):
         super().update()
         self.bubble.set_text(
-            f"Soap: {to_readable_int(marketPriceIncrement(self.nb_clicks))}$ {to_readable_int(self._value)}$ {self.worker:.1f} tendance {round(self.tendance, 2)}"
+            f"Soap: {to_readable_int(marketPriceIncrement(self.nb_clicks))}$ {to_readable_int(self._value)}$ {self.worker:.1f}"
         )
 class BeerNode(MarketNode):
     def __init__(self, bubble, observer):
@@ -207,7 +213,7 @@ class BeerNode(MarketNode):
     def update(self):
         super().update()
         self.bubble.set_text(
-            f"Beer: {to_readable_int(marketPriceIncrement(self.nb_clicks))}$ {to_readable_int(self._value)}$ {self.worker:.1f} tendance {round(self.tendance, 2)}"
+            f"Beer: {to_readable_int(marketPriceIncrement(self.nb_clicks))}$ {to_readable_int(self._value)}$ {self.worker:.1f}"
         )
 class WrapNode(MarketNode):
     def __init__(self, bubble, observer):
@@ -215,7 +221,7 @@ class WrapNode(MarketNode):
     def update(self):
         super().update()
         self.bubble.set_text(
-            f"Wrap: {to_readable_int(marketPriceIncrement(self.nb_clicks))}$ {to_readable_int(self._value)}$ {self.worker:.1f} tendance {round(self.tendance, 2)}"
+            f"Wrap: {to_readable_int(marketPriceIncrement(self.nb_clicks))}$ {to_readable_int(self._value)}$ {self.worker:.1f}"
         )
 class MarketGroup():
     def __init__(self, markets_nodes):
@@ -319,7 +325,7 @@ class PublicDoubtNode(BaseNode):
     
     def incrementDoubt(self, increment):
         self._value = getNewValue(self._value, increment, 100)
-        self._value = max(self._value, 0)
+        self._value = max(self._value, 1)
     
     def incrementVolatility(self, increment):
         self.volatility = getNewValue(self.volatility, increment, 15)
@@ -388,6 +394,7 @@ class InvestorNode(BaseNode):
         self.bottom_line = self.invested_money * self.volatility
         if self.newest_record * self.interest < self.bottom_line:
             self.disturbed = True
+            self._value *= self.volatility
 
     def draw(self): return
 
@@ -593,9 +600,7 @@ class EspionageNode(BaseNode):
 
     def influencedBy(self, parent):
         if type(parent) == EventNode: # = Crime
-            print("world")
             if self.is_click:
-                print("hello")
                 parent.createEvent()
         
         if type(parent) == TrueCapitalNode:

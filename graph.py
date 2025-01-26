@@ -52,13 +52,13 @@ class EconomyGraph:
                    "Espionnage", (128, 0, 0), (184, 20, 20)), observer
         )  # Espionage
 
-        self.soap_color = (95, 167, 120)
+        self.soap_color = (206, 200, 239)
         self.beer_color = (185, 113, 31)
         self.wrap_color = (246, 108, 164)
 
         self.SoapM = core.SoapNode(
             Bubble(vd.bubble_size_investing, vd.pos_invest_left, vd.default_fill,
-                   "", self.soap_color, (206, 200, 239)), observer
+                   "", self.soap_color, (95, 167, 120)), observer
         )  # Soap Market
 
         self.BeerM = core.BeerNode(
@@ -126,7 +126,25 @@ class EconomyGraph:
 
     def notify(self, event, notifications):
         if event == EVENT_CRIME_FOUND:
-            pass
+            security = self.S1
+            if security.defense_team > 0:
+                security.add_defense_team(-1)
+                (["A crime was discovered!", "You used a legal defense to block it!"],
+                (0, 0, 0))
+            else:
+                public = self.PD
+                doubt = notifications
+                public._value += abs(random.gaussian(0, public.volatility)) * doubt
+                public._value = core.clamp(public._value, 1, 100)
+
+                investors = self.ID.investors
+                for investor in investors:
+                    investor._value += abs(random.gaussian(0, public.volatility)) * doubt
+                    investor._value = core.clamp(public._value, 1, 100)
+                self.observer.notify(EVENT_NEW_POPUP,
+                (["A crime was discovered!", "You've lost the trust of the public!"],
+                (0, 0, 0))
+            )
         elif event == EVENT_INVESTED:
             investor, invested = notifications
             capital = self.TC._value
