@@ -9,7 +9,7 @@ from splash_screen import *
 from end_screen import EndScreen
 from music import *
 from settings import *
-from event_choice import Card
+from event_choice import *
 
 view = View()
 inputs = Inputs()
@@ -35,8 +35,8 @@ while not inputs.quit:
 
     current_state = "splash_screen"
 
-    card1 = Card("kidnap them", "Some investors are not happy about your profit", 0, view)
-    card2 = Card("kill him", "A little boy playing 'bubblemon go' was searching a bubblemon in your base", 1, view)
+    cards = CardsPair("kidnap them", "Some investors are not happy about your profit",
+                      "kill him", "A little boy playing 'bubblemon go' was searching a bubblemon in your base", view)
 
     paused = False
     tutorial = False
@@ -79,8 +79,7 @@ while not inputs.quit:
             flash_info.draw(view)
             popups.draw(view)
             settings.draw(view)
-            card1.draw(view)
-            card2.draw(view)
+            cards.draw(view)
             if tutorial:
                 economy_graph.draw_docs(view)
         

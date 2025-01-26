@@ -1,6 +1,7 @@
 from vec import *
 import pygame as pg
 from observer import *
+import sys
 
 
 class FlashInfo:
@@ -10,7 +11,7 @@ class FlashInfo:
         self.text = ""
         self.scrolling = 0
         self.screenSize = screenSize
-        self.font = pg.font.Font("./fonts/SmoochSans-SemiBold.ttf", 38)
+        self.font = pg.font.Font(sys.path[0] + "/fonts/SmoochSans-SemiBold.ttf", 38)
         self.flash_info_size = Vec(*self.font.size("BREAKING NEWS"))
 
     def update(self, inputs):

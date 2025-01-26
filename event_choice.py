@@ -9,7 +9,6 @@ class Card:
     def __init__(self, action, narration, index, view):
         self.action = action
         self.narration = narration
-        self.is_clicked = False
         self.size = Vec(300, 500)
         self.pos = view.screenSize/2+Vec(-self.size.x*(1-index), -self.size.y/2)
         self.b_pos = self.pos+self.size/Vec(2, 4)
@@ -25,7 +24,26 @@ class Card:
         view.text_centered(self.action, self.b_pos, self.b_rad, (255, 255, 255))
 
     def update(self, inputs):
-        self.is_clicked = inputs.pressed("mouse_left") and dist(inputs.mouse_pos, self.pos) < self.b_rad
-        if self.is_clicked: print("zjfojzdzk elj qijsbmajsd ijb")
+        return inputs.pressed("mouse_left") and dist(inputs.mouse_pos, self.pos) < self.b_rad
+
+
+class CardsPair:
+    def __init__(self, action1, narration1, action2, narration2, view):
+        self.card1 = Card(action1, narration1, 0, view)
+        self.card2 = Card(action2, narration2, 1, view)
+
+    def draw(self, view):
+        self.card1.draw(view)
+        self.card2.draw(view)
+
+    def update(self, inputs):
+        a = self.card1.update(inputs)
+        b = self.card2.update(inputs)
+        if a:
+            return 0
+        elif b:
+            return 1
+        else:
+            return -1
 
 
