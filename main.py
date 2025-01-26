@@ -77,10 +77,10 @@ while not inputs.quit:
                     economy_graph.update_simulation()
 
                 if frames % 1000 == 0:
-                    infoMsg, action = random.choice(news.news)
+                    infoMsg = random.choice(news.news.keys())
                     flash_info.new_msg(infoMsg)
                     observer.notify(EVENT_SOUND, ("news_popup",))
-                    economy_graph.apply_action(action)
+                    economy_graph.apply_action(news.news[infoMsg])
 
                 if economy_graph.has_exploded():
                     current_state = "over"
@@ -91,7 +91,7 @@ while not inputs.quit:
             cards.draw()
             if tutorial:
                 economy_graph.draw_docs(view)
-        
+
         elif current_state == "over":
             endScreen.update(inputs)
             endScreen.draw(view)

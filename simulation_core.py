@@ -456,11 +456,11 @@ class MarketingNode(BaseNode):
             f"Marketing {to_readable_int(priceIncrement(self.nb_clicks))}$ {to_readable_int(self._value)}%"
         )
     
-    # def present_choices():
-    #     first_choice, second_choice = random.sample(actions.actions, 2)
+    # def present_choices(self):
+    #     first_choice, second_choice = random.sample(actions.actions.keys(), 2)
 
-    #     choices = event_choice.Cards()
-        
+    #     self.observer.notify(EVENT_TRIGGER_CHOICES, [first_choice, second_choice])
+
     def influencedBy(self, parent):
         if type(parent) == TrueCapitalNode:
             price = priceIncrement(self.nb_clicks)
