@@ -92,12 +92,14 @@ class EconomyGraph:
         self.AC.addParents([self.TC, self.M1, self.PD])
 
         for node in self.market_nodes:
-            node.addParents([self.PD, self.Spy])
+            node.addParents([self.PD, self.Spy, self.TC])
 
         self.PD.addParents([self.Events, self.ID])
         self.ID.addParents([self.S1, self.Events, self.AC, self.ID])
-        self.M1.addParents([self.S1])
+        self.M1.addParents([self.S1, self.TC])
         self.Events.addParents([self.Spy])
+        self.S1.addParents([self.TC])
+        self.Spy.addParents([self.TC])
 
     def quick_simulation_update(self):
         for node in self.nodes:

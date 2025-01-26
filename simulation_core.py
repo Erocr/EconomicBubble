@@ -43,7 +43,7 @@ class BaseNode:
 class TrueCapitalNode(BaseNode):
     def __init__(self, bubble):
         super().__init__(bubble)
-        self._value = 1000
+        self._value = 10
         self.shares = 0 # Ratio of investment, between 0 and 1
     
     def update(self):
@@ -94,7 +94,10 @@ class ApparentCapitalNode(BaseNode):
 
         if (type(parent) == MarketingNode):
             self.persuade = getNewValue(self.persuade, parent._value/500, 1)
-            self._value = getNewValue(self._value, parent._value/200 * self.true_capital, self.true_capital*10)
+            if self.true_capital == 0:
+                print("aaaaaaaaaaaa")
+            else:
+                self._value = getNewValue(self._value, parent._value/200 * self.true_capital, self.true_capital*10)
 
         if (type(parent) == PublicDoubtNode):
             self.persuade = getNewValue(self.persuade, parent._value/500, 1)
@@ -109,6 +112,7 @@ class MarketNode(BaseNode):
         self.maxmult = 5
         self.name = name
         self.is_click = False
+        self.nb_clicks = 1
 
     def quick_update(self):
         self._value += random.random()/4_000
@@ -120,27 +124,31 @@ class MarketNode(BaseNode):
     def update(self):
         super().update()
 
-        if self.is_click:
-            self.mult += 0.1
-            self.mult = clamp(self.mult, 0, self.maxmult)
-            self.is_click = False
         self._value = clamp(self._value, random.randint(3, 12)/100, random.randint(163, 194)/100)
 
         self.bubble.set_text(
-            f"{self.name} {to_readable_int(self._value)}$ {self.mult:.1f} tendance {round(self.tendance, 2)}"
+            f"{self.name} {to_readable_int(self.nb_clicks ** 2)}$ {to_readable_int(self._value)}$ {self.mult:.1f} tendance {round(self.tendance, 2)}"
         )
     
     def influencedBy(self, parent):
         if type(parent) == PublicDoubtNode:
             self.tendance = -10 * 2*(parent._value - parent.max_value / 2) / parent.max_value
-            # self.tendance
-            # self.tendance = getNewValue(self.tendance, parent._value, 25)
         
         if type(parent) == EspionageNode:
             if parent.is_click:
                 self.maxmult += 0.5
                 self.mult += 0.5
-                parent.is_click = False
+                # parent.is_click = False
+        
+        if type(parent) == TrueCapitalNode:
+            if self.is_click:
+                price = self.nb_clicks ** 2
+                if price <= parent._value:
+                    self.mult += 0.1
+                    self.mult = clamp(self.mult, 0, self.maxmult)
+                    self.nb_clicks += 1
+                    parent._value -= price
+                self.is_click = False
 
 class PublicDoubtNode(BaseNode):
     def __init__(self, bubble):
@@ -260,27 +268,40 @@ class MarketingNode(BaseNode):
     def __init__(self, bubble):
         super().__init__(bubble)
         self.is_click = False
+        self.nb_clicks = 1
 
     def quick_update(self):
         if self.bubble.clicked():
             self.is_click = True
 
     def update(self):
+        super().update()
         self._value = max(0, self._value - 1)
-        if self.is_click:
-            self._value = getNewValue(self._value, 10, 100)
-            self.is_click = False
-            self.debt += 50 + self.true_capital/80
+        # if self.is_click:
+        #     self._value = getNewValue(self._value, 10, 100)
+        #     self.is_click = False
+        #     self.debt += 50 + self.true_capital/80
             # self._value = clamp(self._value, 0, 10_000)
 
         self.bubble.set_text(
-            f"Marketing {to_readable_int(self._value)}%"
+            f"Marketing {to_readable_int(self.nb_clicks ** 2)}$ {to_readable_int(self._value)}%"
         )
+    
+    def influencedBy(self, parent):
+        if type(parent) == TrueCapitalNode:
+            if self.is_click:
+                price = self.nb_clicks ** 2
+                if price <= parent._value:
+                    self._value = getNewValue(self._value, 10, 100)
+                    self.nb_clicks += 1
+                    parent._value -= price
+                self.is_click = False
 
 class SecurityNode(BaseNode):
     def __init__(self, bubble):
         super().__init__(bubble)
         self.is_click = False
+        self.nb_clicks = 1
 
 
     def quick_update(self):
@@ -288,20 +309,31 @@ class SecurityNode(BaseNode):
             self.is_click = True
 
     def update(self):
-        if self.is_click:
-            self._value = getNewValue(self._value, 10, 100)
-            super().update()
-            self.debt += 50 + self.true_capital/80
-            self.is_click = False
+        super().update()
+        # if self.is_click:
+        #     self._value = getNewValue(self._value, 10, 100)
+        #     self.debt += 50 + self.true_capital/80
+        #     self.is_click = False
         
         self.bubble.set_text(
-            f"Security {to_readable_int(self._value)}%"
+            f"Security {to_readable_int(self.nb_clicks ** 2)}$ {to_readable_int(self._value)}%"
         )
+    
+    def influencedBy(self, parent):
+        if type(parent) == TrueCapitalNode:
+            if self.is_click:
+                price = self.nb_clicks ** 2
+                if price <= parent._value:
+                    self._value = getNewValue(self._value, 10, 100)
+                    self.nb_clicks += 1
+                    parent._value -= price
+                self.is_click = False
 
 class EspionageNode(BaseNode):
     def __init__(self, bubble):
         super().__init__(bubble)
         self.is_click = False
+        self.nb_clicks = 1
         
 
     def quick_update(self):
@@ -310,15 +342,26 @@ class EspionageNode(BaseNode):
 
     def update(self):
         self._value = max(0, self._value - 1)
-        if self.is_click:
-            self._value = getNewValue(self._value, 10, 100)
-            self.debt += 50 + self.true_capital/80
-            self.is_click = False
+        super().update()
+        # if self.is_click:
+        #     self._value = getNewValue(self._value, 10, 100)
+        #     self.debt += 50 + self.true_capital/80
+        #     self.is_click = False
             
         
         self.bubble.set_text(
-            f"Espionage {to_readable_int(self._value)}%"
+            f"Espionage {to_readable_int(self.nb_clicks ** 2)}$ {to_readable_int(self._value)}%"
         )
+    
+    def influencedBy(self, parent):
+        if type(parent) == TrueCapitalNode:
+            if self.is_click:
+                price = self.nb_clicks ** 2
+                if price <= parent._value:
+                    self._value = getNewValue(self._value, 10, 100)
+                    self.nb_clicks += 1
+                    parent._value -= price
+                self.is_click = False
 
 class EventNode(BaseNode):
     def __init__(self, bubble):
