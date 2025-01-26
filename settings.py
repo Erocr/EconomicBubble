@@ -46,4 +46,5 @@ class Settings:
                 view.screen.blit(self.music_off, (self.setting_image.get_width(), 0))
             view.screen.blit(self.quit_image, (self.setting_image.get_width()+self.music_off.get_width(), 0))
             view.text_ul("GAME PAUSED", DOWN * self.setting_image.get_height(), 10000)
+            view.text_ul("Hover for explanations", DOWN * (self.setting_image.get_height()+view.font.size(" ")[1]), 10000)
 

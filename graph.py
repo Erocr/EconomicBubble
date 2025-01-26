@@ -74,14 +74,17 @@ class EconomyGraph:
                    "", self.wrap_color, (245, 197, 217)), "Wrap", observer
         )  # Wrap Market
 
+        self.savedValues = []
         self.multi_curve = curve.MultiCurve(vd.multicurve_pos, vd.multicurve_size, 3,
                                             [self.soap_color, self.beer_color, self.wrap_color])
 
         self.market_nodes = [self.SoapM, self.BeerM, self.WrapM]
 
+        self.market = core.MarketGroup(self.market_nodes)
+
         self.influenced_nodes = [
-                                    self.TC, self.AC, self.PD, self.ID, self.Events
-                                ] + self.market_nodes
+                                    self.TC, self.AC, self.PD, self.ID, self.Events, self.market
+                                ]
 
         self.clickable_nodes = [
             self.M1, self.S1, self.Spy
@@ -95,8 +98,7 @@ class EconomyGraph:
         self.TC.addParents([*self.market_nodes, self.ID])
         self.AC.addParents([self.TC, self.M1, self.PD])
 
-        for node in self.market_nodes:
-            node.addParents([self.PD, self.Spy, self.TC])
+        self.market.addParents([self.PD, self.Spy, self.TC])
 
         self.PD.addParents([self.Events, self.ID])
         self.ID.addParents([self.S1, self.Events, self.AC, self.ID])
@@ -109,8 +111,13 @@ class EconomyGraph:
         for node in self.nodes:
             node.quick_update()
 
+    def save_values(self):
+        self.savedValues.append([node._value for node in self.market_nodes])
+
     def update_multigraph(self):
-        self.multi_curve.add_values([node._value for node in self.market_nodes])
+        for e in self.savedValues:
+            self.multi_curve.add_values(e)
+        self.savedValues = []
 
     def check_invest(self, node, observer):
         node = self.ID
@@ -134,14 +141,8 @@ class EconomyGraph:
 
     def update_simulation(self):
         random.shuffle(self.nodes)
-        full_debt = 0
         for node in self.nodes:
-            full_debt += node.debt
-            node.debt = 0
-            node.true_capital = self.TC._value
             node.update()
-        self.TC._value -= full_debt
-        if self.TC._value < 0: self.TC._value = 0
 
     def update_visuals(self, view, inputs, observer, paused):
         for node in self.nodes:
@@ -156,35 +157,4 @@ class EconomyGraph:
             node.draw_docs(view)
 
     def has_exploded(self):
-        return (self.AC._value == 0) or (self.ID._value >= 100) or (self.PD._value >= 100)
-
-# def main2():
-#     economy = EconomyGraph()
-#     time = np.arange(100)
-#     for i in time:
-#         economy.update()
-
-#     i, l = 0, len(economy.nodes)
-#     fig = plt.figure(figsize = [l // 5, 5])
-#     for node in economy.nodes:
-#         ax = plt.subplot(i // 5 + 1, i + 1, i + 1)
-#         ax.plot(time, node.value_history, label = str(node))
-
-#         ax.legend()
-#         i += 1
-#     plt.show()
-
-
-# def main():
-#     economy = EconomyGraph()
-#     time = np.arange(100)
-#     for i in time:
-#         economy.update()
-
-#     for node in economy.nodes:
-#         plt.plot(time, node.value_history, label = str(node))
-
-#     plt.legend()
-#     plt.show()
-
-# main()
+        return (self.AC._value == 0) or (self.ID._value >= 100) or (self.PD._value > 100)
