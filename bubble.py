@@ -46,5 +46,5 @@ class Bubble:
         self.text = text
 
     def set_fill_level(self, fill_level):
-        assert 0 <= fill_level <= 1
+        fill_level = min(1, max(0, fill_level))
         self.fill_level = fill_level
