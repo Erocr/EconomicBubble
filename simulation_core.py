@@ -175,9 +175,13 @@ class MarketNode(BaseNode):
         self.nb_clicks = 1
 
     def quick_update(self):
-        self._value += random.random()/4_000
+        self._value += random.random()/3_300
         self._value += random.gauss(self.tendance, self.volatility*10)/2_000
-        self.tendance /= 1.1
+        if self.tendance < 0:
+            self.tendance /= 1.08
+        else:
+            self.tendance /= 1.1
+
         if self.bubble.clicked():
             self.is_click = True
 
@@ -214,7 +218,7 @@ class SoapNode(MarketNode):
     def update(self):
         super().update()
         self.bubble.set_text(
-            f"Soap: {to_readable_int(marketPriceIncrement(self.nb_clicks))}$ {to_readable_int(self._value)}$ {self.worker:.1f}"
+            f"Soap: {to_readable_int(marketPriceIncrement(self.nb_clicks))}$ {self.worker:.1f}"
         )
 class BeerNode(MarketNode):
     def __init__(self, bubble, observer):
@@ -222,7 +226,7 @@ class BeerNode(MarketNode):
     def update(self):
         super().update()
         self.bubble.set_text(
-            f"Beer: {to_readable_int(marketPriceIncrement(self.nb_clicks))}$ {to_readable_int(self._value)}$ {self.worker:.1f}"
+            f"Beer: {to_readable_int(marketPriceIncrement(self.nb_clicks))}$ {self.worker:.1f}"
         )
 class WrapNode(MarketNode):
     def __init__(self, bubble, observer):
@@ -230,7 +234,7 @@ class WrapNode(MarketNode):
     def update(self):
         super().update()
         self.bubble.set_text(
-            f"Wrap: {to_readable_int(marketPriceIncrement(self.nb_clicks))}$ {to_readable_int(self._value)}$ {self.worker:.1f}"
+            f"Wrap: {to_readable_int(marketPriceIncrement(self.nb_clicks))}$ {self.worker:.1f}"
         )
 class MarketGroup():
     def __init__(self, markets_nodes):
@@ -383,7 +387,7 @@ class InvestorNode(BaseNode):
             res /= self.records[0]
             # print(str(res) + " & ")
             if abs(res) < 1 / self.volatility:
-                self._value *= 1.2; return
+                self._value *= 1.1; return
             if res < 0:
                 self._value *= (1 + abs(res)) * self.volatility / 5
                 self.interest = max(1, self.interest - 0.05)
@@ -429,7 +433,7 @@ class InvestorNode(BaseNode):
             return 0
         if self.disturbed:
             pulled_out = self.invested_money / self.true_capital
-            pulled_out = clamp(self.pulled_out, 0, 1)
+            pulled_out = clamp(pulled_out, 0, 1)
             self.observer.notify(EVENT_PULLED_OUT, [self, pulled_out])
             self.owned_shares = 0
             return pulled_out
@@ -561,7 +565,7 @@ class SecurityNode(BaseNode):
             self.is_click = True
     
     def add_defense_team(self, val):
-        self.defense_team += val
+        self.defense_team += 1
 
     def right_answer(self, val):
         self.observer.notify(EVENT_WRONG_ANSWER, 0)
@@ -571,7 +575,7 @@ class SecurityNode(BaseNode):
 
     def monitor(self, val):
         #print("Not Yet Implemented")
-        string = "Let's see how successful the surveillance was! What share do you think your biggest investor holds?"
+        string = "Let's see how successful the surveillance was! What share do you think your biggest investor holds? \n"
         right_answer = self.check_answer
         wrong_answer = random.random() * 0.8
         self.observer.notify(EVENT_REQUEST_QUESTION, [string, right_answer, wrong_answer])
@@ -655,7 +659,7 @@ class EventNode(BaseNode):
         pass
 
     def createEvent(self):
-        self.events.append(Event(5, 30, 0.8, self.observer))
+        self.events.append(Event(5, 10, 0.6, self.observer))
 
 class Event():
     def __init__(self, TTL, dbt, risk, observer):

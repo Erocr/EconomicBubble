@@ -52,13 +52,13 @@ class EconomyGraph:
                    "Espionnage", (128, 0, 0), (184, 20, 20)), observer
         )  # Espionage
 
-        self.soap_color = (206, 200, 239)
+        self.soap_color = (95, 167, 120)
         self.beer_color = (185, 113, 31)
         self.wrap_color = (246, 108, 164)
 
         self.SoapM = core.SoapNode(
             Bubble(vd.bubble_size_investing, vd.pos_invest_left, vd.default_fill,
-                   "", self.soap_color, (95, 167, 120)), observer
+                   "", (206, 200, 239),self.soap_color), observer
         )  # Soap Market
 
         self.BeerM = core.BeerNode(
@@ -133,8 +133,9 @@ class EconomyGraph:
 
             if security.defense_team > 0:
                 security.add_defense_team(-1)
+                self.observer.notify(EVENT_NEW_POPUP,
                 (["A crime was discovered!", "You used a legal defense!"],
-                (0, 0, 0))
+                (0, 0, 0)))
             else:
                 public._value = min(100, public._value + notifications)
                 for investor in investors:
@@ -146,10 +147,12 @@ class EconomyGraph:
                 volatility = 1.5
             # no matter what, people become very unstable
             public.volatility *= volatility
+            public.volatility = core.clamp(public.volatility, 1, 10)
             for investor in investors:
                 investor._value += abs(random.gauss(0, public.volatility)) * notifications
-                investor._value = core.clamp(public._value, 1, 100)
+                investor._value = core.clamp(investor._value, 1, 100)
                 investor.volatility *= volatility
+                investor.volatility = core.clamp(investor.volatility, 1, 10)
 
         elif event == EVENT_INVESTED:
             investor, invested = notifications
@@ -172,12 +175,35 @@ class EconomyGraph:
             if investor.owned_shares == 0:
                 self.observer.notify(EVENT_NEW_POPUP,
                 (["An investor has left your company!"], (255, 0, 0)))
+
         elif event == EVENT_REQUEST_QUESTION:
-            pass
-        elif event == EVENT_RIGHT_QUESTION:
-            pass
-        elif event == EVENT_WRONG_QUESTION:
-            pass
+            if self.S1.check_answer <= 0:
+                self.observer.notify(EVENT_NEW_POPUP,
+                (["There was nothing interesting."], (0, 0, 0)))
+                return
+            string1 = notifications[0] + str(int(notifications[1] * 100)) + "%"
+            string2 = notifications[0] + str(int(notifications[2] * 100)) + "%"
+            self.actions.questions[string1] = {self.S1: [(self.S1.right_answer, 1)]}
+            self.actions.questions[string2] = {self.S1: [(self.S1.wrong_answer, 1)]}
+            self.observer.notify(EVENT_TRIGGER_CHOICES, [string1, string2])
+
+        elif event == EVENT_RIGHT_ANSWER:
+            public.volatility *= 0.8
+            public.volatility = core.clamp(public.volatility, 1, 10)
+            for investor in investors:
+                investor.volatility *= 0.8
+                investor.volatility = core.clamp(investor.volatility, 1, 10)
+            self.observer.notify(EVENT_NEW_POPUP,
+                (["Right Answer! You are now more stable!"], (0, 0, 0)))
+
+        elif event == EVENT_WRONG_ANSWER:
+            public.volatility *= 1.2
+            public.volatility = core.clamp(public.volatility, 1, 10)
+            for investor in investors:
+                investor.volatility *= 1.2
+                investor.volatility = core.clamp(investor.volatility, 1, 10)
+            self.observer.notify(EVENT_NEW_POPUP,
+                (["Wrong Answer! Better luck next time!"], (0, 0, 0)))
 
     def update_simulation(self):
         random.shuffle(self.nodes)
@@ -207,4 +233,4 @@ class EconomyGraph:
                 function(self.type_to_node[node_type], arg)
 
     def has_exploded(self):
-        return (self.AC._value <= 0) or (self.ID._value >= 100) or (self.PD._value >= 100)
+        return (self.AC._value <= 0) or (self.PD._value >= 100)

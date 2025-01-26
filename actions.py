@@ -250,7 +250,9 @@ class Actions :
             "Legal Defense": {
                 SecurityNode: [(SecurityNode.add_defense_team, 1)]
             } 
-        }   
+        }
+
+        self.questions = {}   
         
-        self.all_actions = self.actions | self.illegal | self.surveillance
+        self.all_actions = self.actions | self.illegal | self.surveillance | self.questions
 
