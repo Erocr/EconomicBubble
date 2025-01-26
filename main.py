@@ -52,16 +52,15 @@ while not inputs.quit:
             popups.update(inputs)
 
             economy_graph.update_visuals(view, inputs, observer, paused)
-            if frames % 10 == 0 and not paused:
-                economy_graph.save_values()
-            
-            if frames % 400 == 0 and not paused:
+
+            if frames % 300 == 0 and not paused:
                 economy_graph.update_multigraph()
 
             if not paused:
                 economy_graph.quick_simulation_update()
 
-            if frames % 50 == 0 and not paused:
+            if frames % 40 == 0 and not paused:
+                economy_graph.save_values()
                 economy_graph.update_simulation()
 
             if frames % 1000 == 0 and not paused:
