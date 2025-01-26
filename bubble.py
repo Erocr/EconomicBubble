@@ -43,3 +43,7 @@ class Bubble:
 
     def set_text(self, text):
         self.text = text
+
+    def set_fill_level(self, fill_level):
+        assert 0 <= fill_level <= 1
+        self.fill_level = fill_level
