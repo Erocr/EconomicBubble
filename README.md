@@ -26,6 +26,7 @@ There are a couple of important metrics:
 - Shown capital: The amount of money your investors and the general public think your company has
 - Public doubt: Represents the amount of skepticism surrounding your company amongst the public
 - Investor doubt: Represents the amount of skepticism surrounding your company amongst the investors
+- The prices of the products you're selling
 
 You lose the game if:
 - Public doubt reaches 100%
