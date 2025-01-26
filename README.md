@@ -41,7 +41,7 @@ pip install curve
 
 **2. Clone this repo into a folder of your choosing**
 
-If you're on Linux or MacOS, open a terminal window and paste one of the commands below.
+Open a terminal window and paste one of the commands below.
 
 If you are not in your desired folder:
 
