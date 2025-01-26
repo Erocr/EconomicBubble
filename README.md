@@ -45,11 +45,15 @@ If you're on Linux or MacOS, open a terminal window and paste one of the command
 
 If you are not in your desired folder:
 
-```git clone https://github.com/Erocr/EconomicBubble REPLACE_THIS_WITH_YOUR_DESTINATION```
+```
+git clone https://github.com/Erocr/EconomicBubble REPLACE_THIS_WITH_YOUR_DESTINATION
+```
 
 if you are in your desired folder:
 
-```git clone https://github.com/Erocr/EconomicBubble```
+```
+git clone https://github.com/Erocr/EconomicBubble
+```
 
 **3. Execute the program**
 
