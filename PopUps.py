@@ -94,5 +94,5 @@ class Popup:
 
     def update(self, inputs):
         self.counter += 1
-        return self.counter > 1000
+        return self.counter > 100
 

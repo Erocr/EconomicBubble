@@ -35,8 +35,9 @@ class BaseNode:
         for node in self.parents:
             self.influencedBy(node)
     
-    def draw(self, view, inputs):
-        self.bubble.update(inputs)
+    def draw(self, view, inputs, paused):
+        if not paused:
+            self.bubble.update(inputs)
         self.bubble.draw(view)
 
     def notify(self, event, notifications):
@@ -94,6 +95,7 @@ class ApparentCapitalNode(BaseNode):
         self.bubble.set_text(
             f"Shown capital {to_readable_int(self._value)}$"
         )
+        self.bubble.set_fill_level(1 - exp(-1 / 1000 * self._value))
 
         self.persuade = clamp(self.persuade, 0, 1)
         self.persuade /= 1.1
@@ -152,8 +154,9 @@ class MarketNode(BaseNode):
                 # parent.is_click = False
         
         if type(parent) == TrueCapitalNode:
+            price = priceIncrement(self.nb_clicks)
+            self.bubble.set_fill_level(parent._value / price)
             if self.is_click:
-                price = priceIncrement(self.nb_clicks)
                 if price <= parent._value:
                     self.mult += 0.1
                     self.mult = clamp(self.mult, 0, self.maxmult)
@@ -175,6 +178,7 @@ class PublicDoubtNode(BaseNode):
         self.bubble.set_text(
             f"Public Doubt {to_readable_int(self._value)}%"
         )
+        self.bubble.set_fill_level(self._value / self.max_value)
 
     def influencedBy(self, parent):
         if type(parent) == MarketingNode:
@@ -250,6 +254,7 @@ class InvestorsDoubtNode(BaseNode):
         self.bubble.set_text(
             f"Investors Doubt {to_readable_int(self._value)}%"
         )
+        self.bubble.set_fill_level(self._value / self.max_value)
 
     def invest(self, shares): 
         # invest only after observing
@@ -286,22 +291,24 @@ class MarketingNode(BaseNode):
             self.is_click = True
 
     def update(self):
+        price = self.nb_clicks ** 2
         super().update()
         self._value = max(0, self._value - 1)
         # if self.is_click:
         #     self._value = getNewValue(self._value, 10, 100)
         #     self.is_click = False
         #     self.debt += 50 + self.true_capital/80
-            # self._value = clamp(self._value, 0, 10_000)
+        #     self._value = clamp(self._value, 0, 10_000)
 
         self.bubble.set_text(
-            f"Marketing {to_readable_int(self.nb_clicks ** 2)}$ {to_readable_int(self._value)}%"
+            f"Marketing {to_readable_int(price)}$ {to_readable_int(self._value)}%"
         )
     
     def influencedBy(self, parent):
         if type(parent) == TrueCapitalNode:
+            price = self.nb_clicks ** 2
+            self.bubble.set_fill_level(parent._value / price)
             if self.is_click:
-                price = self.nb_clicks ** 2
                 if price <= parent._value:
                     self._value = getNewValue(self._value, 10, 100)
                     self.nb_clicks += 1
@@ -332,8 +339,9 @@ class SecurityNode(BaseNode):
     
     def influencedBy(self, parent):
         if type(parent) == TrueCapitalNode:
+            price = self.nb_clicks ** 2
+            self.bubble.set_fill_level(parent._value / price)
             if self.is_click:
-                price = self.nb_clicks ** 2
                 if price <= parent._value:
                     self._value = getNewValue(self._value, 10, 100)
                     self.nb_clicks += 1
@@ -366,8 +374,9 @@ class EspionageNode(BaseNode):
     
     def influencedBy(self, parent):
         if type(parent) == TrueCapitalNode:
+            price = self.nb_clicks ** 2
+            self.bubble.set_fill_level(parent._value / price)
             if self.is_click:
-                price = self.nb_clicks ** 2
                 if price <= parent._value:
                     self._value = getNewValue(self._value, 10, 100)
                     self.nb_clicks += 1
@@ -378,6 +387,7 @@ class EventNode(BaseNode):
     def __init__(self, bubble):
         super().__init__(bubble)
         self.events = []
+        self.bubble.set_fill_level(0)
     
     def update(self):
         super().update()
