@@ -121,6 +121,12 @@ class EconomyGraph:
             self.multi_curve.add_values(e)
         self.savedValues = []
 
+    def notify(self, event, notifications):
+        if event == EVENT_CRIME_FOUND:
+            pass
+        if event == EVENT_INVESTED:
+                        
+
     def check_invest(self, node, observer):
         node = self.ID
         capital = self.TC._value
@@ -176,4 +182,4 @@ class EconomyGraph:
             function(self.type_to_node[node_type], arg)
 
     def has_exploded(self):
-        return (self.AC._value == 0) or (self.ID._value >= 100) or (self.PD._value > 100)
+        return (self.AC._value <= 0) or (self.ID._value >= 100) or (self.PD._value >= 100)

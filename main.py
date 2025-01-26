@@ -27,6 +27,7 @@ while not inputs.quit:
     observer.add_observable(popups)
     observer.add_observable(flash_info)
     observer.add_observable(music)
+    observer.add_observable(economy_graph)
 
     splash_screen = SplashScreen(view.screenSize)
     settings = Settings()
@@ -58,7 +59,7 @@ while not inputs.quit:
 
             end = cards.update(inputs)
             if end is not None:
-                economy_graph.apply_action(end)
+                economy_graph.apply_action(actions.actions[end])
             if not paused:
                 paused = cards.actif()
 

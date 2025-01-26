@@ -37,6 +37,9 @@ class BaseNode:
     def quick_update(self):
         pass
 
+    def mulValue(self, val):
+        self._value *= val
+
     def update(self):
         for node in self.parents:
             self.influencedBy(node)
@@ -103,6 +106,9 @@ class TrueCapitalNode(BaseNode):
             self.shares = clamp(self.shares, 0, 0.8)
             self._value /= (1 - self.shares)
 
+    def incrementCapital(self, increment):
+        self._value += increment
+
 class ApparentCapitalNode(BaseNode):
     doc = """Shown Capital : the capital you show to other people, you better lie very well if you want to make them invest"""
     def __init__(self, bubble, observer):
@@ -119,7 +125,7 @@ class ApparentCapitalNode(BaseNode):
         self.bubble.set_fill_level(1 - exp(-1 / 1000 * self._value))
 
         self.persuade = clamp(self.persuade, 0, 1)
-        self.persuade /= 1.1
+        self.persuade /= 1.01
         self._value = max(self._value, self.true_capital + random.randint(12, 102))
         
     def influencedBy(self, parent):
@@ -414,6 +420,10 @@ class InvestorsDoubtNode(BaseNode):
             # self._value = getNewValue()
             pass
 
+    def mulValue(self, val):
+        for investor in self.investors:
+            investor._value *= val
+
     def update(self):
         super().update()
 
@@ -577,8 +587,7 @@ class Event():
     
     def burst(self):
         self.alive = False
-        self.observer.notify(EVENT_EVENT_BURST, self.doubt)
-        
+        self.observer.notify(EVENT_EVENT_BURST, self.doubt)    
 
     def update(self):
         self.time_to_live -= 1
@@ -590,6 +599,10 @@ class Event():
             self.risk /= 2
                 
         self.bubble.set_text(
-            f"Event {to_readable_int(self._value)}$"
+            f"Event: Risk to burst {to_readable_int(self._risk)}%"
         )
 
+class Crime(Event):
+    def burst(self):
+        super().burst(self)
+        
