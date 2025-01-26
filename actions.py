@@ -240,14 +240,17 @@ class Actions :
                     TrueCapitalNode: [(TrueCapitalNode.mulValue, 1.6)],
                     BeerNode: [(BeerNode.mulValue, 1.6)],
                     PublicDoubtNode: [(PublicDoubtNode.mulValue, 0.45)],
-                },
-                "Surveillance": {
-                    SecurityNode: [(SecurityNode.monitor, 0)]
-                },
-                "Legal Defense": {
-                    SecurityNode: [(SecurityNode.add_defense_team, 1)]
                 }
-        }        
+        }
 
-        self.all_actions = self.actions | self.illegal
+        self.surveillance =  {
+            "Surveillance": {
+                SecurityNode: [(SecurityNode.monitor, 0)]
+            },
+            "Legal Defense": {
+                SecurityNode: [(SecurityNode.add_defense_team, 1)]
+            } 
+        }   
+        
+        self.all_actions = self.actions | self.illegal | self.surveillance
 
