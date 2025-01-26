@@ -10,6 +10,7 @@ from end_screen import EndScreen
 from music import *
 from settings import *
 from event_choice import *
+from actions import actions
 
 view = View()
 inputs = Inputs()
@@ -59,7 +60,7 @@ while not inputs.quit:
 
             end = cards.update(inputs)
             if end is not None:
-                economy_graph.apply_action(actions.actions[end])
+                economy_graph.apply_action(actions[end])
             if not paused:
                 paused = cards.actif()
 

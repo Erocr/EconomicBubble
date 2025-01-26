@@ -1,4 +1,5 @@
 from graph import *
+from simulation_core import *
 
 '''List of actions
     Each element is a list with :
@@ -93,17 +94,16 @@ actions = {
     # (Effect: WrapNode - 6%, SoapNode - 4%, TrueCapitalNode - 2%, PublicDoubtNode + 3%)
 
     "You start selling 'soap-scented' beer that's supposed to be the perfect pairing for your soap products, but it's actually just a cheap gimmick":
-    {BeerNode: [(BeerNode.mulValue, 1.03)],
-     SoapNode: [(SoapNode.mulValue, 0.99)],
+    {BeerNode: [(BeerNode.mulValue, 1.10)],
+     SoapNode: [(SoapNode.mulValue, 1.10)],
      WrapNode: [(WrapNode.mulValue, 0.98)],
      TrueCapitalNode: [(TrueCapitalNode.mulValue, 0.98)]},
     # (Effect: BeerNode + 3%, SoapNode - 1%, WrapNode - 2%, TrueCapitalNode - 2%)
 
     "You try to create a new market trend by selling bubble wrap as a luxury item, but people are like 'meh, I can just buy regular bubble wrap for cheaper'":
-    {WrapNode: [(WrapNode.mulValue, 1.02)],
-     SoapNode: [(SoapNode.mulValue, 0.97)],
-     TrueCapitalNode: [(TrueCapitalNode.mulValue, 0.99)],
-     PublicDoubtNode: [(PublicDoubtNode.mulValue, 0.99)]},
+    {WrapNode: [(WrapNode.mulValue, 0.87)],
+     TrueCapitalNode: [(TrueCapitalNode.mulValue, 1.03)],
+     PublicDoubtNode: [(PublicDoubtNode.mulValue, 0.94)]},
     # (Effect: WrapNode + 2%, SoapNode - 3%, TrueCapitalNode - 1%, PublicDoubtNode - 1%)
 
     "You partner with a social media influencer to promote your soap products, but they're actually just posting pictures of themselves wrapped in bubble wrap":

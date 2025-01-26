@@ -134,12 +134,6 @@ class EconomyGraph:
             )
             investor.invested_money += investor.invested * capital
 
-    def check_invest(self, node, observer):
-        node = self.ID
-        capital = self.TC._value
-        for investor in node.investors:
-            if investor.invested > 0:
-
     def check_pullout(self, node, observer):
         node = self.ID
         capital = self.TC._value
@@ -169,7 +163,7 @@ class EconomyGraph:
         for node in self.nodes:
             node.draw(view, inputs, paused)
             if not paused:
-                self.check_invest(node, observer)
+                #self.check_invest(node, observer)
                 self.check_pullout(node, observer)
         self.multi_curve.draw(view)
 

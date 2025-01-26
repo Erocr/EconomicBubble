@@ -143,6 +143,13 @@ class ApparentCapitalNode(BaseNode):
 
         if (type(parent) == PublicDoubtNode):
             self.persuade = getNewValue(self.persuade, parent._value/500, 1)
+    
+    def incrementCapital(self, increment):
+        self._value += increment
+    
+    def incrementPersuasion(self, increment): # must be positive, between 0 and 1
+        self.persuade = getNewValue(self.persuade, increment, 1)
+        self.persuade = max(self.persuade, 0)
 
 class MarketNode(BaseNode):
     doc = """Choose wisely where you invest. If the bubble is filled, you can buy.\nLook at the graph.\nExplanations? Become a trader."""
@@ -174,6 +181,10 @@ class MarketNode(BaseNode):
     
     def increment_min_price(self, increment):
         self.min_value += increment
+    
+    def incrementTendance(self, increment):
+        self.tendance += increment
+
     
 class SoapNode(MarketNode):
     def __init__(self, bubble, observer):
@@ -291,6 +302,13 @@ class PublicDoubtNode(BaseNode):
     def notify(self, event, notifications):
         if event == EVENT_EVENT_BURST:
             self._value = min(100, self._value + notifications)
+    
+    def incrementDoubt(self, increment):
+        self._value = getNewValue(self._value, increment, 100)
+        self._value = max(self._value, 0)
+    
+    def incrementVolatility(self, increment):
+        self.volatility = getNewValue(self.volatility, increment, 15)
 
 class InvestorNode(BaseNode):
     def __init__(self, bubble, observer):
