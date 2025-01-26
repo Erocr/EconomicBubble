@@ -142,7 +142,7 @@ class ApparentCapitalNode(BaseNode):
             self.persuade = getNewValue(self.persuade, parent._value/500, 1)
 
 class MarketNode(BaseNode):
-    doc = """Choose wisely where you invest. Look at the graph.\nExplanations? Become a trader."""
+    doc = """Choose wisely where you invest. If the bubble is filled, you can buy.\nLook at the graph.\nExplanations? Become a trader."""
     def __init__(self, bubble, name, observer):
         super().__init__(bubble, observer)
         self._value = 1
