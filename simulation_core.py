@@ -63,7 +63,6 @@ class BaseNode:
     def test_hover(self, inputs):
         return dist(inputs.mouse_pos, self.bubble.center) < self.bubble.radius
 
-
     def notify(self, event, notifications):
         """ notifications doit etre de la forme (type_du_noeud, valeur_a_ajouter) """
         pass
@@ -192,12 +191,11 @@ class MarketGroup():
 
     def draw(self, view, inputs, paused):
         for market_node in self.market_nodes:
-            if not paused:
-                market_node.bubble.update(inputs)
-            market_node.bubble.draw(view)
+            market_node.draw(view, inputs, paused)
 
     def draw_docs(self, view):
-        pass
+        for node in self.market_nodes:
+            node.draw_docs(view)
     
     def influencedBy(self, parent):
         if type(parent) == PublicDoubtNode:
