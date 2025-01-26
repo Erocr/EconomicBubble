@@ -48,6 +48,8 @@ class BaseNode:
         #     self._value += notifications[1]
 
 class TrueCapitalNode(BaseNode):
+    doc = """Your True Capital, what you truly have, the money you can actually spend.
+             Nobody knows it. It's your darkest secret."""
     def __init__(self, bubble, observer):
         super().__init__(bubble, observer)
         self._value = 10
@@ -84,6 +86,7 @@ class TrueCapitalNode(BaseNode):
         return f"test"
 
 class ApparentCapitalNode(BaseNode):
+    doc = """Shown Capital : the capital you show to other people, you better lie very well if you want to make them invest"""
     def __init__(self, bubble, observer):
         super().__init__(bubble, observer)
         self._value = 1000
@@ -167,6 +170,8 @@ class MarketNode(BaseNode):
                 self.is_click = False
 
 class PublicDoubtNode(BaseNode):
+    doc = """Public Doubt : if the public loves you, we love you.
+             If Public doubt is a 100%, you're over."""
     def __init__(self, bubble, observer):
         super().__init__(bubble, observer)
         self.max_value = 100
@@ -198,6 +203,9 @@ class PublicDoubtNode(BaseNode):
             self._value = min(100, self._value + notifications)
         
 class InvestorsDoubtNode(BaseNode):
+    doc = """Investor Doubt : investors will fund you. Don't make them leave.
+             If you show consitent growth, they will take interest in you.
+             If Investor doubt is a 100%, you're over."""
     def __init__(self, bubble, observer):
         super().__init__(bubble, observer)
         self.max_value = 100
@@ -288,6 +296,8 @@ class InvestorsDoubtNode(BaseNode):
         return 0
 
 class MarketingNode(BaseNode):
+    doc = """Marketing : invest a ton into marketing and your public will love you. And investors will think your very rich.
+             Your apparent capital will go up."""
     def __init__(self, bubble, observer):
         super().__init__(bubble, observer)
         self.is_click = False
@@ -324,6 +334,7 @@ class MarketingNode(BaseNode):
                 self.is_click = False
 
 class SecurityNode(BaseNode):
+    doc = """Security : diminishes the probability of getting caught doing criminal activities"""
     def __init__(self, bubble, observer):
         super().__init__(bubble, observer)
         self.is_click = False
@@ -358,6 +369,8 @@ class SecurityNode(BaseNode):
                 self.is_click = False
 
 class EspionageNode(BaseNode):
+    doc = """Espionage : this is a criminal activity. Big risk, big reward. It's up to you.
+             Try not to trail behind the competition."""
     def __init__(self, bubble, observer):
         super().__init__(bubble, observer)
         self.is_click = False
