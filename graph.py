@@ -7,7 +7,7 @@ import random
 import curve
 import vec
 from observer import *
-
+from actions import Actions
 
 class EconomyGraph:
     def __init__(self, visual_data, observer):
@@ -112,6 +112,8 @@ class EconomyGraph:
         self.Spy.addParents([self.TC])
 
         self.type_to_node = {type(node): node for node in self.all_nodes}
+        
+        self.actions = Actions(core.TrueCapitalNode, core.WrapNode, core.SoapNode, core.WrapNode, core.PublicDoubtNode, core.InvestorsDoubtNode).actions
 
     def quick_simulation_update(self):
         for node in self.nodes:
@@ -176,6 +178,7 @@ class EconomyGraph:
             node.draw_docs(view)
 
     def apply_action(self, action):
+        # print(self.type_to_node)
         for node_type, actions in action.items():
             for function, arg in actions:
                 function(self.type_to_node[node_type], arg)

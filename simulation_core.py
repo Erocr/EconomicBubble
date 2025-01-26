@@ -507,7 +507,7 @@ class MarketingNode(BaseNode):
                     self._value = getNewValue(self._value, 10, 100)
                     self.nb_clicks += 1
                     parent._value -= price
-                self.present_choices()
+                    self.present_choices()
                 self.is_click = False
 
 class SecurityNode(BaseNode):

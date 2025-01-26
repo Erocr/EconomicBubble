@@ -57,11 +57,12 @@ while not inputs.quit:
                 paused = settings.activated
                 tutorial = settings.activated
 
+            if not paused and cards.actif():
+                paused = True
             end = cards.update(inputs)
             if end is not None:
                 economy_graph.apply_action(economy_graph.actions[end])
-            if not paused:
-                paused = cards.actif()
+                paused = False
 
             if not paused: flash_info.update(inputs)
             popups.update(inputs)
