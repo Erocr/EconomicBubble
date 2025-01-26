@@ -49,12 +49,18 @@ class View:
         im = self.font.render(msg, False, color)
         self.screen.blit(im, pos.get)
 
-    def renders(self, msg, width, color=(255, 255, 255)):
+    def renders(self, msg, width, color):
+        res = []
+        for line in msg.split("\n"):
+            res += self.render_line(line, width, color)
+        return res
+
+    def render_line(self, msg, width, color=(255, 255, 255)):
         messages = msg.split(" ")
         images = []
         line = " " + messages[0]
         for i in range(1, len(messages)):
-            count = self.font.size(line)[0]
+            count = self.font.size(line + " " + messages[i])[0]
             if count > width:
                 images.append(self.font.render(line[1:], True, color))
                 line = ""

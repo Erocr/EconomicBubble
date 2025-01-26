@@ -3,6 +3,7 @@ import numpy as np
 from misc import *
 from observer import *
 from math import exp
+from vec import *
 
 def getNewValue(value, bonus, max_value):
     clamped_bonus = clamp(bonus, -max_value, max_value)
@@ -12,6 +13,7 @@ def priceIncrement(n: int):
     return n**3
 
 class BaseNode:
+    doc = "It's something clickable, maybe"
     def __init__(self, bubble, observer):
         self._value = 0
         self.volatility = 5
@@ -21,6 +23,7 @@ class BaseNode:
         self.true_capital = 1_000
         self.debt = 0
         self.observer = observer
+        self.hover = False
     
     def addParent(self, node):
         self.parents.append(node)
@@ -40,6 +43,17 @@ class BaseNode:
         if not paused:
             self.bubble.update(inputs)
         self.bubble.draw(view)
+        self.hover = self.test_hover(inputs)
+
+    def draw_docs(self, view):
+        if self.hover:
+            size_x = 300
+            view.rect(self.bubble.center+DOWN*self.bubble.radius+LEFT*size_x/2, Vec(size_x, 100), (0, 0, 0))
+            view.text(self.doc, self.bubble.center+DOWN*self.bubble.radius, size_x, (255, 255, 255))
+
+    def test_hover(self, inputs):
+        return dist(inputs.mouse_pos, self.bubble.center) < self.bubble.radius
+
 
     def notify(self, event, notifications):
         """ notifications doit etre de la forme (type_du_noeud, valeur_a_ajouter) """

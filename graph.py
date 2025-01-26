@@ -151,8 +151,12 @@ class EconomyGraph:
                 self.check_pullout(node, observer)
         self.multi_curve.draw(view)
 
+    def draw_docs(self, view):
+        for node in self.nodes:
+            node.draw_docs(view)
+
     def has_exploded(self):
-        return (self.AC._value == 0) or (self.ID._value >= 100) or (self.PD._value > 100)
+        return (self.AC._value == 0) or (self.ID._value >= 100) or (self.PD._value >= 100)
 
 # def main2():
 #     economy = EconomyGraph()
