@@ -21,9 +21,11 @@ class Settings:
         self.quit_image = pg.transform.scale(self.quit_image, (50, 50))
 
     def update(self, inputs, music):
+        """ return if it changes the activated """
         if (inputs.pressed("mouse_left") and
                 dist(Vec(*self.setting_image.get_size())/2, inputs.mouse_pos) < self.setting_image.get_width()/2):
             self.activated = not self.activated
+            return True
         music_pos = Vec(*self.setting_image.get_size()) * Vec(1, 0) + Vec(*self.music_on.get_size()) / 2
         if (self.activated and inputs.pressed("mouse_left") and
                 dist(music_pos, inputs.mouse_pos) < self.music_on.get_width()/2):
@@ -36,6 +38,7 @@ class Settings:
         if (self.activated and inputs.pressed("mouse_left") and
                 dist(quit_pos, inputs.mouse_pos) < self.music_on.get_width() / 2):
             inputs.quit = True
+        return False
 
     def draw(self, view):
         view.screen.blit(self.setting_image, (0, 0))
