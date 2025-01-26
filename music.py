@@ -31,7 +31,6 @@ class Music:
 
     def hardstop(self):
         pg.mixer.music.stop()
-        self.activated = False
 
     def sound(self, sound):
         if self.activated:
@@ -55,7 +54,9 @@ class Music:
         elif event == EVENT_PLAY_CRITICAL:
             self.play_critical = True
 
-    def update(self):
+    def update(self, inputs):
+        if inputs.pressed("mouse_left"):
+            self.sound("menu_click")
         if self.play_normal and (not self.play_critical) and (not self.playing_normal):
             self.hardstop()
             self.play('normal')
