@@ -11,7 +11,7 @@ news = [
     ["Enjoy a hot air balloon trip for two people at a low price !"],
     ["A strange phenomenon: giant soap bubbles invade a beach"],
     ["A toxic bubble discovered in barley fields. Repercussions on the beer industry are to be expected.", {0: -0.7}],
-    ["Soap isn't strong enough anymore, try bleach instead.", {0 : -0.4}],
+    ["Soap isn't strong enough anymore, try bleach instead.", {"MarketNode" : -0.4}],
     ["Alcoholism is climbing, investors love you, people blame you."],
     ["blup, Blup, BLUP ...                          POP !"],
     ["O     °     O     o     0     °     o     O     0     °     o     0     O"],

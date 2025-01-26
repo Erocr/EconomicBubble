@@ -11,13 +11,23 @@ from settings import *
 
 view = View()
 inputs = Inputs()
+music = Music()
+
 visual_data = VisualData(view)
 economy_graph = EconomyGraph(visual_data)
+
 flash_info = FlashInfo(view.screenSize)
-clock = pg.time.Clock()
+popups = PopupsContainer()
+
+observer = Observer()
+observer.add_observable(popups)
+observer.add_observable(flash_info)
+observer.add_observable(music)
+
 splash_screen = SplashScreen(view.screenSize)
-music = Music()
 settings = Settings()
+
+clock = pg.time.Clock()
 
 current_state = "splash_screen"
 
@@ -33,8 +43,9 @@ while not inputs.quit:
     elif current_state == "game":
         settings.update(inputs, music)
         flash_info.update(inputs)
+        popups.update(inputs)
 
-        economy_graph.update_visuals(view, inputs)
+        economy_graph.update_visuals(view, inputs, observer)
         if frames % 10 == 0:
             economy_graph.update_multigraph()
         
@@ -45,9 +56,10 @@ while not inputs.quit:
 
         if frames % 1000 == 0:
             flash_info.new_msg(random.choice(news.news)[0])
-            music.sound("news_popup")
+            observer.notify(EVENT_SOUND, ("news_popup",))
 
         flash_info.draw(view)
+        popups.draw(view)
         settings.draw(view)
     view.flip()
 

@@ -1,6 +1,7 @@
 import random
 import numpy as np
 from misc import *
+from observer import *
 
 def getNewValue(value, bonus, max_value):
     clamped_bonus = clamp(bonus, -max_value, max_value)
@@ -33,6 +34,11 @@ class BaseNode:
     def draw(self, view, inputs):
         self.bubble.update(inputs)
         self.bubble.draw(view)
+
+    def notify(self, event, notifications):
+        """ notifications doit etre de la forme (type_du_noeud, valeur_a_ajouter) """
+        if event == EVENT_ADD_VALUE_NODE and type(self).__name__ == notifications[0]:
+            self._value += notifications[1]
 
 class TrueCapitalNode(BaseNode):
     def __init__(self, bubble):
@@ -80,7 +86,7 @@ class ApparentCapitalNode(BaseNode):
 
         self.persuade = clamp(self.persuade, 0, 1)
         self.persuade /= 1.1
-        print(f"{self.persuade = }")
+        # print(f"{self.persuade = }")
         
     def influencedBy(self, parent):
         if (type(parent) == TrueCapitalNode):
@@ -121,7 +127,7 @@ class MarketNode(BaseNode):
         self._value = clamp(self._value, random.randint(3, 12)/100, random.randint(163, 194)/100)
 
         self.bubble.set_text(
-            f"{self.name} {to_readable_int(self._value)}$ {self.mult:.1f} tendance {self.tendance}"
+            f"{self.name} {to_readable_int(self._value)}$ {self.mult:.1f} tendance {round(self.tendance, 2)}"
         )
     
     def influencedBy(self, parent):

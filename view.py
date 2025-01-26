@@ -207,16 +207,19 @@ class View:
             return floor(nb/error) * error
 
     def axis(self, pos, size, var_y, center, min_y, max_y):
-        possible_values = (1, 5, 10, 25, 20, 100, 200)
+        possible_values = (0.1, 0.5, 1, 5, 10, 25, 20, 100, 200)
         value = 500
         for v in possible_values:
             if v * 20 > max_y - min_y:
                 value = v
                 break
-        for y in range(self.round(min_y, value, True), int(max_y), value):
+        y = round(self.round(min_y, value, True), 1)
+        while y < max_y:
             p1 = (pos.x, pos.y + self.relative_pos_y(var_y, y, center, size).y)
             p2 = (pos.x + 10, p1[1])
             pg.draw.line(self.screen, (255, 255, 255), p1, p2)
             text = self.mini_font.render(str(y), True, (255, 255, 255))
             self.screen.blit(text, (Vec(*p2) + RIGHT*10 +
                              UP * text.get_height()/2).get)
+            y += value
+            y = round(y, 1)

@@ -1,5 +1,6 @@
 import sys
 import pygame as pg
+from observer import *
 
 
 class Music:
@@ -31,6 +32,10 @@ class Music:
     def unpause(self):
         pg.mixer.music.unpause()
         self.activated = True
+
+    def notify(self, event, notifications):
+        if event == EVENT_SOUND:
+            self.sound(notifications[0])
 
 
 
