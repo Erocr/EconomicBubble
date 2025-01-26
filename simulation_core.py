@@ -75,10 +75,10 @@ class TrueCapitalNode(BaseNode):
         elif type(parent) == InvestorsDoubtNode:
             self._value *= (1 - self.shares)
             if parent._value < 0.5 * parent.max_value:
-                if self.shares < 0.8 and parent.interest > 1.1:
+                if self.shares < 0.8:
                     self.shares += parent.invest(self.shares)
             else:
-                self.shares -= parent.pullout(self.shares)
+                self.shares -= parent.pullout()
             self.shares = clamp(self.shares, 0, 0.8)
             self._value /= (1 - self.shares)
     
@@ -88,9 +88,9 @@ class TrueCapitalNode(BaseNode):
 class ApparentCapitalNode(BaseNode):
     def __init__(self, bubble, observer):
         super().__init__(bubble, observer)
-        self._value = 1000
+        self._value = 10
         self.persuade = 0.5
-        self.true_capital = 100
+        self.true_capital = 10
 
     def update(self):
         super().update() 
@@ -180,7 +180,7 @@ class MarketGroup():
         if type(parent) == EspionageNode:
             if parent.is_click:
                 for market_node in self.market_nodes:
-                    market_node._value += 0.5
+                    market_node.worker += 0.5
 
         if type(parent) == TrueCapitalNode:
             for market_node in self.market_nodes:
@@ -208,7 +208,7 @@ class PublicDoubtNode(BaseNode):
     
     def update(self):
         super().update()
-        self._value -= 0.05
+        self._value -= 0.1
         self._value += random.gauss(0, self.volatility/500)
         self._value = clamp(self._value, 0, self.max_value)
 
@@ -242,13 +242,16 @@ class InvestorNode(BaseNode):
         self.invested = 0
         self.pulled_out = 0
         self.interest = 1
+        self.new_join = True
+        self.owned_shares = 0
 
-        self.observing_for = random.randint(7, 14)
+        self.observing_for = random.randint(6, 8)
         self.records = []
 
     def setObsPeriod(self, val1, val2, keepHistory=0):
         new_obs_period = random.randint(val1, val2) * self.interest
-        self.observing_for = new_obs_period
+        new_obs_period /= (self.volatility / 5)
+        self.observing_for = int(new_obs_period)
         if keepHistory > len(self.records): return
         if keepHistory == 0: self.records = []
         else: self.records = self.records[-keepHistory : -1]
@@ -275,10 +278,10 @@ class InvestorNode(BaseNode):
                 if self._value > 75: self.setObsPeriod(3, 5)
             else:
                 if self.observing_for < 7:
-                    self.setObsPeriod(7, 14)
+                    self.setObsPeriod(6, 8)
                 else:
                     last_point = random.randint(0, self.observing_for)
-                    self.setObsPeriod(3, 5, keepHistory=last_point)
+                    self.setObsPeriod(6, 8, keepHistory=last_point)
                 self.interest = min(1.5, self.interest + 0.05)
                 self._value /= (1 + res)
 
@@ -291,25 +294,29 @@ class InvestorNode(BaseNode):
 
     def invest(self, shares): 
         # invest only after observing
-        if len(self.records) < self.observing_for or self.invested > 0: 
+        if len(self.records) < self.observing_for or self.invested > 0 \
+                                                  or self.interest < 1.1: 
             return 0
         if random.random() * 100 > self._value:
             self.invested = random.random() * (0.8 - shares) / 2.5
             self.invested *= self.interest
             self.invested *= (1 - self._value / 100)
             if self.invested * 100 < 1: self.invested = 0
+            self.owned_shares += self.invested
             return self.invested
         return 0
 
-    def pullout(self, shares):
+    def pullout(self):
         # pullout if doubt starts to grow
-        if len(self.records) < self.observing_for or self.pulled_out > 0:
+        if len(self.records) < self.observing_for or self.pulled_out > 0 \
+                            or (self.interest > 1.4 and self._value < 70):
             return 0
         if random.random() * 100 < self._value:
-            self.pulled_out = random.random() * shares / 2
+            self.pulled_out = random.random() * self.owned_shares / 2
             self.pulled_out /= self.interest
             self.pulled_out *= self._value / 100
             if self.pulled_out * 100 < 1: self.pulled_out = 0
+            self.owned_shares -= self.pulled_out
             return self.pulled_out
         return 0
 
@@ -317,54 +324,14 @@ class InvestorsDoubtNode(BaseNode):
     def __init__(self, bubble, observer):
         super().__init__(bubble, observer)
         self.max_value = 100
-        # the investors observe for some time, which helps
-        # then calculate how much they doubt you, as well as
-        # how interested they are
-        self.invested = 0
-        self.pulled_out = 0
-        self.interest = 1
-
-        self.observing_for = 14
-        self.records = []
-
-    def all_eyes_on(self):
-        self.observing_for = 6
-        self.records = []
-    
-    def stop_watching(self):
-        self.observing_for = 14
-        self.records = []
-
-    def record(self, value):
-        if len(self.records) > 0:
-            newavg = self.records[-1] * len(self.records)
-            newavg = (newavg + value) / (len(self.records) + 1)
-        else: newavg = value
-        self.records.append(newavg)
-        # print(str(self._value) + ", " + str(newavg))
-
+        # our group of investors
+        self.investors = []
 
     def influencedBy(self, parent):
         if type(parent) == ApparentCapitalNode:
-            self.record(parent._value)
-            # once enough info is given:
-            if len(self.records) > self.observing_for:
-                res = self.records[-1] - self.records[0] 
-                res /= self.records[0]
-                # print(str(res) + " & ")
-                if abs(res) < 1 / self.volatility:
-                    self._value *= 1.01; return
-                if res < 0:
-                    self._value *= (1 + abs(res))
-                    self.interest = max(1, self.interest - 0.05)
-                    if self._value > 75: self.all_eyes_on()
-                else:
-                    if self.observing_for == 3:
-                        self.stop_watching()
-                    else: 
-                        self.records = self.records[1:]
-                    self.interest = min(1.5, self.interest + 0.05)
-                    self._value /= (1 + res)
+            for investor in self.investors:
+                investor.record(parent._value)
+                investor.determine()
 
         if type(parent) == EventNode:
             # self._value = getNewValue()
@@ -373,38 +340,33 @@ class InvestorsDoubtNode(BaseNode):
     def update(self):
         super().update()
 
-        self._value += random.gauss(0, 1) * self.volatility
-        self._value -= 0.05
-        self._value = clamp(self._value, 1, 100)
+        if len(self.investors) > 0:
+            investor_doubt = []
+            for investor in self.investors:
+                investor.update()
+                investor_doubt.append(investor._value)
+            self._value = np.mean(investor_doubt)
+            self._value = clamp(self._value, 1, 100)
+
+        if len(self.investors) < 10:
+            if random.random() * 100 > self._value:
+                new_investor = InvestorNode(self.bubble, self.observer)
+                self.investors.append(new_investor)
 
         self.bubble.set_text(
             f"Investors Doubt {to_readable_int(self._value)}%"
         )
         self.bubble.set_fill_level(self._value / self.max_value)
 
-    def invest(self, shares): 
-        # invest only after observing
-        if len(self.records) < self.observing_for or self.invested > 0: 
-            return 0
-        if random.random() * 100 > self._value:
-            self.invested = random.random() * (0.8 - shares) / 2.5
-            self.invested *= self.interest
-            self.invested *= (1 - self._value / 100)
-            if self.invested * 100 < 1: self.invested = 0
-            return self.invested
-        return 0
+    def invest(self, shares):
+        if len(self.investors) <= 0: return 0
+        random.shuffle(self.investors)
+        return self.investors[0].invest(shares)
 
-    def pullout(self, shares):
-        # pullout if doubt starts to grow
-        if len(self.records) < self.observing_for or self.pulled_out > 0:
-            return 0
-        if random.random() * 100 < self._value:
-            self.pulled_out = random.random() * shares / 2
-            self.pulled_out /= self.interest
-            self.pulled_out *= self._value / 100
-            if self.pulled_out * 100 < 1: self.pulled_out = 0
-            return self.pulled_out
-        return 0
+    def pullout(self):
+        if len(self.investors) <= 0: return 0
+        random.shuffle(self.investors)
+        return self.investors[0].pullout()
 
 class MarketingNode(BaseNode):
     def __init__(self, bubble, observer):
@@ -475,7 +437,6 @@ class EspionageNode(BaseNode):
             self.is_click = True
 
     def update(self):
-        self._value = max(0, self._value - 1)
         super().update()
         self.bubble.set_text(
             f"Espionage {to_readable_int(priceIncrement(self.nb_clicks))}$ {to_readable_int(self._value)}%"
