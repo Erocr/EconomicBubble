@@ -182,7 +182,16 @@ class MarketNode(BaseNode):
             self.is_click = True
 
     def update(self):
-        self._value = clamp(self._value, random.randint(self.min_value, self.min_value + 10)/100, random.randint(self.max_value - 10, self.max_value)/100)
+        if random.random() < 0.2:
+            self.max_value += 100
+            self.min_value -= 100
+        if random.random() < 0.1:
+            self.max_value *= 1.03
+            self.max_value = round(self.max_value)
+            self.min_value *= 1.03
+            self.min_value = round(self.min_value)
+
+        self._value = clamp(self._value, random.randint(self.min_value, self.min_value + 10)/100, random.randint(self.max_value-10, self.max_value)/100)
 
     def mulValue(self, val):
         self._value *= val
@@ -545,6 +554,7 @@ class SecurityNode(BaseNode):
         self.is_click = False
         self.nb_clicks = 1
         self.defense_team = 0
+        self.check_answer = 0
 
     def quick_update(self):
         if self.bubble.clicked():
@@ -553,10 +563,17 @@ class SecurityNode(BaseNode):
     def add_defense_team(self, val):
         self.defense_team += val
 
-    
+    def right_answer(self, val):
+        pass
+
+    def wrong_answer(self, val):
+        pass
 
     def monitor(self, val):
         print("Not Yet Implemented")
+        string = "Let's see how successful the surveillance was! What share do you think your biggest investor holds?"
+        right_answer = self.check_answer
+        wrong_answer = random.random() * 0.8
 
     def update(self):
         super().update()
@@ -654,7 +671,7 @@ class Event():
     
     def burst(self):
         self.alive = False
-        self.observer.notify(EVENT_EVENT_BURST, self.doubt)    
+        self.observer.notify(EVENT_EVENT_BURST, self.doubt)
 
     def update(self):
         self.time_to_live -= 1

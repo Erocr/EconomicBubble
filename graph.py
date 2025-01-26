@@ -125,7 +125,7 @@ class EconomyGraph:
         self.savedValues = []
 
     def notify(self, event, notifications):
-        if event == EVENT_CRIME_FOUND:
+        if event == EVENT_EVENT_BURST:
             security = self.S1
             public = self.PD
             investors = self.ID.investors
@@ -137,8 +137,8 @@ class EconomyGraph:
                 (0, 0, 0))
             else:
                 doubt = notifications
-                public._value += abs(random.gaussian(0, public.volatility)) * doubt
-                public._value = core.clamp(public._value, 1, 100)
+                # public._value += abs(random.gaussian(0, public.volatility)) * doubt
+                # public._value = core.clamp(public._value, 1, 100)
                 for investor in investors:
                     investor._value += abs(random.gaussian(0, public.volatility)) * doubt
                     investor._value = core.clamp(public._value, 1, 100)
@@ -181,8 +181,12 @@ class EconomyGraph:
         for node in self.nodes:
             node.update()
 
+        max_invest = 0
         for investor in self.ID.investors:
             investor.true_capital = self.TC._value
+            if investor.owned_shares > max_invest:
+                max_invest = investor.owned_shares
+        self.S1.check_answer = max_invest
 
     def update_visuals(self, view, inputs, observer, paused):
         for node in self.nodes:
