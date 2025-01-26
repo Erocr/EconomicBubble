@@ -13,13 +13,13 @@ view = View()
 inputs = Inputs()
 music = Music()
 
+observer = Observer()
 visual_data = VisualData(view)
-economy_graph = EconomyGraph(visual_data)
+economy_graph = EconomyGraph(visual_data, observer)
 
 flash_info = FlashInfo(view.screenSize)
 popups = PopupsContainer()
 
-observer = Observer()
 observer.add_observable(popups)
 observer.add_observable(flash_info)
 observer.add_observable(music)

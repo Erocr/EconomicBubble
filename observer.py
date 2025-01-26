@@ -1,8 +1,8 @@
 EVENT_ADD_VALUE_NODE = 0
 EVENT_FLASH_INFO = 1
 EVENT_NEW_POPUP = 2
-
 EVENT_SOUND = 3
+EVENT_EVENT_BURST = 4
 
 
 class Observer:
@@ -20,3 +20,6 @@ class Observer:
     def add_observable(self, observable):
         self.observables.append(observable)
 
+    def add_observables(self, observables):
+        for ob in observables:
+            self.add_observable(ob)

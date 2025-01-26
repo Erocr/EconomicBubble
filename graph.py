@@ -10,47 +10,49 @@ from observer import *
 
 
 class EconomyGraph:
-    def __init__(self, visual_data):
+    def __init__(self, visual_data, observer):
         vd = visual_data
+        
+        self.observer = observer
 
         self.TC = core.TrueCapitalNode(
             Bubble(vd.bubble_size_capital, vd.pos_true_capital, vd.default_fill,
-                   "", (7, 37, 6), (133, 187, 101))
+                   "", (7, 37, 6), (133, 187, 101)), observer
         )  # True capital
 
         self.AC = core.ApparentCapitalNode(
             Bubble(vd.bubble_size_capital, vd.pos_shown_capital, vd.default_fill,
-                   "", (7, 37, 6), (133, 187, 101))
+                   "", (7, 37, 6), (133, 187, 101)), observer
         )  # Apparent capital
 
         self.ID = core.InvestorsDoubtNode(
             Bubble(vd.bubble_size_doubt, vd.pos_investor_doubt, vd.default_fill,
-                   "Investor Doubt", (33, 171, 205), (239, 204, 0))
+                   "Investor Doubt", (33, 171, 205), (239, 204, 0)), observer
         )  # Investors Doubt
 
         self.PD = core.PublicDoubtNode(
             Bubble(vd.bubble_size_doubt, vd.pos_public_doubt, vd.default_fill,
-                   "Public Doubt", (33, 171, 205), (239, 204, 0))
+                   "Public Doubt", (33, 171, 205), (239, 204, 0)), observer
         )  # Public Doubt
 
         self.Events = core.EventNode(
             Bubble(vd.bubble_size_investing, vd.sc * 2, vd.default_fill,
-                   "Wrap", (246, 108, 164), (245, 197, 217))
+                   "Wrap", (246, 108, 164), (245, 197, 217)), observer
         )  # Events
 
         self.M1 = core.MarketingNode(
             Bubble(vd.bubble_size_big, vd.pos_marketing, vd.default_fill,
-                   "Marketing", (45, 81, 242), (22, 164, 202))
+                   "Marketing", (45, 81, 242), (22, 164, 202)), observer
         )  # Marketing 1 : press message
 
         self.S1 = core.SecurityNode(
             Bubble(vd.bubble_size_big, vd.pos_security, vd.default_fill,
-                   "Security", (1, 1, 1), (128, 128, 128))
+                   "Security", (1, 1, 1), (128, 128, 128)), observer
         )  # Security 1 : media control
 
         self.Spy = core.EspionageNode(
             Bubble(vd.bubble_size_big, vd.pos_espionnage, vd.default_fill,
-                   "Espionnage", (128, 0, 0), (184, 20, 20))
+                   "Espionnage", (128, 0, 0), (184, 20, 20)), observer
         )  # Espionage
 
         self.soap_color = (95, 167, 120)
@@ -59,17 +61,17 @@ class EconomyGraph:
 
         self.SoapM = core.MarketNode(
             Bubble(vd.bubble_size_investing, vd.pos_invest_left, vd.default_fill,
-                   "", self.soap_color, (206, 200, 239)), "Soap"
+                   "", self.soap_color, (206, 200, 239)), "Soap", observer
         )  # Soap Market
 
         self.BeerM = core.MarketNode(
             Bubble(vd.bubble_size_investing, vd.pos_invest_center, vd.default_fill,
-                   "", self.beer_color, (242, 142, 28)), "Beer"
+                   "", self.beer_color, (242, 142, 28)), "Beer", observer
         )  # Beer Market
 
         self.WrapM = core.MarketNode(
             Bubble(vd.bubble_size_investing, vd.pos_invest_right, vd.default_fill,
-                   "", self.wrap_color, (245, 197, 217)), "Wrap"
+                   "", self.wrap_color, (245, 197, 217)), "Wrap", observer
         )  # Wrap Market
 
         self.multi_curve = curve.MultiCurve(vd.multicurve_pos, vd.multicurve_size, 3,
@@ -86,6 +88,8 @@ class EconomyGraph:
         ]
 
         self.nodes = self.influenced_nodes + self.clickable_nodes
+        
+        self.observer.add_observables(self.nodes)
 
         # Edges
         self.TC.addParents([*self.market_nodes, self.ID])
@@ -98,7 +102,7 @@ class EconomyGraph:
         self.ID.addParents([self.S1, self.Events, self.AC, self.ID])
         self.M1.addParents([self.S1, self.TC])
         self.Events.addParents([self.Spy])
-        self.S1.addParents([self.TC])
+        self.S1.addParents([self.Events, self.TC])
         self.Spy.addParents([self.TC])
 
     def quick_simulation_update(self):
