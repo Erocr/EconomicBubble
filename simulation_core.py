@@ -78,7 +78,7 @@ class TrueCapitalNode(BaseNode):
     doc = """Your True Capital, what you truly have, the money you can actually spend.\nNobody knows it. It's your darkest secret."""
     def __init__(self, bubble, observer):
         super().__init__(bubble, observer)
-        self._value = 10
+        self._value = 5000
         self.shares = 0 # Ratio of investment, between 0 and 1
     
     def update(self):
@@ -117,7 +117,7 @@ class ApparentCapitalNode(BaseNode):
     doc = """Shown Capital : the capital you show to other people, you better lie very well if you want to make them invest"""
     def __init__(self, bubble, observer):
         super().__init__(bubble, observer)
-        self._value = 10
+        self._value = 5000
         self.persuade = 0.5
         self.true_capital = 10
 
@@ -135,9 +135,11 @@ class ApparentCapitalNode(BaseNode):
     def influencedBy(self, parent):
         if (type(parent) == TrueCapitalNode):
             if (parent._value - self.true_capital > 0):
-                self._value += 10 * self.persuade * (parent._value - self.true_capital)
+                self._value += 4 * self.persuade * (parent._value - self.true_capital)
             else:
                 self._value = (5*self.persuade * self._value + parent._value)/(1 + 5*self.persuade)
+            
+            self._value = self.persuade * self._value + (1-self.persuade) * parent._value
 
             self.true_capital = parent._value
 
@@ -161,7 +163,7 @@ class MarketNode(BaseNode):
         super().__init__(bubble, observer)
         self._value = 1
         self.max_value = 194
-        self.min_value = 3
+        self.min_value = -3
         self.tendance = 1
         self.worker = 2
         self.is_click = False
@@ -287,7 +289,6 @@ class PublicDoubtNode(BaseNode):
         self._value -= 0.05
         self._value += random.gauss(0, self.volatility/5)
         self._value = clamp(self._value, 0, self.max_value)
-        print(self._value)
         self.bubble.set_text(
             f"Public Doubt {to_readable_int(self._value)}%"
         )
@@ -368,9 +369,9 @@ class InvestorNode(BaseNode):
             res /= self.records[0]
             # print(str(res) + " & ")
             if abs(res) < 1 / self.volatility:
-                self._value *= 1.01; return
+                self._value *= 1.2; return
             if res < 0:
-                self._value *= (1 + abs(res))
+                self._value *= (1 + abs(res)) * self.volatility / 5
                 self.interest = max(1, self.interest - 0.05)
                 if self._value > 75: self.setObsPeriod(3, 5)
             else:
@@ -399,9 +400,10 @@ class InvestorNode(BaseNode):
             invested = random.random() * (0.8 - shares) / 2.5
             invested *= self.interest
             invested *= (1 - self._value / 100)
-            if invested * 100 < 1: invested = 0
+            if invested * 100 < 2: invested = 0
             self.owned_shares += invested
-            self.observer.notify(EVENT_INVESTED, [self, invested])
+            if invested > 0:
+                self.observer.notify(EVENT_INVESTED, [self, invested])
             return invested
         return 0
 
@@ -425,9 +427,10 @@ class InvestorNode(BaseNode):
                 pulled_out = random.random() * self.shares / 2
                 pulled_out /= self.interest
                 pulled_out *= self._value / 100
-                if pulled_out * 100 < 1: pulled_out = 0
+                if pulled_out * 100 < 2: pulled_out = 0
                 self.owned_shares -= pulled_out
-            self.observer.notify(EVENT_PULLED_OUT, [self, pulled_out])
+            if pulled_out > 0:
+                self.observer.notify(EVENT_PULLED_OUT, [self, pulled_out])
             return pulled_out
         return 0
 
@@ -510,7 +513,7 @@ class MarketingNode(BaseNode):
         )
     
     def present_choices(self):
-        actions = Actions(TrueCapitalNode, WrapNode, SoapNode, BeerNode, PublicDoubtNode, InvestorsDoubtNode)
+        actions = Actions(TrueCapitalNode, WrapNode, SoapNode, BeerNode, PublicDoubtNode, InvestorsDoubtNode, SecurityNode)
         first_choice, second_choice = random.sample(list(actions.actions.keys()), 2)
 
         self.observer.notify(EVENT_TRIGGER_CHOICES, [first_choice, second_choice])
@@ -534,11 +537,17 @@ class SecurityNode(BaseNode):
         super().__init__(bubble, observer)
         self.is_click = False
         self.nb_clicks = 1
-        self.defense_team = []
+        self.defense_team = 0
 
     def quick_update(self):
         if self.bubble.clicked():
             self.is_click = True
+    
+    def add_defense_team(self, val):
+        self.defense_team += val
+
+    def monitor(self, val):
+        print("Not Yet Implemented")
 
     def update(self):
         super().update()
@@ -576,20 +585,31 @@ class EspionageNode(BaseNode):
         self.bubble.set_text(
             f"Espionage {to_readable_int(priceIncrement(self.nb_clicks))}$ {to_readable_int(self._value)}%"
         )
-    
+
+    def present_choices(self):
+        actions = Actions(TrueCapitalNode, WrapNode, SoapNode, BeerNode, PublicDoubtNode, InvestorsDoubtNode, SecurityNode)
+        first_choice, second_choice = random.sample(list(actions.illegal.keys()), 2)
+
+        self.observer.notify(EVENT_TRIGGER_CHOICES, [first_choice, second_choice])
+
     def influencedBy(self, parent):
-        if self.is_click:
-            if type(parent) == Event:
+        if type(parent) == EventNode: # = Crime
+            print("world")
+            if self.is_click:
+                print("hello")
                 parent.createEvent()
-            
-            if type(parent) == TrueCapitalNode:
+        
+        if type(parent) == TrueCapitalNode:
+            price = priceIncrement(self.nb_clicks)
+            self.bubble.set_fill_level(parent._value / price)
+            if self.is_click:
                 price = priceIncrement(self.nb_clicks)
-                self.bubble.set_fill_level(parent._value / price)
                 if price <= parent._value:
                     self._value = getNewValue(self._value, 10, 100)
                     self.nb_clicks += 1
                     parent._value -= price
-            self.is_click = False
+                    self.present_choices()
+                self.is_click = False
 
 class EventNode(BaseNode):
     def __init__(self, bubble, observer):
@@ -610,7 +630,7 @@ class EventNode(BaseNode):
         pass
 
     def createEvent(self):
-        self.events.append(Event(5, 0.4, 0.8, self.observer))
+        self.events.append(Event(5, 30, 0.8, self.observer))
 
 class Event():
     def __init__(self, TTL, dbt, risk, observer):
@@ -636,13 +656,9 @@ class Event():
         elif random.random() < self.risk:
             self.burst()
         else:
-            self.risk /= 2
-                
-        self.bubble.set_text(
-            f"Event: Risk to burst {to_readable_int(self._risk)}%"
-        )
+            self.risk = max(self.risk - 0.1, 0)
 
-class Crime(Event):
-    def burst(self):
-        super().burst(self)
-        self.observer.notify(EVENT_CRIME_FOUND, self.risk)
+# class Crime(Event):
+#     def burst(self):
+#         super().burst(self)
+#         self.observer.notify(EVENT_CRIME_FOUND, self.risk)

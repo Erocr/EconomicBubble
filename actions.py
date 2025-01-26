@@ -1,16 +1,17 @@
 class Actions :
-    def __init__(self, TC, W, S, B, PD, ID):
+    def __init__(self, TC, W, S, B, PD, ID, SN):
         TrueCapitalNode = TC
         WrapNode = W
         SoapNode = S
         BeerNode = B
         PublicDoubtNode = PD
         InvestorsDoubtNode = ID
+        SecurityNode = SN
 
         self.actions = {
                 "You create a viral social media campaign featuring your soap products being used as impromptu bubble wrap replacements in a humorous DIY video":
                 {TrueCapitalNode : [(TrueCapitalNode.mulValue, 1.05)], 
-                WrapNode : [(WrapNode.mulValue, 1.03)], 
+                WrapNode : [(WrapNode.increment_max_price, 1.03)], 
                 SoapNode : [(SoapNode.mulValue, 1.02)],
                 PublicDoubtNode : [(PublicDoubtNode.mulValue, 1.2)]
                 },
@@ -25,13 +26,13 @@ class Actions :
                 {InvestorsDoubtNode : [(InvestorsDoubtNode.mulValue, 1.08)],
                 TrueCapitalNode : [(TrueCapitalNode.mulValue, 0.96)],
                 WrapNode : [(WrapNode.mulValue, 1.06)],
-                SoapNode : [(SoapNode.mulValue, 0.97)]
+                SoapNode : [(SoapNode.increment_min_price, -0.97)]
                 },
                 # (Effect: InvestorsDoubtNode + 8%, TrueCapitalNode - 4%, WrapNode + 6%, SoapNode - 3%)
                 "You buy an entire warehouse full of bubble wrap to use as office decor and end up bankrupting the company":
                 {WrapNode : [(WrapNode.mulValue, 1.08)],
                 InvestorsDoubtNode : [(InvestorsDoubtNode.mulValue, 1.1)],
-                TrueCapitalNode : [TrueCapitalNode.mulValue, 0.88]
+                TrueCapitalNode : [(TrueCapitalNode.mulValue, 0.88)]
                 },
                 #(Effect: WrapNode + 8%, InvestorsDoubtNode + 10%, TrueCapitalNode - 12%)"
                 "You accidentally order 1000 cases of beer for a party that only 10 people will attend, resulting in a massive inventory glut":
@@ -142,16 +143,16 @@ class Actions :
         self.illegal = {
             "You partner with a notorious drug lord to produce and distribute a new designer soap that contains marijuana, creating a new business, but maybe not a good one.": {
                     TrueCapitalNode: [(TrueCapitalNode.mulValue, 1.1)],
-                    SoapNode: [(SoapNode.mulValue, 0.7)],
+                    SoapNode: [(SoapNode.increment_min_price, -1)],
                     WrapNode: [(WrapNode.mulValue, 1.05)],
                     BeerNode: [(BeerNode.mulValue, 1.03)],
-                    PublicDoubtNode: [(PublicDoubtNode.mulValue, 0.8)],
+                    PublicDoubtNode: [(PublicDoubtNode.mulValue, 1.8)],
                 },
                 "You team up with a ruthless gun runner to smuggle soap into the country by hiding it in beer barrels, causing a surge in soap sales and confusion in the beer market.": {
                     TrueCapitalNode: [(TrueCapitalNode.mulValue, 1.15)],
-                    SoapNode: [(SoapNode.mulValue, 1.25)],
-                    WrapNode: [(WrapNode.mulValue, 1.05)],
-                    BeerNode: [(BeerNode.mulValue, 0.8)],
+                    SoapNode: [(SoapNode.increment_max_price, 0.8)],
+                    WrapNode: [(WrapNode.increment_max_price, 0.7)],
+                    BeerNode: [(SoapNode.increment_min_price, -1)],
                     PublicDoubtNode: [(PublicDoubtNode.mulValue, 0.9)],
                 },
                 "You align with a powerful mafia boss to corner the bubble wrap market by threatening rival companies, forcing them out of business and leaving you in control of the entire industry.": {
@@ -276,4 +277,13 @@ class Actions :
                     BeerNode: [(BeerNode.mulValue, 1.6)],
                     PublicDoubtNode: [(PublicDoubtNode.mulValue, 0.45)],
                 },
-        }
+                "Surveillance": {
+                    SecurityNode: [(SecurityNode.monitor, 0)]
+                },
+                "Legal Defense": {
+                    SecurityNode: [(SecurityNode.add_defense_team, 1)]
+                }
+        }        
+
+        self.all_actions = self.actions | self.illegal
+
