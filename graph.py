@@ -181,24 +181,24 @@ class EconomyGraph:
                 return
             string1 = notifications[0] + str(int(notifications[1] * 100)) + "%"
             string2 = notifications[0] + str(int(notifications[2] * 100)) + "%"
-            self.actions.questions[string1] = {core.SecurityNode: [(self.S1.right_answer, 1)]}
-            self.actions.questions[string2] = {core.SecurityNode: [(self.S1.wrong_answer, 1)]}
+            self.actions.questions[string1] = {core.SecurityNode: [(core.SecurityNode.right_answer, 1)]}
+            self.actions.questions[string2] = {core.SecurityNode: [(core.SecurityNode.wrong_answer, 1)]}
             self.actions.all_actions = self.actions.all_actions | self.actions.questions
             self.observer.notify(EVENT_TRIGGER_CHOICES, [string1, string2])
 
         elif event == EVENT_RIGHT_ANSWER:
-            public.volatility *= 0.8
-            public.volatility = core.clamp(public.volatility, 1, 10)
-            for investor in investors:
+            self.PD.volatility *= 0.8
+            self.PD.volatility = core.clamp(public.volatility, 1, 10)
+            for investor in self.ID.investors:
                 investor.volatility *= 0.8
                 investor.volatility = core.clamp(investor.volatility, 1, 10)
             self.observer.notify(EVENT_NEW_POPUP,
                 (["Right Answer! You are now more stable!"], (0, 0, 0)))
 
         elif event == EVENT_WRONG_ANSWER:
-            public.volatility *= 1.2
-            public.volatility = core.clamp(public.volatility, 1, 10)
-            for investor in investors:
+            self.PD.volatility *= 1.2
+            self.PD.volatility = core.clamp(public.volatility, 1, 10)
+            for investor in self.ID.investors:
                 investor.volatility *= 1.2
                 investor.volatility = core.clamp(investor.volatility, 1, 10)
             self.observer.notify(EVENT_NEW_POPUP,

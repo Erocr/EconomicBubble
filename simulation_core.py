@@ -565,7 +565,7 @@ class SecurityNode(BaseNode):
             self.is_click = True
     
     def add_defense_team(self, val):
-        self.defense_team += 1
+        self.defense_team += val
 
     def right_answer(self, val):
         self.observer.notify(EVENT_WRONG_ANSWER, 0)
