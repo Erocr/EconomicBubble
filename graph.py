@@ -93,7 +93,7 @@ class EconomyGraph:
             self.TC, self.AC, self.PD, self.ID, self.Events, self.M1, self.S1, self.Spy,
         ] + self.market_nodes
 
-        self.observer.add_observables(self.nodes)
+        self.observer.add_observables(self.all_nodes)
 
         # Edges
         self.TC.addParents([*self.market_nodes, self.ID])
