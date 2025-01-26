@@ -71,8 +71,7 @@ class BaseNode:
         #     self._value += notifications[1]
 
 class TrueCapitalNode(BaseNode):
-    doc = """Your True Capital, what you truly have, the money you can actually spend.
-             Nobody knows it. It's your darkest secret."""
+    doc = """Your True Capital, what you truly have, the money you can actually spend.\nNobody knows it. It's your darkest secret."""
     def __init__(self, bubble, observer):
         super().__init__(bubble, observer)
         self._value = 10
@@ -143,6 +142,7 @@ class ApparentCapitalNode(BaseNode):
             self.persuade = getNewValue(self.persuade, parent._value/500, 1)
 
 class MarketNode(BaseNode):
+    doc = """Choose wisely where you invest. Look at the graph.\nExplanations? Become a trader."""
     def __init__(self, bubble, name, observer):
         super().__init__(bubble, observer)
         self._value = 1
@@ -229,8 +229,7 @@ class MarketGroup():
         pass
 
 class PublicDoubtNode(BaseNode):
-    doc = """Public Doubt : if the public loves you, we love you.
-             If Public doubt is a 100%, you're over."""
+    doc = """Public Doubt : if the public loves you, we love you.\nIf Public doubt is a 100%, you're over."""
     def __init__(self, bubble, observer):
         super().__init__(bubble, observer)
         self.max_value = 100
@@ -350,9 +349,7 @@ class InvestorNode(BaseNode):
         return 0
 
 class InvestorsDoubtNode(BaseNode):
-    doc = """Investor Doubt : investors will fund you. Don't make them leave.
-             If you show consitent growth, they will take interest in you.
-             If Investor doubt is a 100%, you're over."""
+    doc = """Investor Doubt : investors will fund you. Don't make them leave.\nIf you show consitent growth, they will take interest in you.\nIf Investor doubt is a 100%, you're over."""
     def __init__(self, bubble, observer):
         super().__init__(bubble, observer)
         self.max_value = 100
@@ -401,8 +398,7 @@ class InvestorsDoubtNode(BaseNode):
         return self.investors[0].pullout()
 
 class MarketingNode(BaseNode):
-    doc = """Marketing : invest a ton into marketing and your public will love you. And investors will think your very rich.
-             Your apparent capital will go up."""
+    doc = """Marketing : invest a ton into marketing and your public will love you. And investors will think your very rich.\nYour apparent capital will go up."""
     def __init__(self, bubble, observer):
         super().__init__(bubble, observer)
         self.is_click = False
@@ -461,8 +457,7 @@ class SecurityNode(BaseNode):
                 self.is_click = False
 
 class EspionageNode(BaseNode):
-    doc = """Espionage : this is a criminal activity. Big risk, big reward. It's up to you.
-             Try not to trail behind the competition."""
+    doc = """Espionage : this is a criminal activity. Big risk, big reward. It's up to you.\nTry not to trail behind the competition."""
     def __init__(self, bubble, observer):
         super().__init__(bubble, observer)
         self.is_click = False
