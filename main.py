@@ -31,6 +31,7 @@ clock = pg.time.Clock()
 
 current_state = "splash_screen"
 
+paused = False
 frames = 0
 while not inputs.quit:
     inputs.update()
@@ -42,19 +43,22 @@ while not inputs.quit:
 
     elif current_state == "game":
         settings.update(inputs, music)
+        paused = settings.activated
+
         flash_info.update(inputs)
         popups.update(inputs)
 
-        economy_graph.update_visuals(view, inputs, observer)
-        if frames % 10 == 0:
+        economy_graph.update_visuals(view, inputs, observer, paused)
+        if frames % 10 == 0 and not paused:
             economy_graph.update_multigraph()
-        
-        economy_graph.quick_simulation_update()
 
-        if frames % 50 == 0:
+        if not paused:
+            economy_graph.quick_simulation_update()
+
+        if frames % 50 == 0 and not paused:
             economy_graph.update_simulation()
 
-        if frames % 1000 == 0:
+        if frames % 1000 == 0 and not paused:
             flash_info.new_msg(random.choice(news.news)[0])
             observer.notify(EVENT_SOUND, ("news_popup",))
 
@@ -64,7 +68,8 @@ while not inputs.quit:
     view.flip()
 
     clock.tick(50)
-    frames += 1
+    if not paused:
+        frames += 1
         
 
 pg.quit()

@@ -45,4 +45,5 @@ class Settings:
             else:
                 view.screen.blit(self.music_off, (self.setting_image.get_width(), 0))
             view.screen.blit(self.quit_image, (self.setting_image.get_width()+self.music_off.get_width(), 0))
+            view.text_ul("GAME PAUSED", DOWN * self.setting_image.get_height(), 10000)
 

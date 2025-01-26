@@ -139,11 +139,12 @@ class EconomyGraph:
         self.TC._value -= full_debt
         if self.TC._value < 0: self.TC._value = 0
 
-    def update_visuals(self, view, inputs, observer):
+    def update_visuals(self, view, inputs, observer, paused):
         for node in self.nodes:
             node.draw(view, inputs)
-            self.check_invest(node, observer)
-            self.check_pullout(node, observer)
+            if not paused:
+                self.check_invest(node, observer)
+                self.check_pullout(node, observer)
         self.multi_curve.draw(view)
 
     def has_exploded(self):

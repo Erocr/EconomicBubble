@@ -45,6 +45,10 @@ class View:
         im = font.render(msg, False, color)
         self.screen.blit(im, pos.get)
 
+    def text_ul(self, msg, pos, color=(0, 0, 0)):
+        im = self.font.render(msg, False, color)
+        self.screen.blit(im, pos.get)
+
     def renders(self, msg, width, color=(255, 255, 255)):
         messages = msg.split(" ")
         images = []
