@@ -12,7 +12,7 @@ class Actions :
                 {TrueCapitalNode : [(TrueCapitalNode.mulValue, 1.05)], 
                 WrapNode : [(WrapNode.mulValue, 1.03)], 
                 SoapNode : [(SoapNode.mulValue, 1.02)],
-                PublicDoubtNode : [(PublicDoubtNode.mulValue, 0.9)]
+                PublicDoubtNode : [(PublicDoubtNode.mulValue, 1.2)]
                 },
                 #(Effect: TrueCapitalNode + 5%, WrapNode + 3%, SoapNode + 2%, PublicDoubtNode - 10%)
                 "You host an 'open house' where you let customers play with bubble wrap for hours on end, causing a massive delay in production and sales":
@@ -137,11 +137,10 @@ class Actions :
                 TrueCapitalNode: [(TrueCapitalNode.mulValue, 0.99)],
                 PublicDoubtNode: [(PublicDoubtNode.mulValue, 0.98)]},
                 # (Effect: SoapNode - 1%, WrapNode - 2%, TrueCapitalNode - 1%, PublicDoubtNode - 2%)
-
-                
-                ## Illegal
-                
-                "You partner with a notorious drug lord to produce and distribute a new designer soap that contains marijuana, creating a new business, but maybe not a good one.": {
+        }
+        
+        self.illegal = {
+            "You partner with a notorious drug lord to produce and distribute a new designer soap that contains marijuana, creating a new business, but maybe not a good one.": {
                     TrueCapitalNode: [(TrueCapitalNode.mulValue, 1.1)],
                     SoapNode: [(SoapNode.mulValue, 0.7)],
                     WrapNode: [(WrapNode.mulValue, 1.05)],
