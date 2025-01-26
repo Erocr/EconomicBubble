@@ -91,7 +91,7 @@ class TrueCapitalNode(BaseNode):
             self.observer.notify(EVENT_PLAY_CRITICAL, None)
         else:
             self.bubble.color_border = (108, 104, 101)
-            if value > 130:
+            if self._value > 130:
                 self.observer.notify(EVENT_PLAY_NORMAL, None)
         self.bubble.set_fill_level(1-exp(-1/1000*self._value))
 
