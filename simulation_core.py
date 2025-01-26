@@ -93,7 +93,7 @@ class TrueCapitalNode(BaseNode):
             self.bubble.color_border = (108, 104, 101)
             if self._value > 130:
                 self.observer.notify(EVENT_PLAY_NORMAL, None)
-        self.bubble.set_fill_level(1-exp(-1/1000*self._value))
+        self.bubble.set_fill_level(1-exp(-1/100000*self._value))
 
     def influencedBy(self, parent):
         if type(parent) in [SoapNode, BeerNode, WrapNode]:
@@ -125,7 +125,7 @@ class ApparentCapitalNode(BaseNode):
         self.bubble.set_text(
             f"Shown capital {to_readable_int(self._value)}$"
         )
-        self.bubble.set_fill_level(1 - exp(-1 / 1000 * self._value))
+        self.bubble.set_fill_level(1 - exp(-1 / 100000 * self._value))
 
         self.persuade = clamp(self.persuade, 0, 1)
         self.persuade /= 1.01

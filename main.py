@@ -40,11 +40,16 @@ while not inputs.quit:
     cards = CardsPair(view)
     observer.add_observable(cards)
 
+    depause_delay = -1
 
     paused = False
     tutorial = False
     frames = 0
     while not inputs.quit:
+        if depause_delay > 0:
+            depause_delay -= 1
+            if depause_delay <= 0:
+                paused = False
         inputs.update()
         music.update(inputs)
         # if not economy_graph.has_exploded():
@@ -58,13 +63,6 @@ while not inputs.quit:
             if settings.update(inputs, music):
                 paused = settings.activated
                 tutorial = settings.activated
-
-            if not paused and cards.actif():
-                paused = True
-            end = cards.update(inputs)
-            if end is not None:
-                economy_graph.apply_action(economy_graph.actions.all_actions[end])
-                paused = False
 
             if not paused: flash_info.update(inputs)
             popups.update(inputs)
@@ -95,6 +93,12 @@ while not inputs.quit:
             cards.draw()
             if tutorial:
                 economy_graph.draw_docs(view)
+            if not paused and cards.actif():
+                paused = True
+            end = cards.update(inputs)
+            if end is not None:
+                economy_graph.apply_action(economy_graph.actions[end])
+                depause_delay = 10
 
         elif current_state == "over":
             endScreen.update(inputs)
