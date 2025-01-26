@@ -553,7 +553,7 @@ class SecurityNode(BaseNode):
     def add_defense_team(self, val):
         self.defense_team += val
 
-    def 
+    
 
     def monitor(self, val):
         print("Not Yet Implemented")
