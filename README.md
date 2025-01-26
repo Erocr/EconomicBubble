@@ -14,7 +14,19 @@ The features of the game include:
 
 ## How to play
 
-The goal of the game is to make as much money as possible without people knowing that you're scamming them. The economic model is designed to make it impossible to succeed without scamming people, so you're forced to put aside your morals.
+Your company sells soap, beer and wraps. The goal of the game is to make as much money as possible without people knowing that you're scamming them. The economic model is designed to make it impossible to succeed without scamming people, so you're forced to put aside your morals.
+
+There are three activities you can invest in:
+- Marketing: Makes the public like you and less likely to doubt your company
+- Security: Lowers the chance of your crimes getting discovered
+- Espionnage: Allows your company to get ahead of competitors by stealing their discoveries, but if discovered it can make the public doubt you
+
+There are a couple of important metrics:
+- Actual capital: The amount of money your company actually has.
+- Shown capital: The amount of money your investors and the general public think your company has
+- Public doubt: Represents the amount of skepticism surrounding your company amongst the public
+- Investor doubt: Represents the amount of skepticism surrounding your company amongst the investors
+- The prices of the products you're selling
 
 You lose the game if:
 - Public doubt reaches 100%
