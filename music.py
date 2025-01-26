@@ -53,6 +53,12 @@ class Music:
             self.play_normal = True
         elif event == EVENT_PLAY_CRITICAL:
             self.play_critical = True
+        elif event == EVENT_NEW_POPUP and notifications[1] != (255, 0, 0):
+            self.sound("cash_chaching")
+        elif event == EVENT_NEW_POPUP and notifications[1] == (255, 0, 0):
+            self.sound("crime_ching")
+        elif event == EVENT_TRIGGER_CHOICES:
+            self.sound("good_or_bad")
 
     def update(self, inputs):
         if inputs.pressed("mouse_left"):
