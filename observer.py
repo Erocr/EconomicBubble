@@ -10,6 +10,9 @@ EVENT_CRIME_FOUND = 7
 EVENT_INVESTED = 8
 EVENT_PULLED_OUT = 9
 
+EVENT_PLAY_NORMAL = 10
+EVENT_PLAY_CRITICAL = 11
+
 class Observer:
     """
     Permet de l'echange d'information entre deux classes eloignees.

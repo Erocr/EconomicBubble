@@ -88,9 +88,11 @@ class TrueCapitalNode(BaseNode):
 
         if self._value < 100:
             self.bubble.color_border = (255, 0, 0)
-
+            self.observer.notify(EVENT_PLAY_CRITICAL, None)
         else:
             self.bubble.color_border = (108, 104, 101)
+            if value > 130:
+                self.observer.notify(EVENT_PLAY_NORMAL, None)
         self.bubble.set_fill_level(1-exp(-1/1000*self._value))
 
     def influencedBy(self, parent):
@@ -290,6 +292,11 @@ class PublicDoubtNode(BaseNode):
         )
         self.bubble.set_fill_level(self._value / self.max_value)
 
+        if self._value > 90:
+            self.observer.notify(EVENT_PLAY_CRITICAL, None)
+        elif self._value < 80:
+            self.observer.notify(EVENT_PLAY_NORMAL, None)
+
     def influencedBy(self, parent):
         if type(parent) == MarketingNode:
             self._value = getNewValue(self._value, -parent._value/2, self.max_value)
@@ -455,6 +462,10 @@ class InvestorsDoubtNode(BaseNode):
                 investor_doubt.append(investor._value)
             self._value = np.mean(investor_doubt)
             self._value = clamp(self._value, 1, 100)
+        if self._value > 90:
+            self.observer.notify(EVENT_PLAY_CRITICAL, None)
+        elif self._value < 80:
+            self.observer.notify(EVENT_PLAY_NORMAL, None)
 
         if len(self.investors) < 10:
             #print(str(len(self.investors)) + "@")

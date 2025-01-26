@@ -40,11 +40,13 @@ while not inputs.quit:
     cards = CardsPair(view)
     observer.add_observable(cards)
 
+
     paused = False
     tutorial = False
     frames = 0
     while not inputs.quit:
-        inputs.update() 
+        inputs.update()
+        music.update(inputs)
         # if not economy_graph.has_exploded():
         if current_state == "splash_screen":
             e = splash_screen.update(inputs)
