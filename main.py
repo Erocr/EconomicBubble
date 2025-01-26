@@ -45,7 +45,7 @@ while not inputs.quit:
         settings.update(inputs, music)
         paused = settings.activated
 
-        flash_info.update(inputs)
+        if not paused: flash_info.update(inputs)
         popups.update(inputs)
 
         economy_graph.update_visuals(view, inputs, observer, paused)

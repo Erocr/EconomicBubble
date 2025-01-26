@@ -8,6 +8,9 @@ def getNewValue(value, bonus, max_value):
     clamped_bonus = clamp(bonus, -max_value, max_value)
     return value + clamped_bonus - value * abs(clamped_bonus) / max_value
 
+def priceIncrement(n: int):
+    return n**1.65
+
 class BaseNode:
     def __init__(self, bubble):
         self._value = 0
@@ -52,8 +55,14 @@ class TrueCapitalNode(BaseNode):
         self.bubble.set_text(
             f"True capital {to_readable_int(self._value)}$"
         )
+        value = self._value
+        if value < 100:
+            self.bubble.color_border = (255, 0, 0)
+
+        else:
+            self.bubble.color_border = (108, 104, 101)
         self.bubble.set_fill_level(1-exp(-1/1000*self._value))
-    
+
     def influencedBy(self, parent):
         if type(parent) == MarketNode:
             self._value += parent._value * parent.mult
@@ -129,7 +138,7 @@ class MarketNode(BaseNode):
         self._value = clamp(self._value, random.randint(3, 12)/100, random.randint(163, 194)/100)
 
         self.bubble.set_text(
-            f"{self.name} {to_readable_int(self.nb_clicks ** 2)}$ {to_readable_int(self._value)}$ {self.mult:.1f} tendance {round(self.tendance, 2)}"
+            f"{self.name} {to_readable_int(priceIncrement(self.nb_clicks))}$ {to_readable_int(self._value)}$ {self.mult:.1f} tendance {round(self.tendance, 2)}"
         )
     
     def influencedBy(self, parent):
@@ -144,7 +153,7 @@ class MarketNode(BaseNode):
         
         if type(parent) == TrueCapitalNode:
             if self.is_click:
-                price = self.nb_clicks ** 2
+                price = priceIncrement(self.nb_clicks)
                 if price <= parent._value:
                     self.mult += 0.1
                     self.mult = clamp(self.mult, 0, self.maxmult)

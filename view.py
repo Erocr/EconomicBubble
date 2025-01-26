@@ -144,7 +144,7 @@ class View:
 
         self.miniCircles(bubble, radius, 13)
         #outter circles
-        self.circle(bubble.center, radius+5, (108, 104, 101))
+        self.circle(bubble.center, radius+5, bubble.color_border)
 
         # UP * bubble.radius * 0.9 to keep the text inside vertically
         # bubble.radius * 0.75 to keep the text inside horizontally the circle
