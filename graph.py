@@ -145,7 +145,7 @@ class EconomyGraph:
 
     def update_visuals(self, view, inputs, observer, paused):
         for node in self.nodes:
-            node.draw(view, inputs)
+            node.draw(view, inputs, paused)
             if not paused:
                 self.check_invest(node, observer)
                 self.check_pullout(node, observer)

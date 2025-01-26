@@ -116,8 +116,7 @@ class View:
         flag = (bubble.anim_timer / 1) % (mini_rad * 4) > mini_rad * 2
         for i in range(-1, nb_circles+1):
             # Small variation of the height of the waves
-            wave = DOWN * 1.7 * cos(i / (4 * pi))
-            mini_pos = start + RIGHT * mini_rad * (2 * i) + wave
+            mini_pos = start + RIGHT * mini_rad * (2 * i)
             col = [bubble.color1, bubble.color2][flag]
             if not (i <= 0 or i >= nb_circles-1):
                 self.circle(mini_pos, mini_rad, col, filled=True)
