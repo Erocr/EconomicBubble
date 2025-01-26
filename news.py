@@ -4,7 +4,8 @@ from graph import *
     Each element is a list with :
      - a string to be shown on screen
      - a dictionnary with
-        - keys = id of the variable to change (0 for soap, 1 for )'''
+        - keys = id of the variable to change (0 for soap, 1 for )
+        TODO'''
     
     # string, (ressource type, factor)
 news = [

@@ -53,6 +53,9 @@ while not inputs.quit:
 
             economy_graph.update_visuals(view, inputs, observer, paused)
             if frames % 10 == 0 and not paused:
+                economy_graph.save_values()
+            
+            if frames % 400 == 0 and not paused:
                 economy_graph.update_multigraph()
 
             if not paused:
