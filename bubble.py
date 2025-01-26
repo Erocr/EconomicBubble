@@ -16,12 +16,13 @@ class Bubble:
     """
 
     def __init__(self, radius: float, center: Vec, fill_level: float, text: str,
-                 color1=(0, 255, 0), color2=(255, 0, 0)):
+                 color1=(0, 255, 0), color2=(255, 0, 0), color_border=(108, 104, 101)):
         self.radius = radius
         self.center = center
         self.fill_level = fill_level
         self.color1 = color1
         self.color2 = color2
+        self.color_border = color_border
         self.click_timer = 0
         self.anim_timer = 0
         self.text = text
