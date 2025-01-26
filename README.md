@@ -16,22 +16,30 @@ The features of the game include:
 
 ### Uncompiled version (Windows, Linux/Unix, MacOS)
 
-1. Install dependencies
+**1. Install dependencies**
 
 If you don't have Python installed, go to https://www.python.org/about/gettingstarted/ to install it.
 
 If you do, open a terminal window and run the following commands:
 
-```pip install matplotlib```
+```
+pip install matplotlib
+```
 
-```pip install pygame```
+```
+pip install pygame
+```
 
-```pip install numpy```
+```
+pip install numpy
+```
 
-```pip install curve```
+```
+pip install curve
+```
 
 
-2. Clone this repo into a folder of your choosing
+**2. Clone this repo into a folder of your choosing**
 
 If you're on Linux or MacOS, open a terminal window and paste one of the commands below.
 
@@ -43,7 +51,7 @@ if you are in your desired folder:
 
 ```git clone https://github.com/Erocr/EconomicBubble```
 
-3. Execute the program
+**3. Execute the program**
 
 If you are in the folder where you cloned the repo, execute the following command in your terminal:
 
