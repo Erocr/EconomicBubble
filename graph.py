@@ -154,6 +154,9 @@ class EconomyGraph:
         for node in self.nodes:
             node.update()
 
+        for investor in self.ID.investors:
+            investor.true_capital = self.TC._value
+
     def update_visuals(self, view, inputs, observer, paused):
         for node in self.nodes:
             node.draw(view, inputs, paused)
@@ -169,8 +172,7 @@ class EconomyGraph:
     def apply_action(self, action):
         for e in self.nodes:
             if type(e) in action:
-                e.action[type(e)][0](action(type(e))[1])
-            # action[key][0](action[key][1])
+                action[type(e)][0](e, action(type(e))[1])
             
 
     def has_exploded(self):

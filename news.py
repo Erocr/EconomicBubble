@@ -10,15 +10,19 @@ from simulation_core import *
         TODO'''
     
     # string, (ressource type, factor)
-news = [
-    ["Enjoy a hot air balloon trip for two people at a low price !", []],
-    ["A strange phenomenon: giant soap bubbles invade a beach", []],
-    ["A toxic bubble discovered in barley fields. Repercussions on the beer industry are to be expected.", {BeerNode: (mulValue, -0.7)}],
-    ["Soap isn't strong enough anymore, try bleach instead.", {SoapNode : (mulValue, -0.4)}],
-    ["Alcoholism is climbing, investors love you, people blame you.", []],
-    ["blup, Blup, BLUP ...                          POP !", []],
-    ["O     °     O     o     0     °     o     O     0     °     o     0     O", []],
-    ["Increasing soap prices cause nationwide protests.", []],
-    ["Video game industry experts are predicting that bubble-themed games are going to be the next big thing.", []],
-    ["Maps are becoming collectibles; with some paying hundreds of dollars for them for them.", []]
-]
+news = {
+    "Enjoy a hot air balloon trip for two people at a low price !": {},
+    "A strange phenomenon: giant soap bubbles invade a beach": {},
+    "A toxic bubble discovered in barley fields. Repercussions on the beer industry are to be expected.": {BeerNode: (BeerNode.mulValue, -0.7)},
+    "Soap isn't strong enough anymore, try bleach instead.": {SoapNode : (SoapNode.mulValue, -0.4)},
+    "Alcoholism is climbing, investors love you, people blame you.": {},
+    "blup, Blup, BLUP ...                          POP !": {},
+    "O     °     O     o     0     °     o     O     0     °     o     0     O": {},
+    "Increasing soap prices cause nationwide protests.": {},
+    "Video game industry experts are predicting that bubble-themed games are going to be the next big thing.": {},
+    "Maps are becoming collectibles; with some paying hundreds of dollars for them for them.": {},
+    "Price of bubble wrap explodes after surge in demand for e-commerce" : {WrapNode : (WrapNode.mulValue, 0.8)},
+    "Health insitutions have descovered asbestos in bubble-rap (TM) soap! Avoid using it at all costs" : {},
+    "A scandal breaks out: disposable bubble wrap singled out for its plastic pollution": {WrapNode : (WrapNode.mulValue, -0.5)}
+    
+}

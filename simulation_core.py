@@ -18,7 +18,6 @@ def marketPriceIncrement(n: int):
 class BaseNode:
     doc = "It's something clickable, maybe"
     def __init__(self, bubble, observer):
-        self.name = name
         self._value = 0
         self.volatility = 5
         self.max_value = 10_000
@@ -162,25 +161,33 @@ class MarketNode(BaseNode):
     def update(self):
         self._value = clamp(self._value, random.randint(self.min_value, self.min_value)/100, random.randint(self.max_value - 10, self.max_value)/100)
 
-        self.bubble.set_text(
-            f"{self.name} {to_readable_int(marketPriceIncrement(self.nb_clicks))}$ {to_readable_int(self._value)}$ {self.worker:.1f} tendance {round(self.tendance, 2)}"
-        )
-    
     def mulValue(self, val):
         self._value *= val
     
 class SoapNode(MarketNode):
     def __init__(self, bubble, observer):
         super().__init__(bubble, observer)
-        
+    def update(self):
+        super().update()
+        self.bubble.set_text(
+            f"Soap: {to_readable_int(marketPriceIncrement(self.nb_clicks))}$ {to_readable_int(self._value)}$ {self.worker:.1f} tendance {round(self.tendance, 2)}"
+        )
 class BeerNode(MarketNode):
     def __init__(self, bubble, observer):
         super().__init__(bubble, observer)
-
+    def update(self):
+        super().update()
+        self.bubble.set_text(
+            f"Beer: {to_readable_int(marketPriceIncrement(self.nb_clicks))}$ {to_readable_int(self._value)}$ {self.worker:.1f} tendance {round(self.tendance, 2)}"
+        )
 class WrapNode(MarketNode):
     def __init__(self, bubble, observer):
         super().__init__(bubble, observer)
-
+    def update(self):
+        super().update()
+        self.bubble.set_text(
+            f"Wrap: {to_readable_int(marketPriceIncrement(self.nb_clicks))}$ {to_readable_int(self._value)}$ {self.worker:.1f} tendance {round(self.tendance, 2)}"
+        )
 class MarketGroup():
     def __init__(self, markets_nodes):
         self.market_nodes = markets_nodes
@@ -276,8 +283,8 @@ class PublicDoubtNode(BaseNode):
             self._value = min(100, self._value + notifications)
 
 class InvestorNode(BaseNode):
-    def __init__(self, bubble, observer, capital_node):
-        super().__init__(bubble, observer, capital_node)
+    def __init__(self, bubble, observer):
+        super().__init__(bubble, observer)
         self.max_value = 100
         # the investors observe for some time, which helps
         # then calculate how much they doubt you, as well as
@@ -285,21 +292,25 @@ class InvestorNode(BaseNode):
         self.invested = 0
         self.pulled_out = 0
         self.interest = 1
+        self.true_capital = 10
+        
         self.owned_shares = 0
         self.invested_money = 0
-        self.bottom_line = 0
-        self.true_capital = 10
+        self.bottom_line = 0   # an investor becomes disturbed if your
+                               # shown capital passes the bottom line
+        self.disturbed = False # a disturbed investor will immediately
+                               # pull everything away.
 
         self.observing_for = random.randint(6, 8)
         self.records = []
         self.newest_record = 0
 
-        self.newest_record = 0    1, val2, keepHistory=False):
-            new_obs_period = random.randint(val1, val2) * self.interest
-            new_obs_period /= (self.volatility / 5)
-            self.observing_for = int(new_obs_period)
-            if not keepHistory: self.records = []
-            else: self.observing_for += len(self.records)
+    def setObsPeriod(self, val1, val2, keepHistory=False):
+        new_obs_period = random.randint(val1, val2) * self.interest
+        new_obs_period /= (self.volatility / 5)
+        self.observing_for = int(new_obs_period)
+        if not keepHistory: self.records = []
+        else: self.observing_for += len(self.records)
 
     def record(self, value):
         if len(self.records) > 0:
@@ -334,7 +345,9 @@ class InvestorNode(BaseNode):
         self._value += random.gauss(0, 1) * self.volatility
         self._value -= 0.05
         self._value = clamp(self._value, 1, 100)
-        self.bottom_line 
+        self.bottom_line = self.invested_money * self.volatility
+        if self.newest_record * self.interest < self.bottom_line:
+            self.disturbed = True
 
     def draw(self): return
 
@@ -352,22 +365,23 @@ class InvestorNode(BaseNode):
             return self.invested
         return 0
 
-    def pullout(self, urgent=False):
+    def pullout(self):
         # pullout if doubt starts to grow
         if len(self.records) < self.observing_for or self.pulled_out > 0 \
                             or (self.interest > 1.4 and self._value < 70):
             return 0
-        if urgent:
+        if self.disturbed:
             self.pulled_out = self.invested_money / self.true_capital
+            self.pulled_out = clamp(self.pulled_out, 0, 1)
+            self.owned_shares = 0
             return self.pulled_out
             
         if random.random() * 100 < self._value:
             if self.owned_shares * 100 < 5:
-                self.pulled_out = self.owne
                 self.pulled_out = self.owned_shares
                 self.owned_shares = 0
             else:
-                res / 2
+                self.pulled_out = random.random() * self.shares / 2
                 self.pulled_out /= self.interest
                 self.pulled_out *= self._value / 100
                 if self.pulled_out * 100 < 1: self.pulled_out = 0
@@ -444,6 +458,11 @@ class MarketingNode(BaseNode):
             f"Marketing {to_readable_int(priceIncrement(self.nb_clicks))}$ {to_readable_int(self._value)}%"
         )
     
+    # def present_choices():
+    #     first_choice, second_choice = random.sample(actions.actions, 2)
+
+    #     choices = event_choice.Cards()
+        
     def influencedBy(self, parent):
         if type(parent) == TrueCapitalNode:
             price = priceIncrement(self.nb_clicks)
