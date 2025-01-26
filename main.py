@@ -2,6 +2,7 @@ from view import *
 from inputs import *
 from visual_data import *
 from graph import *
+import simulation_core as core
 from PopUps import *
 import news
 import random
@@ -10,7 +11,6 @@ from end_screen import EndScreen
 from music import *
 from settings import *
 from event_choice import *
-from actions import actions
 
 view = View()
 inputs = Inputs()
@@ -39,7 +39,6 @@ while not inputs.quit:
 
     cards = CardsPair(view)
     observer.add_observable(cards)
-    cards.set_cards("akjf aojbdja joa jbsjalsc pk hao", "qksjsnq jsdaojbcak,cabs aoskja")
 
     paused = False
     tutorial = False
@@ -60,7 +59,7 @@ while not inputs.quit:
 
             end = cards.update(inputs)
             if end is not None:
-                economy_graph.apply_action(actions[end])
+                economy_graph.apply_action(economy_graph.actions[end])
             if not paused:
                 paused = cards.actif()
 

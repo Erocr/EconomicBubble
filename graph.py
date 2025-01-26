@@ -83,15 +83,19 @@ class EconomyGraph:
         self.market = core.MarketGroup(self.market_nodes)
 
         self.influenced_nodes = [
-                                    self.TC, self.AC, self.PD, self.ID, self.Events, self.market
-                                ]
+            self.TC, self.AC, self.PD, self.ID, self.Events, self.market
+        ]
 
         self.clickable_nodes = [
             self.M1, self.S1, self.Spy
         ]
 
         self.nodes = self.influenced_nodes + self.clickable_nodes
-        
+
+        self.all_nodes = [
+            self.TC, self.AC, self.PD, self.ID, self.Events, self.M1, self.S1, self.Spy,
+        ] + self.market_nodes
+
         self.observer.add_observables(self.nodes)
 
         # Edges
@@ -107,7 +111,7 @@ class EconomyGraph:
         self.S1.addParents([self.Events, self.TC])
         self.Spy.addParents([self.TC])
 
-        self.type_to_node = {type(node): node for node in self.nodes}
+        self.type_to_node = {type(node): node for node in self.all_nodes}
 
     def quick_simulation_update(self):
         for node in self.nodes:
@@ -172,8 +176,9 @@ class EconomyGraph:
             node.draw_docs(view)
 
     def apply_action(self, action):
-        for node_type, (function, arg) in action.values():
-            function(self.type_to_node[node_type], arg)
+        for node_type, actions in action.items():
+            for function, arg in actions:
+                function(self.type_to_node[node_type], arg)
 
     def has_exploded(self):
         return (self.AC._value <= 0) or (self.ID._value >= 100) or (self.PD._value >= 100)
