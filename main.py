@@ -35,8 +35,9 @@ while not inputs.quit:
 
     current_state = "splash_screen"
 
-    cards = CardsPair("kidnap them", "Some investors are not happy about your profit",
-                      "kill him", "A little boy playing 'bubblemon go' was searching a bubblemon in your base", view)
+    cards = CardsPair(view)
+    observer.add_observable(cards)
+    cards.set_cards("akjf aojbdja joa jbsjalsc pk hao", "qksjsnq jsdaojbcak,cabs aoskja")
 
     paused = False
     tutorial = False
@@ -50,9 +51,16 @@ while not inputs.quit:
             if e: current_state = "game"
 
         elif current_state == "game":
+
             if settings.update(inputs, music):
                 paused = settings.activated
                 tutorial = settings.activated
+
+            end = cards.update(inputs)
+            if end is not None:
+                economy_graph.apply_action(end)
+            if not paused:
+                paused = cards.actif()
 
             if not paused: flash_info.update(inputs)
             popups.update(inputs)
@@ -80,7 +88,7 @@ while not inputs.quit:
             flash_info.draw(view)
             popups.draw(view)
             settings.draw(view)
-            cards.draw(view)
+            cards.draw()
             if tutorial:
                 economy_graph.draw_docs(view)
         
