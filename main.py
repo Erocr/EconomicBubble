@@ -83,6 +83,7 @@ while not inputs.quit:
                     flash_info.new_msg(infoMsg)
                     observer.notify(EVENT_SOUND, ("news_popup",))
                     economy_graph.apply_action(news.news[infoMsg])
+                    # action = news.news[infoMsg]
 
                 if economy_graph.has_exploded():
                     current_state = "over"

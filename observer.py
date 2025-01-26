@@ -13,6 +13,9 @@ EVENT_PULLED_OUT = 9
 EVENT_PLAY_NORMAL = 10
 EVENT_PLAY_CRITICAL = 11
 
+EVENT_APPLY_FUNC_NODE = 12
+
+
 class Observer:
     """
     Permet de l'echange d'information entre deux classes eloignees.
