@@ -396,7 +396,7 @@ class InvestorsDoubtNode(BaseNode):
         return self.investors[0].pullout()
 
 class MarketingNode(BaseNode):
-    doc = """Marketing : invest a ton into marketing and your public will love you. And investors will think your very rich.\nYour apparent capital will go up."""
+    doc = """Marketing : invest a ton into marketing and your public will love you. And investors will think your rich.\nYour shown capital will go up."""
     def __init__(self, bubble, observer):
         super().__init__(bubble, observer)
         self.is_click = False
