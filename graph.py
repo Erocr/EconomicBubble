@@ -59,19 +59,19 @@ class EconomyGraph:
         self.beer_color = (185, 113, 31)
         self.wrap_color = (246, 108, 164)
 
-        self.SoapM = core.MarketNode(
+        self.SoapM = core.SoapNode(
             Bubble(vd.bubble_size_investing, vd.pos_invest_left, vd.default_fill,
-                   "", self.soap_color, (206, 200, 239)), "Soap", observer
+                   "", self.soap_color, (206, 200, 239)), observer
         )  # Soap Market
 
-        self.BeerM = core.MarketNode(
+        self.BeerM = core.BeerNode(
             Bubble(vd.bubble_size_investing, vd.pos_invest_center, vd.default_fill,
-                   "", self.beer_color, (242, 142, 28)), "Beer", observer
+                   "", self.beer_color, (242, 142, 28)), observer
         )  # Beer Market
 
-        self.WrapM = core.MarketNode(
+        self.WrapM = core.WrapNode(
             Bubble(vd.bubble_size_investing, vd.pos_invest_right, vd.default_fill,
-                   "", self.wrap_color, (245, 197, 217)), "Wrap", observer
+                   "", self.wrap_color, (245, 197, 217)), observer
         )  # Wrap Market
 
         self.savedValues = []
@@ -129,6 +129,7 @@ class EconomyGraph:
                                 (["An investor has just spent ", invest_str + " into your company!"],
                                 (0, 0, 0))
                                 )
+                investor.invested_money += investor.invested * capital
                 investor.invested = 0
 
     def check_pullout(self, node, observer):
@@ -141,6 +142,7 @@ class EconomyGraph:
                                 (["An investor has withdrawn", pullout_str + " from your company!"],
                                 (255, 0, 0))
                                 )
+                investor.invested_money -= investor.pulled_out * capital
                 investor.pulled_out = 0
 
                 if investor.owned_shares == 0:
@@ -163,6 +165,13 @@ class EconomyGraph:
     def draw_docs(self, view):
         for node in self.nodes:
             node.draw_docs(view)
+
+    def apply_action(self, action):
+        for e in self.nodes:
+            if type(e) in action:
+                e.action[type(e)][0](action(type(e))[1])
+            # action[key][0](action[key][1])
+            
 
     def has_exploded(self):
         return (self.AC._value == 0) or (self.ID._value >= 100) or (self.PD._value > 100)

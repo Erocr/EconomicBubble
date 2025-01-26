@@ -52,23 +52,24 @@ while not inputs.quit:
             popups.update(inputs)
 
             economy_graph.update_visuals(view, inputs, observer, paused)
-
-            if frames % 300 == 0 and not paused:
-                economy_graph.update_multigraph()
-
             if not paused:
+                if frames % 300 == 0:
+                    economy_graph.update_multigraph()
+
                 economy_graph.quick_simulation_update()
 
-            if frames % 40 == 0 and not paused:
-                economy_graph.save_values()
-                economy_graph.update_simulation()
+                if frames % 40 == 0:
+                    economy_graph.save_values()
+                    economy_graph.update_simulation()
 
-            if frames % 1000 == 0 and not paused:
-                flash_info.new_msg(random.choice(news.news)[0])
-                observer.notify(EVENT_SOUND, ("news_popup",))
+                if frames % 1000 == 0:
+                    infoMsg, action = random.choice(news.news)
+                    flash_info.new_msg(infoMsg)
+                    observer.notify(EVENT_SOUND, ("news_popup",))
+                    economy_graph.apply_action(action)
 
-            if economy_graph.has_exploded():
-                current_state = "over"
+                if economy_graph.has_exploded():
+                    current_state = "over"
             
             flash_info.draw(view)
             popups.draw(view)
