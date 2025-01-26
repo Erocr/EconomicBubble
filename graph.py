@@ -106,11 +106,11 @@ class EconomyGraph:
         self.M1.addParents([self.S1, self.TC])
         self.Events.addParents([self.Spy])
         self.S1.addParents([self.Events, self.TC])
-        self.Spy.addParents([self.TC])
+        self.Spy.addParents([self.Events, self.TC])
 
         self.type_to_node = {type(node): node for node in self.all_nodes}
         
-        self.actions = Actions(core.TrueCapitalNode, core.WrapNode, core.SoapNode, core.WrapNode, core.PublicDoubtNode, core.InvestorsDoubtNode)
+        self.actions = Actions(core.TrueCapitalNode, core.WrapNode, core.SoapNode, core.WrapNode, core.PublicDoubtNode, core.InvestorsDoubtNode, core.SecurityNode)
 
     def quick_simulation_update(self):
         for node in self.nodes:

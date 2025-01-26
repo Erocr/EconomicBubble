@@ -137,6 +137,8 @@ class ApparentCapitalNode(BaseNode):
                 self._value += 4 * self.persuade * (parent._value - self.true_capital)
             else:
                 self._value = (5*self.persuade * self._value + parent._value)/(1 + 5*self.persuade)
+            
+            self._value = self.persuade * self._value + (1-self.persuade) * parent._value
 
             self.true_capital = parent._value
 
@@ -510,7 +512,7 @@ class MarketingNode(BaseNode):
         )
     
     def present_choices(self):
-        actions = Actions(TrueCapitalNode, WrapNode, SoapNode, BeerNode, PublicDoubtNode, InvestorsDoubtNode)
+        actions = Actions(TrueCapitalNode, WrapNode, SoapNode, BeerNode, PublicDoubtNode, InvestorsDoubtNode, SecurityNode)
         first_choice, second_choice = random.sample(list(actions.actions.keys()), 2)
 
         self.observer.notify(EVENT_TRIGGER_CHOICES, [first_choice, second_choice])
@@ -576,14 +578,16 @@ class EspionageNode(BaseNode):
         self.bubble.set_text(
             f"Espionage {to_readable_int(priceIncrement(self.nb_clicks))}$ {to_readable_int(self._value)}%"
         )
+
     def present_choices(self):
-        actions = Actions(TrueCapitalNode, WrapNode, SoapNode, BeerNode, PublicDoubtNode, InvestorsDoubtNode)
+        actions = Actions(TrueCapitalNode, WrapNode, SoapNode, BeerNode, PublicDoubtNode, InvestorsDoubtNode, SecurityNode)
         first_choice, second_choice = random.sample(list(actions.illegal.keys()), 2)
 
         self.observer.notify(EVENT_TRIGGER_CHOICES, [first_choice, second_choice])
 
     def influencedBy(self, parent):
-        if type(parent) == Event:
+        if type(parent) == EventNode: # = Crime
+            print("world")
             if self.is_click:
                 print("hello")
                 parent.createEvent()
@@ -619,7 +623,7 @@ class EventNode(BaseNode):
         pass
 
     def createEvent(self):
-        self.events.append(Event(5, 0.4, 0.8, self.observer))
+        self.events.append(Event(5, 30, 0.8, self.observer))
 
 class Event():
     def __init__(self, TTL, dbt, risk, observer):

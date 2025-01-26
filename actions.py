@@ -1,11 +1,12 @@
 class Actions :
-    def __init__(self, TC, W, S, B, PD, ID):
+    def __init__(self, TC, W, S, B, PD, ID, SN):
         TrueCapitalNode = TC
         WrapNode = W
         SoapNode = S
         BeerNode = B
         PublicDoubtNode = PD
         InvestorsDoubtNode = ID
+        SecurityNode = SN
 
         self.actions = {
                 "You create a viral social media campaign featuring your soap products being used as impromptu bubble wrap replacements in a humorous DIY video":
@@ -31,7 +32,7 @@ class Actions :
                 "You buy an entire warehouse full of bubble wrap to use as office decor and end up bankrupting the company":
                 {WrapNode : [(WrapNode.mulValue, 1.08)],
                 InvestorsDoubtNode : [(InvestorsDoubtNode.mulValue, 1.1)],
-                TrueCapitalNode : [TrueCapitalNode.mulValue, 0.88]
+                TrueCapitalNode : [(TrueCapitalNode.mulValue, 0.88)]
                 },
                 #(Effect: WrapNode + 8%, InvestorsDoubtNode + 10%, TrueCapitalNode - 12%)"
                 "You accidentally order 1000 cases of beer for a party that only 10 people will attend, resulting in a massive inventory glut":

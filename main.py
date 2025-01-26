@@ -97,7 +97,7 @@ while not inputs.quit:
                 paused = True
             end = cards.update(inputs)
             if end is not None:
-                economy_graph.apply_action(economy_graph.actions[end])
+                economy_graph.apply_action(economy_graph.actions.all_actions[end])
                 depause_delay = 10
 
         elif current_state == "over":
