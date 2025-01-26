@@ -133,23 +133,21 @@ class EconomyGraph:
 
             if security.defense_team > 0:
                 security.add_defense_team(-1)
-                (["A crime was discovered!", "You used a legal defense to block it!"],
+                (["A crime was discovered!", "You used a legal defense!"],
                 (0, 0, 0))
             else:
-                doubt = notifications
-                # public._value += abs(random.gaussian(0, public.volatility)) * doubt
-                # public._value = core.clamp(public._value, 1, 100)
+                public._value = min(100, public._value + notifications)
                 for investor in investors:
-                    investor._value += abs(random.gaussian(0, public.volatility)) * doubt
+                    investor._value += abs(random.gauss(0, public.volatility)) * notifications
                     investor._value = core.clamp(public._value, 1, 100)
                 self.observer.notify(EVENT_NEW_POPUP,
-                (["A crime was discovered!", "You've lost the trust of the public!"],
+                (["A crime was discovered!", "You've lost trust of public!"],
                 (0, 0, 0)))
                 volatility = 1.5
             # no matter what, people become very unstable
             public.volatility *= volatility
             for investor in investors:
-                investor._value += abs(random.gaussian(0, public.volatility)) * doubt
+                investor._value += abs(random.gauss(0, public.volatility)) * notifications
                 investor._value = core.clamp(public._value, 1, 100)
                 investor.volatility *= volatility
 
@@ -174,7 +172,12 @@ class EconomyGraph:
             if investor.owned_shares == 0:
                 self.observer.notify(EVENT_NEW_POPUP,
                 (["An investor has left your company!"], (255, 0, 0)))
-
+        elif event == EVENT_REQUEST_QUESTION:
+            pass
+        elif event == EVENT_RIGHT_QUESTION:
+            pass
+        elif event == EVENT_WRONG_QUESTION:
+            pass
 
     def update_simulation(self):
         random.shuffle(self.nodes)

@@ -13,7 +13,7 @@ def priceIncrement(n: int):
     return n**3
 
 def marketPriceIncrement(n: int):
-    return 10*n*log(n) + 15
+    return 50*n*log(n) + 15
 
 class BaseNode:
     doc = "It's something clickable, maybe"
@@ -328,9 +328,9 @@ class PublicDoubtNode(BaseNode):
         #     for ev in parent.events:
         #         if not ev.alive:
     
-    def notify(self, event, notifications):
-        if event == EVENT_EVENT_BURST:
-            self._value = min(100, self._value + notifications)
+    # def notify(self, event, notifications):
+    #     if event == EVENT_EVENT_BURST:
+    #         self._value = min(100, self._value + notifications)
     
     def incrementDoubt(self, increment):
         self._value = getNewValue(self._value, increment, 100)
@@ -564,16 +564,17 @@ class SecurityNode(BaseNode):
         self.defense_team += val
 
     def right_answer(self, val):
-        pass
+        self.observer.notify(EVENT_WRONG_ANSWER, 0)
 
     def wrong_answer(self, val):
-        pass
+        self.observer.notify(EVENT_RIGHT_ANSWER, 0)
 
     def monitor(self, val):
-        print("Not Yet Implemented")
+        #print("Not Yet Implemented")
         string = "Let's see how successful the surveillance was! What share do you think your biggest investor holds?"
         right_answer = self.check_answer
         wrong_answer = random.random() * 0.8
+        self.observer.notify(EVENT_REQUEST_QUESTION, [string, right_answer, wrong_answer])
 
     def update(self):
         super().update()
