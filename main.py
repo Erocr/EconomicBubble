@@ -2,6 +2,7 @@ from view import *
 from inputs import *
 from visual_data import *
 from graph import *
+import simulation_core as core
 from PopUps import *
 import news
 import random
@@ -27,6 +28,7 @@ while not inputs.quit:
     observer.add_observable(popups)
     observer.add_observable(flash_info)
     observer.add_observable(music)
+    observer.add_observable(economy_graph)
 
     splash_screen = SplashScreen(view.screenSize)
     settings = Settings()
@@ -44,7 +46,7 @@ while not inputs.quit:
     frames = 0
     while not inputs.quit:
         music.update()
-        inputs.update() 
+        inputs.update()
         # if not economy_graph.has_exploded():
         if current_state == "splash_screen":
             e = splash_screen.update(inputs)
@@ -57,11 +59,12 @@ while not inputs.quit:
                 paused = settings.activated
                 tutorial = settings.activated
 
+            if not paused and cards.actif():
+                paused = True
             end = cards.update(inputs)
             if end is not None:
-                economy_graph.apply_action(end)
-            if not paused:
-                paused = cards.actif()
+                economy_graph.apply_action(economy_graph.actions[end])
+                paused = False
 
             if not paused: flash_info.update(inputs)
             popups.update(inputs)

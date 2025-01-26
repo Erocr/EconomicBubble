@@ -4,6 +4,7 @@ from misc import *
 from observer import *
 from math import exp
 from vec import *
+from actions import Actions
 
 def getNewValue(value, bonus, max_value):
     clamped_bonus = clamp(bonus, -max_value, max_value)
@@ -36,6 +37,9 @@ class BaseNode:
 
     def quick_update(self):
         pass
+
+    def mulValue(self, val):
+        self._value *= val
 
     def update(self):
         for node in self.parents:
@@ -105,6 +109,9 @@ class TrueCapitalNode(BaseNode):
             self.shares = clamp(self.shares, 0, 0.8)
             self._value /= (1 - self.shares)
 
+    def incrementCapital(self, increment):
+        self._value += increment
+
 class ApparentCapitalNode(BaseNode):
     doc = """Shown Capital : the capital you show to other people, you better lie very well if you want to make them invest"""
     def __init__(self, bubble, observer):
@@ -121,7 +128,7 @@ class ApparentCapitalNode(BaseNode):
         self.bubble.set_fill_level(1 - exp(-1 / 1000 * self._value))
 
         self.persuade = clamp(self.persuade, 0, 1)
-        self.persuade /= 1.1
+        self.persuade /= 1.01
         self._value = max(self._value, self.true_capital + random.randint(12, 102))
         
     def influencedBy(self, parent):
@@ -139,6 +146,13 @@ class ApparentCapitalNode(BaseNode):
 
         if (type(parent) == PublicDoubtNode):
             self.persuade = getNewValue(self.persuade, parent._value/500, 1)
+    
+    def incrementCapital(self, increment):
+        self._value += increment
+    
+    def incrementPersuasion(self, increment): # must be positive, between 0 and 1
+        self.persuade = getNewValue(self.persuade, increment, 1)
+        self.persuade = max(self.persuade, 0)
 
 class MarketNode(BaseNode):
     doc = """Choose wisely where you invest. If the bubble is filled, you can buy.\nLook at the graph.\nExplanations? Become a trader."""
@@ -164,6 +178,16 @@ class MarketNode(BaseNode):
 
     def mulValue(self, val):
         self._value *= val
+    
+    def increment_max_price(self, increment):
+        self.max_value += increment
+    
+    def increment_min_price(self, increment):
+        self.min_value += increment
+    
+    def incrementTendance(self, increment):
+        self.tendance += increment
+
     
 class SoapNode(MarketNode):
     def __init__(self, bubble, observer):
@@ -286,6 +310,13 @@ class PublicDoubtNode(BaseNode):
     def notify(self, event, notifications):
         if event == EVENT_EVENT_BURST:
             self._value = min(100, self._value + notifications)
+    
+    def incrementDoubt(self, increment):
+        self._value = getNewValue(self._value, increment, 100)
+        self._value = max(self._value, 0)
+    
+    def incrementVolatility(self, increment):
+        self.volatility = getNewValue(self.volatility, increment, 15)
 
 class InvestorNode(BaseNode):
     def __init__(self, bubble, observer):
@@ -294,7 +325,6 @@ class InvestorNode(BaseNode):
         # the investors observe for some time, which helps
         # then calculate how much they doubt you, as well as
         # how interested they are
-        self.invested = 0
         self.pulled_out = 0
         self.interest = 1
         self.true_capital = 10
@@ -362,12 +392,13 @@ class InvestorNode(BaseNode):
                                                   or self.interest < 1.1: 
             return 0
         if random.random() * 100 > self._value:
-            self.invested = random.random() * (0.8 - shares) / 2.5
-            self.invested *= self.interest
-            self.invested *= (1 - self._value / 100)
-            if self.invested * 100 < 1: self.invested = 0
-            self.owned_shares += self.invested
-            return self.invested
+            invested = random.random() * (0.8 - shares) / 2.5
+            invested *= self.interest
+            invested *= (1 - self._value / 100)
+            if invested * 100 < 1: invested = 0
+            self.owned_shares += invested
+            self.observer.notify(EVENT_INVESTED, [self, invested])
+            return invested
         return 0
 
     def pullout(self):
@@ -414,6 +445,10 @@ class InvestorsDoubtNode(BaseNode):
         if type(parent) == EventNode:
             # self._value = getNewValue()
             pass
+
+    def mulValue(self, val):
+        for investor in self.investors:
+            investor._value *= val
 
     def update(self):
         super().update()
@@ -467,10 +502,11 @@ class MarketingNode(BaseNode):
             f"Marketing {to_readable_int(priceIncrement(self.nb_clicks))}$ {to_readable_int(self._value)}%"
         )
     
-    # def present_choices(self):
-    #     first_choice, second_choice = random.sample(actions.actions.keys(), 2)
+    def present_choices(self):
+        actions = Actions(TrueCapitalNode, WrapNode, SoapNode, BeerNode, PublicDoubtNode, InvestorsDoubtNode)
+        first_choice, second_choice = random.sample(list(actions.actions.keys()), 2)
 
-    #     self.observer.notify(EVENT_TRIGGER_CHOICES, [first_choice, second_choice])
+        self.observer.notify(EVENT_TRIGGER_CHOICES, [first_choice, second_choice])
 
     def influencedBy(self, parent):
         if type(parent) == TrueCapitalNode:
@@ -482,6 +518,7 @@ class MarketingNode(BaseNode):
                     self._value = getNewValue(self._value, 10, 100)
                     self.nb_clicks += 1
                     parent._value -= price
+                    self.present_choices()
                 self.is_click = False
 
 class SecurityNode(BaseNode):
@@ -490,7 +527,7 @@ class SecurityNode(BaseNode):
         super().__init__(bubble, observer)
         self.is_click = False
         self.nb_clicks = 1
-
+        self.defense_team = []
 
     def quick_update(self):
         if self.bubble.clicked():
@@ -582,8 +619,7 @@ class Event():
     
     def burst(self):
         self.alive = False
-        self.observer.notify(EVENT_EVENT_BURST, self.doubt)
-        
+        self.observer.notify(EVENT_EVENT_BURST, self.doubt)    
 
     def update(self):
         self.time_to_live -= 1
@@ -595,6 +631,10 @@ class Event():
             self.risk /= 2
                 
         self.bubble.set_text(
-            f"Event {to_readable_int(self._value)}$"
+            f"Event: Risk to burst {to_readable_int(self._risk)}%"
         )
 
+class Crime(Event):
+    def burst(self):
+        super().burst(self)
+        self.observer.notify(EVENT_CRIME_FOUND, self.risk)

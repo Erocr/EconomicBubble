@@ -7,7 +7,7 @@ import random
 import curve
 import vec
 from observer import *
-
+from actions import Actions
 
 class EconomyGraph:
     def __init__(self, visual_data, observer):
@@ -83,15 +83,19 @@ class EconomyGraph:
         self.market = core.MarketGroup(self.market_nodes)
 
         self.influenced_nodes = [
-                                    self.TC, self.AC, self.PD, self.ID, self.Events, self.market
-                                ]
+            self.TC, self.AC, self.PD, self.ID, self.Events, self.market
+        ]
 
         self.clickable_nodes = [
             self.M1, self.S1, self.Spy
         ]
 
         self.nodes = self.influenced_nodes + self.clickable_nodes
-        
+
+        self.all_nodes = [
+            self.TC, self.AC, self.PD, self.ID, self.Events, self.M1, self.S1, self.Spy,
+        ] + self.market_nodes
+
         self.observer.add_observables(self.nodes)
 
         # Edges
@@ -107,6 +111,10 @@ class EconomyGraph:
         self.S1.addParents([self.Events, self.TC])
         self.Spy.addParents([self.TC])
 
+        self.type_to_node = {type(node): node for node in self.all_nodes}
+        
+        self.actions = Actions(core.TrueCapitalNode, core.WrapNode, core.SoapNode, core.WrapNode, core.PublicDoubtNode, core.InvestorsDoubtNode).actions
+
     def quick_simulation_update(self):
         for node in self.nodes:
             node.quick_update()
@@ -119,18 +127,18 @@ class EconomyGraph:
             self.multi_curve.add_values(e)
         self.savedValues = []
 
-    def check_invest(self, node, observer):
-        node = self.ID
-        capital = self.TC._value
-        for investor in node.investors:
-            if investor.invested > 0:
-                invest_str = str(int(investor.invested * capital)) + "$"
-                observer.notify(EVENT_NEW_POPUP,
-                                (["An investor has just spent ", invest_str + " into your company!"],
-                                (0, 0, 0))
-                                )
-                investor.invested_money += investor.invested * capital
-                investor.invested = 0
+    def notify(self, event, notifications):
+        if event == EVENT_CRIME_FOUND:
+            pass
+        if event == EVENT_INVESTED:
+            investor, invested = notifications
+            capital = self.TC._value
+            invest_str = str(int(invested * capital)) + "$"
+            self.observer.notify(EVENT_NEW_POPUP,
+                (["An investor has just spent ", invest_str + " into your company!"],
+                (0, 0, 0))
+            )
+            investor.invested_money += investor.invested * capital
 
     def check_pullout(self, node, observer):
         node = self.ID
@@ -161,7 +169,7 @@ class EconomyGraph:
         for node in self.nodes:
             node.draw(view, inputs, paused)
             if not paused:
-                self.check_invest(node, observer)
+                #self.check_invest(node, observer)
                 self.check_pullout(node, observer)
         self.multi_curve.draw(view)
 
@@ -170,10 +178,10 @@ class EconomyGraph:
             node.draw_docs(view)
 
     def apply_action(self, action):
-        for e in self.nodes:
-            if type(e) in action:
-                action[type(e)][0](e, action(type(e))[1])
-            
+        # print(self.type_to_node)
+        for node_type, actions in action.items():
+            for function, arg in actions:
+                function(self.type_to_node[node_type], arg)
 
     def has_exploded(self):
-        return (self.AC._value == 0) or (self.ID._value >= 100) or (self.PD._value > 100)
+        return (self.AC._value <= 0) or (self.ID._value >= 100) or (self.PD._value >= 100)
