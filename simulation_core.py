@@ -1,8 +1,7 @@
 import random
-import numpy as np
 from misc import *
 from observer import *
-from math import exp
+from math import exp, log
 from vec import *
 from actions import Actions
 
@@ -14,7 +13,7 @@ def priceIncrement(n: int):
     return n**3
 
 def marketPriceIncrement(n: int):
-    return 10*n*np.log(n) + 15
+    return 10*n*log(n) + 15
 
 class BaseNode:
     doc = "It's something clickable, maybe"
@@ -263,7 +262,7 @@ class MarketGroup():
         if type(parent) == EspionageNode:
             if parent.is_click:
                 for market_node in self.market_nodes:
-                    market_node.worker += 0.5
+                    market_node.worker += 1
 
         if type(parent) == TrueCapitalNode:
             for market_node in self.market_nodes:
@@ -471,7 +470,8 @@ class InvestorsDoubtNode(BaseNode):
             for investor in self.investors:
                 investor.update()
                 investor_doubt.append(investor._value)
-            self._value = np.mean(investor_doubt)
+            self._value = sum(investor_doubt) / len(investor_doubt)
+            # self._value = np.mean(investor_doubt)
             self._value = clamp(self._value, 1, 100)
         if self._value > 90:
             self.observer.notify(EVENT_PLAY_CRITICAL, None)
@@ -552,6 +552,8 @@ class SecurityNode(BaseNode):
     
     def add_defense_team(self, val):
         self.defense_team += val
+
+    def 
 
     def monitor(self, val):
         print("Not Yet Implemented")

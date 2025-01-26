@@ -47,9 +47,9 @@ class Actions :
         # (Effect: BeerNode + 10%, TrueCapitalNode + 8%, PublicDoubtNode - 10%)
 
         "You start selling soap-shaped whoopee cushions as a novelty item, and they become a huge success at trade shows":  
-        {SoapNode: [(SoapNode.mulValue, 1.15)],  
-        WrapNode: [(WrapNode.mulValue, 1.02)],  
-        BeerNode: [(BeerNode.mulValue, 1.03)],  
+        {SoapNode: [(SoapNode.mulValue, 3.15)],  
+        WrapNode: [(WrapNode.increment_min_price, -1)],  
+        BeerNode: [(BeerNode.increment_min_price, -3)],  
         TrueCapitalNode: [(TrueCapitalNode.mulValue, 1.10)],  
         PublicDoubtNode: [(PublicDoubtNode.mulValue, 0.95)]  
         },
@@ -64,7 +64,7 @@ class Actions :
         # (Effect: WrapNode + 15%, InvestorsDoubtNode - 10%, TrueCapitalNode + 8%, SoapNode + 5%)
 
         "You partner with a rival company to co-create a beer-infused soap, which becomes a popular novelty item in stores":
-        {BeerNode: [(BeerNode.mulValue, 1.10)],
+        {BeerNode: [(BeerNode.increment_max_price, 1.10)],
         SoapNode: [(SoapNode.mulValue, 1.10)],
         WrapNode: [(WrapNode.mulValue, 1.05)],
         TrueCapitalNode: [(TrueCapitalNode.mulValue, 1.08)]
@@ -81,7 +81,7 @@ class Actions :
 
         "You host a 'soap-making' workshop for kids, sparking creativity and bringing new customers to your brand":  
         {SoapNode: [(SoapNode.mulValue, 1.10)],  
-        WrapNode: [(WrapNode.mulValue, 1.06)],  
+        WrapNode: [(WrapNode.increment_min_price, -1.06)],  
         InvestorsDoubtNode: [(InvestorsDoubtNode.mulValue, 0.92)],  
         TrueCapitalNode: [(TrueCapitalNode.mulValue, 1.08)]},  
         # (Effect: SoapNode + 10%, WrapNode + 6%, InvestorsDoubtNode - 8%, TrueCapitalNode + 8%)
@@ -94,8 +94,8 @@ class Actions :
         # (Effect: BeerNode + 15%, PublicDoubtNode - 10%, TrueCapitalNode + 8%, InvestorsDoubtNode - 5%)
 
         "You create an 'eco-friendly bubble wrap' movement, reducing plastic use and earning praise for sustainability":  
-        {WrapNode: [(WrapNode.mulValue, 1.15)],  
-        SoapNode: [(SoapNode.mulValue, 1.08)],  
+        {WrapNode: [(WrapNode.increment_max_price, 1.15)],  
+        SoapNode: [(SoapNode.increment_max_price, 2.08)],  
         TrueCapitalNode: [(TrueCapitalNode.mulValue, 1.12)],  
         PublicDoubtNode: [(PublicDoubtNode.mulValue, 0.85)]},  
         # (Effect: WrapNode + 15%, SoapNode + 8%, TrueCapitalNode + 12%, PublicDoubtNode - 15%)
@@ -107,10 +107,10 @@ class Actions :
         self.illegal = {
             "You partner with a notorious drug lord to produce and distribute a new designer soap that contains marijuana, creating a new business, but maybe not a good one.": {
                     TrueCapitalNode: [(TrueCapitalNode.mulValue, 1.1)],
-                    SoapNode: [(SoapNode.increment_min_price, -1)],
+                    SoapNode: [(SoapNode.increment_min_price, -3)],
                     WrapNode: [(WrapNode.mulValue, 1.05)],
                     BeerNode: [(BeerNode.mulValue, 1.03)],
-                    PublicDoubtNode: [(PublicDoubtNode.mulValue, 1.8)],
+                    PublicDoubtNode: [(PublicDoubtNode.mulValue, 1.8), (PublicDoubtNode.incrementDoubt, 9)],
                 },
                 "You team up with a ruthless gun runner to smuggle soap into the country by hiding it in beer barrels, causing a surge in soap sales and confusion in the beer market.": {
                     TrueCapitalNode: [(TrueCapitalNode.mulValue, 1.15)],
@@ -128,23 +128,23 @@ class Actions :
                 },
                 "You hire a mercenary squad to raid rival soap companies, stealing their secret formulas and using them to dominate the market while causing chaos in the beer industry.": {
                     TrueCapitalNode: [(TrueCapitalNode.mulValue, 1.3)],
-                    SoapNode: [(SoapNode.mulValue, 1.5)],
+                    SoapNode: [(SoapNode.increment_max_price, 15)],
                     WrapNode: [(WrapNode.mulValue, 1.05)],
-                    BeerNode: [(BeerNode.mulValue, 0.75)],
+                    BeerNode: [(BeerNode.increment_min_value, -7.5)],
                     PublicDoubtNode: [(PublicDoubtNode.mulValue, 0.85)],
                 },
                 "You collude with corrupt officials to rig soap market prices, artificially inflating your profits while hurting small businesses and causing investor doubt.": {
                     TrueCapitalNode: [(TrueCapitalNode.mulValue, 1.1)],
-                    SoapNode: [(SoapNode.mulValue, 1.2)],
-                    WrapNode: [(WrapNode.mulValue, 1.03)],
+                    SoapNode: [(SoapNode.increment_max_price, 12)],
+                    WrapNode: [(WrapNode.increment_min_price, -5.03)],
                     BeerNode: [(BeerNode.mulValue, 1.05)],
                     PublicDoubtNode: [(PublicDoubtNode.mulValue, 0.9)],
                 },
                 "You leverage connections with organized crime to monopolize the beer market by bribing officials, extorting competitors, and infiltrating distribution networks.": {
                     TrueCapitalNode: [(TrueCapitalNode.mulValue, 1.25)],
-                    SoapNode: [(SoapNode.mulValue, 1.05)],
+                    SoapNode: [(SoapNode.increment_max_price, 11.05)],
                     WrapNode: [(WrapNode.mulValue, 1.03)],
-                    BeerNode: [(BeerNode.mulValue, 0.7)],
+                    BeerNode: [(BeerNode.increment_min_price, -17)],
                     PublicDoubtNode: [(PublicDoubtNode.mulValue, 0.8)],
                 },
                 "You partner with a dangerous cartel to produce a new designer soap that's highly addictive and illegal, flooding the market and causing chaos in law enforcement agencies.": {
@@ -170,15 +170,15 @@ class Actions :
                 },
                 "You pay off rival soap companies to sabotage their production facilities, allowing you to monopolize the market while causing chaos in the beer industry.": {
                     TrueCapitalNode: [(TrueCapitalNode.mulValue, 1.3)],
-                    SoapNode: [(SoapNode.mulValue, 1.5)],
+                    SoapNode: [(SoapNode.increment_max_price, 15)],
                     WrapNode: [(WrapNode.mulValue, 1.05)],
                     BeerNode: [(BeerNode.mulValue, 0.75)],
                     PublicDoubtNode: [(PublicDoubtNode.mulValue, 0.85)],
                 },
                 "You work with a dangerous smuggling ring to import massive amounts of illegal soap into the country, flooding the market and causing chaos in law enforcement agencies.": {
                     TrueCapitalNode: [(TrueCapitalNode.mulValue, 1.2)],
-                    SoapNode: [(SoapNode.mulValue, 0.8)],
-                    WrapNode: [(WrapNode.mulValue, 1.3)],
+                    SoapNode: [(SoapNode.increment_min_price, -18)],
+                    WrapNode: [(WrapNode.increment_max_price, 13)],
                     BeerNode: [(BeerNode.mulValue, 1.05)],
                     PublicDoubtNode: [(PublicDoubtNode.mulValue, 0.85)],
                 },

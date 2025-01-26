@@ -127,24 +127,32 @@ class EconomyGraph:
     def notify(self, event, notifications):
         if event == EVENT_CRIME_FOUND:
             security = self.S1
+            public = self.PD
+            investors = self.ID.investors
+            volatility = 1.1
+
             if security.defense_team > 0:
                 security.add_defense_team(-1)
                 (["A crime was discovered!", "You used a legal defense to block it!"],
                 (0, 0, 0))
             else:
-                public = self.PD
                 doubt = notifications
                 public._value += abs(random.gaussian(0, public.volatility)) * doubt
                 public._value = core.clamp(public._value, 1, 100)
-
-                investors = self.ID.investors
                 for investor in investors:
                     investor._value += abs(random.gaussian(0, public.volatility)) * doubt
                     investor._value = core.clamp(public._value, 1, 100)
                 self.observer.notify(EVENT_NEW_POPUP,
                 (["A crime was discovered!", "You've lost the trust of the public!"],
-                (0, 0, 0))
-            )
+                (0, 0, 0)))
+                volatility = 1.5
+            # no matter what, people become very unstable
+            public.volatility *= volatility
+            for investor in investors:
+                investor._value += abs(random.gaussian(0, public.volatility)) * doubt
+                investor._value = core.clamp(public._value, 1, 100)
+                investor.volatility *= volatility
+
         elif event == EVENT_INVESTED:
             investor, invested = notifications
             capital = self.TC._value

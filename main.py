@@ -83,8 +83,6 @@ while not inputs.quit:
                     flash_info.new_msg(infoMsg)
                     observer.notify(EVENT_SOUND, ("news_popup",))
                     economy_graph.apply_action(news.news[infoMsg])
-                    action = news.news[infoMsg]
-                    observer.notify(EVENT_APPLY_FUNC_NODE, action)
 
                 if economy_graph.has_exploded():
                     current_state = "over"
@@ -99,7 +97,7 @@ while not inputs.quit:
                 paused = True
             end = cards.update(inputs)
             if end is not None:
-                economy_graph.apply_action(economy_graph.actions.all_actions[end])
+                economy_graph.apply_action(economy_graph.actions.il[end])
                 depause_delay = 10
 
         elif current_state == "over":
