@@ -6,6 +6,9 @@ EVENT_EVENT_BURST = 4
 EVENT_MUL_VALUE_NODE = 5
 EVENT_TRIGGER_CHOICES = 6
 
+EVENT_PLAY_NORMAL = 7
+EVENT_PLAY_CRITICAL = 8
+
 class Observer:
     """
     Permet de l'echange d'information entre deux classes eloignees.

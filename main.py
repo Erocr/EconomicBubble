@@ -37,12 +37,13 @@ while not inputs.quit:
 
     cards = CardsPair(view)
     observer.add_observable(cards)
-    cards.set_cards("akjf aojbdja joa jbsjalsc pk hao", "qksjsnq jsdaojbcak,cabs aoskja")
+
 
     paused = False
     tutorial = False
     frames = 0
     while not inputs.quit:
+        music.update()
         inputs.update() 
         # if not economy_graph.has_exploded():
         if current_state == "splash_screen":
@@ -77,7 +78,7 @@ while not inputs.quit:
                     economy_graph.update_simulation()
 
                 if frames % 1000 == 0:
-                    infoMsg = random.choice(news.news.keys())
+                    infoMsg = random.choice(list(news.news.keys()))
                     flash_info.new_msg(infoMsg)
                     observer.notify(EVENT_SOUND, ("news_popup",))
                     economy_graph.apply_action(news.news[infoMsg])
