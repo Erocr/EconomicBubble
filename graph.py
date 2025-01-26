@@ -121,25 +121,31 @@ class EconomyGraph:
 
     def check_invest(self, node, observer):
         node = self.ID
+        capital = self.TC._value
         for investor in node.investors:
             if investor.invested > 0:
-                invest_str = str(int(investor.invested * 100)) + "%"
+                invest_str = str(int(investor.invested * capital)) + "$"
                 observer.notify(EVENT_NEW_POPUP,
-                                (["An investor has just bought", invest_str + " of your company!"],
+                                (["An investor has just spent ", invest_str + " into your company!"],
                                 (0, 0, 0))
                                 )
                 investor.invested = 0
 
     def check_pullout(self, node, observer):
         node = self.ID
+        capital = self.TC._value
         for investor in node.investors:
             if investor.pulled_out > 0:
-                pullout_str = str(int(investor.pulled_out * 100)) + "%"
+                pullout_str = str(int(investor.pulled_out * capital)) + "$"
                 observer.notify(EVENT_NEW_POPUP,
-                                (["An investor has withdrawn", pullout_str + " of your company!"],
+                                (["An investor has withdrawn", pullout_str + " from your company!"],
                                 (255, 0, 0))
                                 )
                 investor.pulled_out = 0
+
+                if investor.owned_shares == 0:
+                    observer.notify(EVENT_NEW_POPUP,
+                                (["An investor has left your company!"], (255, 0, 0)))
 
     def update_simulation(self):
         random.shuffle(self.nodes)

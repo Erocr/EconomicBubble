@@ -6,7 +6,7 @@ def clamp(val, min_, max_):
 class Queue(list):
     def __init__(self, max_size):
         self.max_size = max_size
-        self.append(1)    
+        self.append(1)
         for _ in range(max_size - 1):
             self.append(clamp(self[-1] + random.random()/4_000 + random.gauss(0, 50)/2_000,
                               random.randint(3, 12)/100, random.randint(163, 194)/100))
