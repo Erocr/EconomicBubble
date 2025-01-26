@@ -10,8 +10,8 @@ class View:
         self.screenSize = Vec(1100, 700)
         self.screen = pg.display.set_mode(self.screenSize.get, pg.NOFRAME)
         self.screenSize = Vec(*self.screen.get_size())
-        self.font = pg.font.SysFont("serif", 24)
-        self.mini_font = pg.font.SysFont("serif", 12)
+        self.font = pg.font.Font("./fonts/FuzzyBubbles-Regular.ttf", 19)
+        self.mini_font = pg.font.Font("./fonts/Oswald-Medium.ttf", 12)
         #self.background = self.import_background()
         self.background = pg.image.load(sys.path[0] + "/images/Game_Jam_Desk_Classy.jpg")
 
