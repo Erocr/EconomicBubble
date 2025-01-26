@@ -68,10 +68,11 @@ class BaseNode:
         return dist(inputs.mouse_pos, self.bubble.center) < self.bubble.radius
 
     def notify(self, event, notifications):
-        """ notifications doit etre de la forme (type_du_noeud, valeur_a_ajouter) """
-        pass
-        # if event == EVENT_ADD_VALUE_NODE and type(self).__name__ == notifications[0]:
-        #     self._value += notifications[1]
+        if event == EVENT_APPLY_FUNC_NODE:
+            if type(self) in notifications:
+                for l in notifications[type(self)]:
+                    l[0](self, *l[1:])
+
 
 class TrueCapitalNode(BaseNode):
     doc = """Your True Capital, what you truly have, the money you can actually spend.\nNobody knows it. It's your darkest secret."""
