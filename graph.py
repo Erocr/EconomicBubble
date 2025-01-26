@@ -130,7 +130,7 @@ class EconomyGraph:
     def notify(self, event, notifications):
         if event == EVENT_CRIME_FOUND:
             pass
-        if event == EVENT_INVESTED:
+        elif event == EVENT_INVESTED:
             investor, invested = notifications
             capital = self.TC._value
             invest_str = str(int(invested * capital)) + "$"
@@ -138,24 +138,20 @@ class EconomyGraph:
                 (["An investor has just spent ", invest_str + " into your company!"],
                 (0, 0, 0))
             )
-            investor.invested_money += investor.invested * capital
+            investor.invested_money += invested * capital
+        elif event == EVENT_PULLED_OUT:
+            investor, pulled_out = notifications
+            capital = self.TC._value
+            pullout_str = str(int(pulled_out * capital)) + "$"
+            self.observer.notify(EVENT_NEW_POPUP,
+                (["An investor has withdrawn", pullout_str + " from your company!"],
+                (255, 0, 0))
+            )
+            investor.invested_money -= pulled_out * capital
+            if investor.owned_shares == 0:
+                self.observer.notify(EVENT_NEW_POPUP,
+                (["An investor has left your company!"], (255, 0, 0)))
 
-    def check_pullout(self, node, observer):
-        node = self.ID
-        capital = self.TC._value
-        for investor in node.investors:
-            if investor.pulled_out > 0:
-                pullout_str = str(int(investor.pulled_out * capital)) + "$"
-                observer.notify(EVENT_NEW_POPUP,
-                                (["An investor has withdrawn", pullout_str + " from your company!"],
-                                (255, 0, 0))
-                                )
-                investor.invested_money -= investor.pulled_out * capital
-                investor.pulled_out = 0
-
-                if investor.owned_shares == 0:
-                    observer.notify(EVENT_NEW_POPUP,
-                                (["An investor has left your company!"], (255, 0, 0)))
 
     def update_simulation(self):
         random.shuffle(self.nodes)
@@ -168,9 +164,6 @@ class EconomyGraph:
     def update_visuals(self, view, inputs, observer, paused):
         for node in self.nodes:
             node.draw(view, inputs, paused)
-            if not paused:
-                #self.check_invest(node, observer)
-                self.check_pullout(node, observer)
         self.multi_curve.draw(view)
 
     def draw_docs(self, view):
