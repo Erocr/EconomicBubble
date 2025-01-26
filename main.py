@@ -59,13 +59,6 @@ while not inputs.quit:
                 paused = settings.activated
                 tutorial = settings.activated
 
-            if not paused and cards.actif():
-                paused = True
-            end = cards.update(inputs)
-            if end is not None:
-                economy_graph.apply_action(economy_graph.actions[end])
-                paused = False
-
             if not paused: flash_info.update(inputs)
             popups.update(inputs)
 
@@ -95,6 +88,12 @@ while not inputs.quit:
             cards.draw()
             if tutorial:
                 economy_graph.draw_docs(view)
+            if not paused and cards.actif():
+                paused = True
+            end = cards.update(inputs)
+            if end is not None:
+                economy_graph.apply_action(economy_graph.actions[end])
+                paused = False
 
         elif current_state == "over":
             endScreen.update(inputs)
