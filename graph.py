@@ -113,7 +113,7 @@ class EconomyGraph:
 
     def save_values(self):
         self.savedValues.append([node._value for node in self.market_nodes])
-    
+
     def update_multigraph(self):
         for e in self.savedValues:
             self.multi_curve.add_values(e)
@@ -159,6 +159,10 @@ class EconomyGraph:
                 self.check_invest(node, observer)
                 self.check_pullout(node, observer)
         self.multi_curve.draw(view)
+
+    def draw_docs(self, view):
+        for node in self.nodes:
+            node.draw_docs(view)
 
     def has_exploded(self):
         return (self.AC._value == 0) or (self.ID._value >= 100) or (self.PD._value > 100)

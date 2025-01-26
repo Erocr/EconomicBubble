@@ -73,6 +73,8 @@ while not inputs.quit:
             flash_info.draw(view)
             popups.draw(view)
             settings.draw(view)
+            if paused:
+                economy_graph.draw_docs(view)
         
         elif current_state == "over":
             endScreen.update(inputs)

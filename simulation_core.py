@@ -3,6 +3,7 @@ import numpy as np
 from misc import *
 from observer import *
 from math import exp
+from vec import *
 
 def getNewValue(value, bonus, max_value):
     clamped_bonus = clamp(bonus, -max_value, max_value)
@@ -15,6 +16,7 @@ def marketPriceIncrement(n: int):
     return 10*n*np.log(n) + 15
 
 class BaseNode:
+    doc = "It's something clickable, maybe"
     def __init__(self, bubble, observer):
         self._value = 0
         self.volatility = 5
@@ -23,6 +25,7 @@ class BaseNode:
         self.parents = []
         self.debt = 0
         self.observer = observer
+        self.hover = False
     
     def addParent(self, node):
         self.parents.append(node)
@@ -42,6 +45,24 @@ class BaseNode:
         if not paused:
             self.bubble.update(inputs)
         self.bubble.draw(view)
+        self.hover = self.test_hover(inputs)
+
+    def draw_docs(self, view):
+        if self.hover:
+            size_x = 200
+            images = view.renders(self.doc, size_x, (255, 255, 255))
+            y = 0
+            for im in images:
+                y += im.get_height()
+            view.rect(self.bubble.center + DOWN*self.bubble.radius + LEFT*size_x/2, Vec(size_x, y), (0, 0, 0))
+            pos = self.bubble.center + DOWN*self.bubble.radius
+            for im in images:
+                view.screen.blit(im, (pos - Vec(im.get_width() / 2, 0)).get)
+                pos += Vec(0, im.get_height())
+
+    def test_hover(self, inputs):
+        return dist(inputs.mouse_pos, self.bubble.center) < self.bubble.radius
+
 
     def notify(self, event, notifications):
         """ notifications doit etre de la forme (type_du_noeud, valeur_a_ajouter) """
@@ -50,8 +71,7 @@ class BaseNode:
         #     self._value += notifications[1]
 
 class TrueCapitalNode(BaseNode):
-    doc = """Your True Capital, what you truly have, the money you can actually spend.
-             Nobody knows it. It's your darkest secret."""
+    doc = """Your True Capital, what you truly have, the money you can actually spend.\nNobody knows it. It's your darkest secret."""
     def __init__(self, bubble, observer):
         super().__init__(bubble, observer)
         self._value = 10
@@ -122,6 +142,7 @@ class ApparentCapitalNode(BaseNode):
             self.persuade = getNewValue(self.persuade, parent._value/500, 1)
 
 class MarketNode(BaseNode):
+    doc = """Choose wisely where you invest. Look at the graph.\nExplanations? Become a trader."""
     def __init__(self, bubble, name, observer):
         super().__init__(bubble, observer)
         self._value = 1
@@ -174,6 +195,9 @@ class MarketGroup():
             if not paused:
                 market_node.bubble.update(inputs)
             market_node.bubble.draw(view)
+
+    def draw_docs(self, view):
+        pass
     
     def influencedBy(self, parent):
         if type(parent) == PublicDoubtNode:
@@ -205,8 +229,7 @@ class MarketGroup():
         pass
 
 class PublicDoubtNode(BaseNode):
-    doc = """Public Doubt : if the public loves you, we love you.
-             If Public doubt is a 100%, you're over."""
+    doc = """Public Doubt : if the public loves you, we love you.\nIf Public doubt is a 100%, you're over."""
     def __init__(self, bubble, observer):
         super().__init__(bubble, observer)
         self.max_value = 100
@@ -326,9 +349,7 @@ class InvestorNode(BaseNode):
         return 0
 
 class InvestorsDoubtNode(BaseNode):
-    doc = """Investor Doubt : investors will fund you. Don't make them leave.
-             If you show consitent growth, they will take interest in you.
-             If Investor doubt is a 100%, you're over."""
+    doc = """Investor Doubt : investors will fund you. Don't make them leave.\nIf you show consitent growth, they will take interest in you.\nIf Investor doubt is a 100%, you're over."""
     def __init__(self, bubble, observer):
         super().__init__(bubble, observer)
         self.max_value = 100
@@ -377,8 +398,7 @@ class InvestorsDoubtNode(BaseNode):
         return self.investors[0].pullout()
 
 class MarketingNode(BaseNode):
-    doc = """Marketing : invest a ton into marketing and your public will love you. And investors will think your very rich.
-             Your apparent capital will go up."""
+    doc = """Marketing : invest a ton into marketing and your public will love you. And investors will think your very rich.\nYour apparent capital will go up."""
     def __init__(self, bubble, observer):
         super().__init__(bubble, observer)
         self.is_click = False
@@ -437,8 +457,7 @@ class SecurityNode(BaseNode):
                 self.is_click = False
 
 class EspionageNode(BaseNode):
-    doc = """Espionage : this is a criminal activity. Big risk, big reward. It's up to you.
-             Try not to trail behind the competition."""
+    doc = """Espionage : this is a criminal activity. Big risk, big reward. It's up to you.\nTry not to trail behind the competition."""
     def __init__(self, bubble, observer):
         super().__init__(bubble, observer)
         self.is_click = False
@@ -520,3 +539,4 @@ class Event():
         self.bubble.set_text(
             f"Event {to_readable_int(self._value)}$"
         )
+
