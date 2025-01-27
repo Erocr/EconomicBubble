@@ -100,5 +100,3 @@ You lose the game if:
 - Public doubt reaches 100%
 - Investor doubt reaches 100%
 - Your true capital reaches zero
-
-Made by Victorin-Brunel, Erocr, RandomProgrammerGuy, Nonlinear2, Panda-d3v and one more

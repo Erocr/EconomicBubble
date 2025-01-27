@@ -568,10 +568,10 @@ class SecurityNode(BaseNode):
         self.defense_team += val
 
     def right_answer(self, val):
-        self.observer.notify(EVENT_WRONG_ANSWER, 0)
+        self.observer.notify(EVENT_RIGHT_ANSWER, 0)
 
     def wrong_answer(self, val):
-        self.observer.notify(EVENT_RIGHT_ANSWER, 0)
+        self.observer.notify(EVENT_WRONG_ANSWER, 0)
 
     def monitor(self, val):
         #print("Not Yet Implemented")

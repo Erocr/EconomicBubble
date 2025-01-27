@@ -48,8 +48,8 @@ class Actions :
 
         "You start selling soap-shaped whoopee cushions as a novelty item, and they become a huge success at trade shows":  
         {SoapNode: [(SoapNode.mulValue, 3.15)],  
-        WrapNode: [(WrapNode.increment_min_price, -100)],  
-        BeerNode: [(BeerNode.increment_min_price, -300)],  
+        WrapNode: [(WrapNode.increment_min_price, -100)],
+        BeerNode: [(BeerNode.increment_min_price, -300)],
         TrueCapitalNode: [(TrueCapitalNode.mulValue, 1.10)],  
         PublicDoubtNode: [(PublicDoubtNode.mulValue, 0.95)]  
         },
@@ -81,7 +81,7 @@ class Actions :
 
         "You host a 'soap-making' workshop for kids, sparking creativity and bringing new customers to your brand":  
         {SoapNode: [(SoapNode.mulValue, 1.10)],  
-        WrapNode: [(WrapNode.increment_min_price, -106)],  
+        WrapNode: [(WrapNode.increment_min_price, -106)],
         InvestorsDoubtNode: [(InvestorsDoubtNode.mulValue, 0.92)],  
         TrueCapitalNode: [(TrueCapitalNode.mulValue, 1.08)]},  
         # (Effect: SoapNode + 10%, WrapNode + 6%, InvestorsDoubtNode - 8%, TrueCapitalNode + 8%)
@@ -94,8 +94,8 @@ class Actions :
         # (Effect: BeerNode + 15%, PublicDoubtNode - 10%, TrueCapitalNode + 8%, InvestorsDoubtNode - 5%)
 
         "You create an 'eco-friendly bubble wrap' movement, reducing plastic use and earning praise for sustainability":  
-        {WrapNode: [(WrapNode.increment_max_price, 115)],  
-        SoapNode: [(SoapNode.increment_max_price, 208)],  
+        {WrapNode: [(WrapNode.increment_max_price, 115)],
+        SoapNode: [(SoapNode.increment_max_price, 208)],
         TrueCapitalNode: [(TrueCapitalNode.mulValue, 1.12)],  
         PublicDoubtNode: [(PublicDoubtNode.mulValue, 0.85)]},  
         # (Effect: WrapNode + 15%, SoapNode + 8%, TrueCapitalNode + 12%, PublicDoubtNode - 15%)
@@ -249,10 +249,10 @@ class Actions :
             },
             "Legal Defense": {
                 SecurityNode: [(SecurityNode.add_defense_team, 1)]
-            } 
+            }
         }
 
-        self.questions = {}   
-        
+        self.questions = {}
+
         self.all_actions = self.actions | self.illegal | self.surveillance | self.questions
 

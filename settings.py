@@ -11,13 +11,13 @@ class Settings:
         self.import_images()
 
     def import_images(self):
-        self.setting_image = pg.image.load(sys.path[0] + "/images/settings_icon.png")
+        self.setting_image = pg.image.load("images/settings_icon.png")
         self.setting_image = pg.transform.scale(self.setting_image, (50, 50))
-        self.music_on = pg.image.load(sys.path[0] + "/images/music_off.png")
+        self.music_on = pg.image.load("images/music_off.png")
         self.music_on = pg.transform.scale(self.music_on, (50, 50))
-        self.music_off = pg.image.load(sys.path[0] + "/images/music_on.png")
+        self.music_off = pg.image.load("images/music_on.png")
         self.music_off = pg.transform.scale(self.music_off, (50, 50))
-        self.quit_image = pg.image.load(sys.path[0] + "/images/quit_icon.png")
+        self.quit_image = pg.image.load("images/quit_icon.png")
         self.quit_image = pg.transform.scale(self.quit_image, (50, 50))
 
     def update(self, inputs, music):

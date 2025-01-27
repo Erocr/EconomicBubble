@@ -188,7 +188,7 @@ class EconomyGraph:
 
         elif event == EVENT_RIGHT_ANSWER:
             self.PD.volatility *= 0.8
-            self.PD.volatility = core.clamp(public.volatility, 1, 10)
+            self.PD.volatility = core.clamp(self.PD.volatility, 1, 10)
             for investor in self.ID.investors:
                 investor.volatility *= 0.8
                 investor.volatility = core.clamp(investor.volatility, 1, 10)
@@ -197,7 +197,7 @@ class EconomyGraph:
 
         elif event == EVENT_WRONG_ANSWER:
             self.PD.volatility *= 1.2
-            self.PD.volatility = core.clamp(public.volatility, 1, 10)
+            self.PD.volatility = core.clamp(self.PD.volatility, 1, 10)
             for investor in self.ID.investors:
                 investor.volatility *= 1.2
                 investor.volatility = core.clamp(investor.volatility, 1, 10)
@@ -236,4 +236,4 @@ class EconomyGraph:
                 function(self.type_to_node[node_type], arg)
 
     def has_exploded(self):
-        return (self.AC._value <= 0) or (self.PD._value >= 100)
+        return (self.AC._value <= 0) or (self.PD._value >= 100) or (self.ID._value >= 100)

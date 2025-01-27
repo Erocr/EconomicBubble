@@ -14,10 +14,10 @@ class EndScreen():
         self.top_left_play_pos = self.play_pos - Vec(*self.play_image.get_size()) /2
 
     def import_images(self):
-        self.bg = pg.image.load(sys.path[0] + "/images/game-over.png")
-        self.quit_image = pg.image.load(sys.path[0] + "/images/quit_icon.png")
+        self.bg = pg.image.load("images/game-over.png")
+        self.quit_image = pg.image.load("images/quit_icon.png")
         self.quit_image = pg.transform.scale(self.quit_image, (100,100))
-        self.play_image = pg.image.load(sys.path[0] + "/images/play_image.png")
+        self.play_image = pg.image.load("images/play_image.png")
         self.play_image = pg.transform.scale(self.play_image, (100,100))
 
 

@@ -11,19 +11,18 @@ class Music:
         self.play_critical = False
         pg.mixer.init()
         self.music_channel = pg.mixer.find_channel()
-        pg.mixer.music.load(sys.path[0] + "/music/pleasant-dream.wav")
+        pg.mixer.music.load("music/pleasant-dream.wav")
         pg.mixer.music.play(-1)
         self.sounds = {
-            "cash_chaching": pg.mixer.Sound(sys.path[0] + "/music/ui-sounds/cash_chaching.mp3"),
-            "cash_counter": pg.mixer.Sound(sys.path[0] + "/music/ui-sounds/cash_counter.mp3"),
-            "crime_ching": pg.mixer.Sound(sys.path[0] + "/music/ui-sounds/crime_ching.mp3"),
-            "good_or_bad": pg.mixer.Sound(sys.path[0] + "/music/ui-sounds/good_or_bad.mp3"),
-            "menu_click": pg.mixer.Sound(sys.path[0] + "/music/ui-sounds/menu_click.mp3"),
-            "news_popup": pg.mixer.Sound(sys.path[0] + "/music/ui-sounds/news_popup.mp3")
+            "cash_chaching": pg.mixer.Sound("music/ui-sounds/cash_chaching.mp3"),
+            "crime_ching": pg.mixer.Sound("music/ui-sounds/crime_ching.mp3"),
+            "good_or_bad": pg.mixer.Sound("music/ui-sounds/good_or_bad.mp3"),
+            "menu_click": pg.mixer.Sound("music/ui-sounds/menu_click.mp3"),
+            "news_popup": pg.mixer.Sound("music/ui-sounds/news_popup.mp3")
         }
         self.musics = {
-            "normal": pg.mixer.Sound(sys.path[0] + "/music/pleasant-dream.wav"),
-            "critical": pg.mixer.Sound(sys.path[0] + "/music/the-burst.wav")
+            "normal": pg.mixer.Sound("music/pleasant-dream.wav"),
+            "critical": pg.mixer.Sound("music/the-burst.wav")
         }
 
     def play(self, music):
